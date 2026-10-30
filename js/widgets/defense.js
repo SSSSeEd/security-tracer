@@ -6,6 +6,7 @@
   /* ---------- Defense in depth ---------- */
   ST.widget("layers", {
     title: "多層防御：対策を重ねるとリスクが減っていく",
+    group: "ops", name: "多層防御", desc: "対策を重ねてリスクを減らす", order: 0,
     mount(el) {
       const L = [["mail", "メールフィルタ"], ["web", "危険サイトの遮断"], ["train", "利用者の訓練"], ["upd", "OS・機器の更新"], ["mfa", "多要素認証・パスキー"], ["edr", "EDR（端末監視）"], ["seg", "ネットワーク分割"], ["bk", "オフラインバックアップ"]];
       // Illustrative weights: how much each layer reduces the remaining chance of the attack reaching its goal.
@@ -41,6 +42,7 @@
   /* ---------- Log analysis (mini SOC) ---------- */
   ST.widget("logs", {
     title: "ログ分析：怪しい記録を見つける",
+    group: "ops", name: "ログ分析", desc: "怪しい記録を見つける", order: 2,
     mount(el) {
       const LOG = [
         { t: "09:02:11", s: "auth", m: "login success user=sato src=192.0.2.15", bad: 0, e: "社内のいつものIPアドレスからの、勤務時間内のログイン。" },
@@ -86,6 +88,7 @@
   /* ---------- Phishing judgment game (fictional brands only) ---------- */
   ST.widget("phishgame", {
     title: "見破れる？ フィッシング判定トレーニング",
+    group: "auth", name: "フィッシング判定", desc: "怪しいメッセージを見破る練習", order: 2,
     mount(el) {
       const Q = [
         { ch: "SMS", from: "+81 80-XXXX-XXXX", body: "【ミドリ運輸】お客様宛にお荷物のお届けにあがりましたが不在の為持ち帰りました。配送物は下記よりご確認ください。\nhttps://midori-unyu.delivery-check.top/", bad: 1,
@@ -125,6 +128,7 @@
   /* ---------- Kill chain & ATT&CK ---------- */
   ST.widget("killchain", {
     title: "サイバーキルチェーン：どこで断ち切る？",
+    group: "ops", name: "キルチェーンとATT&CK", desc: "攻撃をどこで断ち切るか", order: 1,
     mount(el) {
       const K = [
         { n: "偵察", en: "Reconnaissance", a: "会社のWebサイトやSNSから、社員の名前やメールアドレス、使っている製品を調べる。", d: "公開する情報を必要最小限にする（完全に防ぐのは難しい）", tac: ["TA0043"] },

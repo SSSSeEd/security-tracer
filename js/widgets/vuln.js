@@ -28,6 +28,7 @@
   const sev = s => s === 0 ? ["なし", "var(--muted)"] : s < 4 ? ["注意 (Low)", "var(--info)"] : s < 7 ? ["警告 (Medium)", "var(--warn)"] : s < 9 ? ["重要 (High)", "var(--packet)"] : ["緊急 (Critical)", "var(--attack)"];
   ST.widget("cvss", {
     title: "CVSS v3.1 基本値の計算機",
+    group: "vuln", name: "CVSS計算機", desc: "深刻度スコアを自分で計算", order: 0,
     mount(el) {
       const PRESETS = [
         ["遠隔から認証なしで乗っ取り", "AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"],
@@ -60,6 +61,7 @@
   /* ---------- Stack buffer overflow ---------- */
   ST.widget("overflow", {
     title: "バッファオーバーフロー：スタックのメモリを見る",
+    group: "vuln", name: "バッファオーバーフロー", desc: "スタックのメモリを見る", order: 1,
     mount(el) {
       el.innerHTML = `<pre class="hexbox" style="margin:0;white-space:pre-wrap">void greet(const char *input) {
     char name[8];          <span style="color:var(--muted)">// 8バイトのバッファ</span>

@@ -13,6 +13,7 @@
 
   ST.widget("password", {
     title: "パスワードの強さを見積もる",
+    group: "auth", name: "パスワード強度", desc: "長さと種類で破られるまでの目安", order: 0,
     mount(el) {
       el.innerHTML = `<p class="callout warn">実際に使っているパスワードは入力しないでください。計算はこの端末の中だけで行い、どこにも送信しません。</p>
         <label class="field">試すパスワード<input class="input" id="pw-in" type="text" value="sakura2024" autocomplete="off" spellcheck="false" autocapitalize="off"></label>
@@ -52,6 +53,7 @@
 
   ST.widget("auth", {
     title: "認証方式 vs リアルタイムフィッシング",
+    group: "auth", name: "認証方式 vs フィッシング", desc: "SMSコードとパスキーの違い", order: 1,
     mount(el) {
       el.innerHTML = `<p class="cap">偽サイトに誘導されたとき、それぞれの認証方式は攻撃者に突破されるでしょうか。</p>
         <div class="pills" role="group" data-m>${[["pw", "パスワードのみ"], ["sms", "＋SMSコード"], ["totp", "＋認証アプリ"], ["pk", "パスキー"]].map(([v, l], i) => `<button type="button" data-v="${v}" aria-pressed="${i === 0}">${l}</button>`).join("")}</div><div data-seq></div>`;

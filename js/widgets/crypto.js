@@ -7,6 +7,7 @@
   /* ---------- Hash / avalanche / salt ---------- */
   ST.widget("hash", {
     title: "ハッシュ関数：SHA-256 と雪崩効果",
+    group: "crypto", name: "ハッシュと雪崩効果", desc: "本物のSHA-256で1文字の違いを見る", order: 0,
     mount(el) {
       el.innerHTML = `<div class="btns">${ST.segHtml("mode", [["ava", "雪崩効果"], ["salt", "パスワードとソルト"]], "ava")}</div><div data-body></div>`;
       const body = el.querySelector("[data-body]");
@@ -51,6 +52,7 @@
   /* ---------- Symmetric / Asymmetric / Signature ---------- */
   ST.widget("crypto", {
     title: "暗号：共通鍵・公開鍵・デジタル署名（実際に計算）",
+    group: "crypto", name: "共通鍵・公開鍵・署名", desc: "AES・RSA・ECDSAを実際に計算", order: 1,
     mount(el) {
       el.innerHTML = `<div class="btns">${ST.segHtml("mode", [["sym", "共通鍵 (AES)"], ["asym", "公開鍵 (RSA)"], ["sig", "署名 (ECDSA)"]], "sym")}</div><div data-body></div>`;
       const body = el.querySelector("[data-body]");
@@ -126,6 +128,7 @@
   /* ---------- TLS 1.3 handshake ---------- */
   ST.widget("tls", {
     title: "TLS 1.3 ハンドシェイク",
+    group: "crypto", name: "TLS 1.3 ハンドシェイク", desc: "鍵マークの裏側と、割り込みの検出", order: 3,
     mount(el) {
       el.innerHTML = `<label class="toggle"><input type="checkbox" id="tls-mitm"><span>偽Wi‑Fiの攻撃者が自分の証明書で割り込む</span></label><div data-seq></div>`;
       let player;

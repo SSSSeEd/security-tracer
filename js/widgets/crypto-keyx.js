@@ -5,6 +5,7 @@
 
   ST.widget("dh", {
     title: "Diffie-Hellman鍵交換：秘密を送らずに同じ鍵を作る",
+    group: "crypto", name: "Diffie-Hellman鍵交換", desc: "秘密を送らずに同じ鍵を作る", order: 2,
     mount(el) {
       el.innerHTML = `<div class="btns">${ST.segHtml("mode", [["paint", "絵の具で考える"], ["num", "数で計算する"]], "paint")}</div><div data-body></div>`;
       const body = el.querySelector("[data-body]");

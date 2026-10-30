@@ -46,6 +46,7 @@
   }
   ST.widget("sqli", {
     title: "SQLインジェクション：入力がSQL文に変わる瞬間",
+    group: "web", name: "SQLインジェクション", desc: "入力がSQLの命令に変わる瞬間", order: 0,
     mount(el) {
       el.innerHTML = `<div class="btns">${ST.segHtml("mode", [["concat", "文字列連結（脆弱）"], ["bind", "プレースホルダ（安全）"]], "concat")}</div>
         <div class="card" style="padding:12px;display:grid;gap:8px">
@@ -103,6 +104,7 @@
   /* ---------- XSS ---------- */
   ST.widget("xss", {
     title: "XSS：入力がHTMLとして解釈される",
+    group: "web", name: "XSS", desc: "入力がHTMLとして解釈される", order: 1,
     mount(el) {
       el.innerHTML = `<p class="cap">掲示板のコメント欄に入力された文字が、他の人のブラウザでどう解釈されるかを見ます。このツールの中では、入力したスクリプトは<b>実行されません</b>（解析して表示するだけです）。</p>
         <div class="btns">${ST.segHtml("mode", [["raw", "そのまま出力（脆弱）"], ["esc", "エスケープして出力"]], "raw")}</div>
@@ -142,6 +144,7 @@
   /* ---------- CSRF ---------- */
   ST.widget("csrf", {
     title: "CSRF：罠サイトから勝手に送金させる",
+    group: "web", name: "CSRF", desc: "罠サイトから勝手に送金", order: 2,
     mount(el) {
       el.innerHTML = `<div class="def"><label class="toggle"><input type="checkbox" id="cs-tok"><span>CSRFトークンを確認する<br><span class="d">フォームに推測できない値を埋め込み、送られてきた値と照合</span></span></label>
         <label class="toggle"><input type="checkbox" id="cs-ss"><span>Cookieに SameSite=Lax を付ける<br><span class="d">別サイトから送られるPOSTにはCookieを付けない</span></span></label></div><div data-seq></div>`;

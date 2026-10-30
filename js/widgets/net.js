@@ -6,6 +6,7 @@
   /* ---------- Encapsulation ---------- */
   ST.widget("encap", {
     title: "カプセル化：データが包まれていく様子",
+    group: "net", name: "カプセル化", desc: "データがヘッダで包まれていく様子", order: 0,
     mount(el) {
       const L = [
         { k: "app", name: "アプリケーション層", proto: "HTTP", color: "var(--c3)", fields: [["メソッド", "GET"], ["パス", "/login"], ["Host", "shop.example"], ["Cookie", "session=8f3a…"]], seen: "WAF・アプリ自身" },
@@ -52,6 +53,7 @@
   /* ---------- DNS resolution ---------- */
   ST.widget("dns", {
     title: "DNS：名前からIPアドレスを調べる流れ",
+    group: "net", name: "DNSとキャッシュポイズニング", desc: "名前解決の流れと偽の応答", order: 1,
     mount(el) {
       el.innerHTML = `<div class="btns">${ST.segHtml("mode", [["first", "初めての問い合わせ"], ["cache", "2回目（キャッシュあり）"], ["poison", "キャッシュポイズニング"]], "first")}</div>
         <label class="toggle" data-dnssec hidden><input type="checkbox" id="dns-sec"><span>DNSSECで応答を検証する<br><span class="d">権威サーバーの署名を確かめ、偽の応答を捨てる</span></span></label><div data-seq></div>`;
@@ -90,6 +92,7 @@
   /* ---------- TCP handshake & SYN flood ---------- */
   ST.widget("tcp", {
     title: "TCP：3ウェイハンドシェイクとSYNフラッド",
+    group: "net", name: "TCPとSYNフラッド", desc: "3ウェイハンドシェイクと接続待ちの枯渇", order: 2,
     mount(el) {
       el.innerHTML = `<div class="btns">${ST.segHtml("mode", [["hs", "3ウェイハンドシェイク"], ["flood", "SYNフラッド攻撃"]], "hs")}</div><div data-body></div>`;
       const body = el.querySelector("[data-body]");
@@ -141,6 +144,7 @@
   /* ---------- Firewall rule lab ---------- */
   ST.widget("firewall", {
     title: "ファイアウォール：ルールを直して攻撃を止める",
+    group: "net", name: "ファイアウォール演習", desc: "ルールを直して攻撃を止める", order: 3,
     mount(el) {
       // A small company: web server 10.0.0.10 (public HTTPS), DB 10.0.0.20 (internal only).
       let rules = [
