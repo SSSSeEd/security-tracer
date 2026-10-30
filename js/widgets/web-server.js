@@ -5,6 +5,7 @@
 
   ST.widget("cmdi", {
     title: "OSコマンド・インジェクション：入力が命令になる",
+    group: "web", name: "OSコマンド・インジェクション", desc: "入力がサーバーの命令になる", order: 3,
     mount(el) {
       el.innerHTML = `<div class="btns">${ST.segHtml("mode", [["shell", "シェル経由（脆弱）"], ["args", "シェルを使わない（安全）"], ["allow", "許可リストで検査"]], "shell")}</div>
         <div class="card" style="padding:12px;display:grid;gap:8px">
@@ -44,6 +45,7 @@
 
   ST.widget("ssrf", {
     title: "SSRF：サーバーに内部へアクセスさせる",
+    group: "web", name: "SSRF", desc: "サーバーに社内システムを見に行かせる", order: 4,
     mount(el) {
       const HOSTS = {
         "news.example": { ip: "203.0.113.10", internal: false, l: "外部のニュースサイト" },

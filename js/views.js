@@ -3,16 +3,17 @@
 (function (ST) {
   const esc = ST.esc, md = ST.md;
 
-  /* Lab catalog: every interactive widget, grouped. */
-  ST.LABS = [
-    { g: "ネットワーク", color: "var(--c1)", items: [["encap", "カプセル化", "データがヘッダで包まれていく様子"], ["dns", "DNSとキャッシュポイズニング", "名前解決の流れと偽の応答"], ["tcp", "TCPとSYNフラッド", "3ウェイハンドシェイクと接続待ちの枯渇"], ["firewall", "ファイアウォール演習", "ルールを直して攻撃を止める"], ["arp", "ARPテーブル監視", "LAN内のなりすましに気づき、防ぐ"]] },
-    { g: "暗号", color: "var(--c3)", items: [["hash", "ハッシュと雪崩効果", "本物のSHA-256で1文字の違いを見る"], ["crypto", "共通鍵・公開鍵・署名", "AES・RSA・ECDSAを実際に計算"], ["dh", "Diffie-Hellman鍵交換", "秘密を送らずに同じ鍵を作る"], ["tls", "TLS 1.3 ハンドシェイク", "鍵マークの裏側と、割り込みの検出"]] },
-    { g: "認証", color: "var(--c2)", items: [["password", "パスワード強度", "長さと種類で破られるまでの目安"], ["auth", "認証方式 vs フィッシング", "SMSコードとパスキーの違い"], ["phishgame", "フィッシング判定", "怪しいメッセージを見破る練習"]] },
-    { g: "Web", color: "var(--c6)", items: [["sqli", "SQLインジェクション", "入力がSQLの命令に変わる瞬間"], ["xss", "XSS", "入力がHTMLとして解釈される"], ["csrf", "CSRF", "罠サイトから勝手に送金"], ["cmdi", "OSコマンド・インジェクション", "入力がサーバーの命令になる"], ["ssrf", "SSRF", "サーバーに社内システムを見に行かせる"]] },
-    { g: "マルウェア", color: "var(--c4)", items: [["malwaredex", "マルウェア図鑑", "種類ごとの特徴を比較"], ["worm", "ワームの拡散", "パッチ率と分割で広がりが変わる"], ["ransom", "ランサムウェア", "暗号化とバックアップの明暗"], ["botnet", "ボットネットとDDoS", "IoT機器が攻撃に加担する"]] },
-    { g: "脆弱性", color: "var(--c5)", items: [["cvss", "CVSS計算機", "深刻度スコアを自分で計算"], ["overflow", "バッファオーバーフロー", "スタックのメモリを見る"]] },
-    { g: "防御と運用", color: "var(--c7)", items: [["layers", "多層防御", "対策を重ねてリスクを減らす"], ["killchain", "キルチェーンとATT&CK", "攻撃をどこで断ち切るか"], ["logs", "ログ分析", "怪しい記録を見つける"]] }
+  ST.LAB_GROUPS = [
+    { id: "net", g: "ネットワーク", color: "var(--c1)" },
+    { id: "crypto", g: "暗号", color: "var(--c3)" },
+    { id: "auth", g: "認証", color: "var(--c2)" },
+    { id: "web", g: "Web", color: "var(--c6)" },
+    { id: "malware", g: "マルウェア", color: "var(--c4)" },
+    { id: "vuln", g: "脆弱性", color: "var(--c5)" },
+    { id: "ops", g: "防御と運用", color: "var(--c7)" }
   ];
+  /* Lab catalog is built from widget metadata (group, name, desc, order); widgets without a group (e.g. packetsim) are not labs. */
+  ST.LABS = ST.LAB_GROUPS.map(g => ({ ...g, items: Object.entries(ST.W).filter(([, w]) => w.group === g.id).sort((a, b) => (a[1].order ?? 99) - (b[1].order ?? 99)).map(([id, w]) => [id, w.name, w.desc]) }));
   ST.LAB = {}; ST.LABS.forEach(g => g.items.forEach(([id, n, d]) => ST.LAB[id] = { id, n, d, g: g.g, color: g.color }));
   const lessonsUsing = w => Object.values(ST.LESSON).filter(l => l.blocks.some(b => b.w === w));
   const allLessons = () => ST.COURSES.flatMap(c => c.lessons);

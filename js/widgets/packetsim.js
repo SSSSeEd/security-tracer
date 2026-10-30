@@ -4,7 +4,6 @@
   const esc = ST.esc;
   ST.widget("packetsim", {
     title: "攻撃シミュレーター",
-    lab: false,
     mount(el, opts) {
       const s = ST.SC[opts.id] || ST.SCEN[0];
       const sim = { i: 0, on: new Set(), log: [], playing: false, done: null, t: 0, busy: false, alive: true };

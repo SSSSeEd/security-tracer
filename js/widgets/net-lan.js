@@ -5,6 +5,7 @@
 
   ST.widget("arp", {
     title: "ARPテーブルを監視して、なりすましに気づく",
+    group: "net", name: "ARPテーブル監視", desc: "LAN内のなりすましに気づき、防ぐ", order: 4,
     mount(el) {
       const MAC = { gw: "00:00:5e:00:53:01", prn: "00:00:5e:00:53:20", sus: "00:00:5e:00:53:66" };
       const N = { pc: { x: 60, y: 180, l: "あなたのPC", ip: ".10", i: "pc" }, sw: { x: 180, y: 100, l: "スイッチ", i: "router" }, gw: { x: 300, y: 180, l: "ルーター", ip: ".1", i: "router" }, sus: { x: 300, y: 36, l: "不審な機器", ip: ".66", i: "attacker" } };
