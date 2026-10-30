@@ -18,7 +18,6 @@
 
 ```
 index.html          GitHub Pages 用の入口
-artifact.html       claude.ai Artifact 用の入口（同じ CSS / JS を読む）
 css/style.css
 js/core.js          ルーター、進捗保存、ウィジェット登録
 js/data/*.js        出典・用語・コース・クイズ・シナリオ・ニュース
@@ -27,10 +26,10 @@ js/views.js         各ページ
 js/app.js           画面の枠と起動処理
 ```
 
-進捗はブラウザの localStorage に保存されます。Artifact 版では claude.ai のデータベースで端末間同期し、ニュースも共有データベースから読みます。
+進捗はブラウザの localStorage に保存されます（端末ごと）。
 
 ## ラボを足すとき
 
 1. `js/widgets/<分野>-<話題>.js` に `ST.widget("id", { title, group, name, desc, order, mount })` を書く。`group` は `ST.LAB_GROUPS`（js/views.js）の id。`group` があるウィジェットだけがラボ（一覧に載り、ヘッダに LAB チップが出る）。攻撃シミュレーターのように一覧に載せないものは `group` を付けない。ラボ一覧は登録内容から自動で組み立てられる。
-2. `index.html` と `artifact.html` の両方に script タグを足す（`js/widgets/_kit.js` の後、`js/views.js` の前）。
+2. `index.html` に script タグを足す（`js/widgets/_kit.js` の後、`js/views.js` の前）。
 3. `node tools/check.js` が `OK` になることを確認してからコミットする（script 一覧、ウィジェットとレッスン・用語・出典・クイズの参照切れを検査する）。
