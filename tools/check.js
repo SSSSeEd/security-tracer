@@ -27,7 +27,8 @@ for (const f of lists[0].filter(f => !/app\.js$/.test(f))) {
 const ST = ctx.ST;
 if (ST && ST.W) {
   const widgets = new Set(Object.keys(ST.W));
-  Object.entries(ST.W).forEach(([id, w]) => { if (w.group && !ST.LAB_GROUPS.some(g => g.id === w.group)) bad(`widget ${id}: 不明な group ${w.group}`); if (w.group && (!w.name || !w.desc)) bad(`widget ${id}: name/desc がない`); });
+  Object.entries(ST.W).forEach(([id, w]) => { if (w.group && !ST.LAB_GROUPS.some(g => g.id === w.group)) bad(`widget ${id}: 不明な group ${w.group}`); if (w.group && (!w.name || !w.desc)) bad(`widget ${id}: name/desc がない`); if (w.group && typeof w.order !== "number") bad(`widget ${id}: order がない`); });
+  (ST.SCEN || []).forEach(s => { (s.terms || []).forEach(t => { if (!ST.TERM[t]) bad(`scenario ${s.id}: 未登録の用語 ${t}`); }); JSON.stringify(s).replace(/\[\[([\w-]+)(?:\|[^\]]*)?\]\]/g, (_, id) => { if (!ST.TERM[id]) bad(`scenario ${s.id}: リンク先の用語 ${id} がない`); }); });
   const lessons = ST.COURSES.flatMap(c => c.lessons);
   lessons.forEach(l => {
     l.blocks.forEach(b => { if (b.w && !widgets.has(b.w)) bad(`lesson ${l.id}: 未登録のウィジェット ${b.w}`); });

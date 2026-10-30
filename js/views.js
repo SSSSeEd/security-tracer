@@ -13,7 +13,7 @@
     { id: "ops", g: "防御と運用", color: "var(--c7)" }
   ];
   /* Lab catalog is built from widget metadata (group, name, desc, order); widgets without a group (e.g. packetsim) are not labs. */
-  ST.LABS = ST.LAB_GROUPS.map(g => ({ ...g, items: Object.entries(ST.W).filter(([, w]) => w.group === g.id).sort((a, b) => a[1].order - b[1].order).map(([id, w]) => [id, w.name, w.desc]) }));
+  ST.LABS = ST.LAB_GROUPS.map(g => ({ ...g, items: Object.entries(ST.W).filter(([, w]) => w.group === g.id).sort((a, b) => (a[1].order ?? 99) - (b[1].order ?? 99)).map(([id, w]) => [id, w.name, w.desc]) }));
   ST.LAB = {}; ST.LABS.forEach(g => g.items.forEach(([id, n, d]) => ST.LAB[id] = { id, n, d, g: g.g, color: g.color }));
   const lessonsUsing = w => Object.values(ST.LESSON).filter(l => l.blocks.some(b => b.w === w));
   const allLessons = () => ST.COURSES.flatMap(c => c.lessons);
