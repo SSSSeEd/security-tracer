@@ -6,23 +6,29 @@ Security Tracer（日本語の情報セキュリティ学習サイト）の開�
 - 静的サイト（素のJS、ビルドなし、グローバル名前空間 `ST`）。iPhone と iPad/PC の両方で使う。ユーザーは主に iPad/PC で使う予定。
 - 規模: 8コース・35レッスン・26ラボ・5シミュレーター・用語75・クイズ約40問。
 - リポジトリ: https://github.com/SSSSeEd/security-tracer （main に初回の内容を直接 push 済み）。
-- 進行中の PR: #1 `refactor/widget-meta`（ラボ一覧をウィジェットのメタ情報から自動生成、`tools/check.js` 追加、ファイル名変更、botnet のクリーンアップ）。保守スレッドは「マージして問題なし」と判断済み。マージはユーザーが行う。
+- マージ済みの PR: #1 `refactor/widget-meta`（ラボ一覧をウィジェットのメタ情報から自動生成、`tools/check.js` 追加、ファイル名変更、botnet のクリーンアップ）。マージはユーザーが行う。
 - 構成は README.md を参照。ラボの追加手順は README の「ラボを足すとき」。
 
 ## 運用ルール（ユーザーが決めたこと）
-- **GitHub のみで運用**。Artifact（https://claude.ai/artifact/M6vwZas8eu4LiSs5zTaP6b）の更新は停止（ページは残っているだけ）。`artifact.html` はリポジトリに残っているが、メンテ不要。
+- **GitHub のみで運用**。Artifact（https://claude.ai/artifact/M6vwZas8eu4LiSs5zTaP6b）の更新は停止（ページは残っているだけ）。`artifact.html` は削除済み。
 - **PR方式**: 毎日ブランチ（例 `daily/2026-11-01`）を切って PR を出す。マージはユーザー。PR説明の末尾に、指定の帰属表記を付ける。
 - **毎日の改善**（予定タスク「セキュリティ学習サイト毎日改善」、毎日 05:45 JST）: `ROADMAP.md` の「次にやること」の先頭から1〜2個。事実は一次情報を WebFetch で開いて確認し、`js/data/sources.js` に確認日つきで登録してから書く。確認できないことは書かない。`node tools/check.js` と、iPhone幅(390px)の全ルート巡回（エラー・横はみ出しなし）を通す。
 - **毎週のニュース**（予定タスク「セキュリティニュース週次更新」、月曜 06:46 JST）: JPCERT/CC と IPA の一次情報から、`js/data/news.js` に追記する PR を出す。新規がなければ何もしない。
-- 予定タスクはどちらも、このスレッドの会話に紐づいている。新スレッドへ移す場合は、`update_trigger` の対象セッションを付け替えるか作り直すこと。
+- 予定タスクはどちらも、担当スレッドの会話に紐づいている。対象セッションは `update_trigger` で付け替えられないので、新スレッドで同じ名前・時刻・内容で `create_trigger` し、旧タスクは `update_trigger` で `enabled: false` にする。
 - 報告は短く（毎日の報告は1通・80語以内）。ユーザーは日本語話者で、スマホで斜め読みする。
 
 ## 未完了のタスク
-1. PR #1 のマージ待ち。
+1. （済）PR #1 はマージ済み。
 2. GitHub Pages の有効化（Settings → Pages、`main`、`/ (root)`）。ユーザー側の操作で、済んだら公開URL（https://sssseed.github.io/security-tracer/）が開けるか確認する。
 3. **引き継ぎコード方式の進行状況共有**（ユーザーが「擬似的なパスワード機能で進行状況だけでも共有したい」と希望）。提案済み、実装の可否を確認中。案: 進行状況（localStorage の `sectracer.progress.v2`）を短い文字列にしてコピー、別端末で貼り付けて読み込む。サーバー不要。統合は新しい方を採用し、完了済みは合算。
 4. ROADMAP の続き: スマホ（不正アプリ、構成プロファイル、SIMスワップ）、クラウド（設定ミス、IAM、キー漏えい）、AI（プロンプトインジェクション、AI悪用）、法律と倫理（e-Gov）、攻撃シミュレーター追加、学習記録のレーダーチャート、PWAオフライン。
 5. 保守スレッドの任意の提案: `web-server.js` のようにファイルを分ける目安は約20KB。net/defense/malware は約20KB で、次に触るときに分割を検討。
+
+## スレッドの交代手順
+スレッドが長くなったら（ユーザーの目安: 前スレッドが終わったくらいの長さ）、次の順で担当を替える。専用の引き継ぎスレッドは置かない。
+1. この HANDOFF.md を最新にして PR に入れる。
+2. `message_coordinator` で新スレッドを依頼する（スレッドを立てられるのはコーディネーターだけ）。
+3. 新スレッドは HANDOFF.md を読み、予定タスクを自分に付け替え（上記）、保守スレッドに担当交代を知らせる。
 
 ## 保守スレッドとの連携
 - 保守スレッド（thread_id: cmsg_01P6GrMKqhuchxgwLYksnyMYXZ83jm6wyfj9r9BbttzXUw）は効率性と保守性を見るレビュー担当。新しい PR や大きな変更を出したら `message_thread` で知らせる。
