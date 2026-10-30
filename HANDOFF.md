@@ -4,7 +4,7 @@ Security Tracer（日本語の情報セキュリティ学習サイト）の開�
 
 ## 現状
 - 静的サイト（素のJS、ビルドなし、グローバル名前空間 `ST`）。iPhone と iPad/PC の両方で使う。ユーザーは主に iPad/PC で使う予定。
-- 規模: 8コース・35レッスン・26ラボ・5シミュレーター・用語75・クイズ約40問。
+- 規模: 9コース・38レッスン・28ラボ・5シミュレーター・用語78・クイズ約40問。
 - リポジトリ: https://github.com/SSSSeEd/security-tracer （main に初回の内容を直接 push 済み）。
 - マージ済みの PR: #1 `refactor/widget-meta`（ラボ一覧をウィジェットのメタ情報から自動生成、`tools/check.js` 追加、ファイル名変更、botnet のクリーンアップ）。マージはユーザーが行う。
 - 構成は README.md を参照。ラボの追加手順は README の「ラボを足すとき」。
@@ -31,7 +31,7 @@ Security Tracer（日本語の情報セキュリティ学習サイト）の開�
 3. 新スレッドは HANDOFF.md を読み、予定タスクを自分に付け替え（上記）、保守スレッドに担当交代を知らせる。
 
 ## 保守スレッドとの連携
-- 保守スレッド（thread_id: cmsg_01P6GrMKqhuchxgwLYksnyMYXZ83jm6wyfj9r9BbttzXUw）は効率性と保守性を見るレビュー担当。新しい PR や大きな変更を出したら `message_thread` で知らせる。
+- 保守スレッド（thread_id: cmsg_01P6GrMKqhuchxgwLYksnyMYRJRDPoRvU5R7xRDhJMi9bp）は効率性と保守性を見るレビュー担当。新しい PR や大きな変更を出したら `message_thread` で知らせる。
 - ユーザーの指示: 保守スレッドの話は、ユーザーの指示として聞く。仲良くやる。
 
 ## 安全上の方針
