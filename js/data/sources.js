@@ -55,5 +55,11 @@ ST.SRC = {
   ipaprof:  {org:"IPA", label:"安心相談窓口だより：宅配便業者をかたる偽ショートメッセージで、また新たな手口が出現（2019年3月20日）", url:"https://www.ipa.go.jp/security/anshin/attention/2019/mgdayori20190320.html", checked:"2026-10-31"},
   ipaent:   {org:"IPA", label:"安心相談窓口だより：App Store以外の配信アプリによるセクストーション被害を確認（2019年12月24日）", url:"https://www.ipa.go.jp/security/anshin/attention/2019/mgdayori20191224.html", checked:"2026-10-31"},
   fksim:    {org:"福岡県警察", label:"SIMスワップ（注意喚起資料）", url:"https://www.police.pref.fukuoka.jp/data/open/cnt/3/22941/1/HP_SIM.pdf", checked:"2026-10-31"},
-  rbsim:    {org:"楽天銀行", label:"SIMスワップ詐欺", url:"https://www.rakuten-bank.co.jp/security/crime/sim-swap-fraud.html", checked:"2026-10-31"}
+  rbsim:    {org:"楽天銀行", label:"SIMスワップ詐欺", url:"https://www.rakuten-bank.co.jp/security/crime/sim-swap-fraud.html", checked:"2026-10-31"},
+  soumucfg: {org:"総務省", label:"クラウドの設定ミス対策ガイドブック（2024年4月26日公表）", url:"https://www.soumu.go.jp/main_content/000944467.pdf", checked:"2026-11-01"},
+  s3bpa:    {org:"AWS", label:"Blocking public access to your Amazon S3 storage", url:"https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html", checked:"2026-11-01"},
+  s3new:    {org:"AWS", label:"Amazon S3 now applies two security best practices to all new buckets by default (2023年4月)", url:"https://aws.amazon.com/about-aws/whats-new/2023/04/amazon-s3-security-best-practices-buckets-default", checked:"2026-11-01"},
+  awsiam:   {org:"AWS", label:"Security best practices in IAM", url:"https://docs.aws.amazon.com/IAM/latest/UserGuide/IAMBestPractices.html", checked:"2026-11-01"},
+  awskey:   {org:"AWS", label:"What to do if you inadvertently expose an AWS access key（AWS Security Blog）", url:"https://aws.amazon.com/blogs/security/what-to-do-if-you-inadvertently-expose-an-aws-access-key/", checked:"2026-11-01"},
+  ghsecret: {org:"GitHub", label:"About secret scanning", url:"https://docs.github.com/en/code-security/secret-scanning/introduction", checked:"2026-11-01"}
 };

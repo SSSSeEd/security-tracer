@@ -11,7 +11,8 @@
     { id: "malware", g: "マルウェア", color: "var(--c4)" },
     { id: "vuln", g: "脆弱性", color: "var(--c5)" },
     { id: "ops", g: "防御と運用", color: "var(--c7)" },
-    { id: "mobile", g: "スマホ", color: "var(--c9)" }
+    { id: "mobile", g: "スマホ", color: "var(--c9)" },
+    { id: "cloud", g: "クラウド", color: "var(--c10)" }
   ];
   /* Lab catalog is built from widget metadata (group, name, desc, order); widgets without a group (e.g. packetsim) are not labs. */
   ST.LABS = ST.LAB_GROUPS.map(g => ({ ...g, items: Object.entries(ST.W).filter(([, w]) => w.group === g.id).sort((a, b) => (a[1].order ?? 99) - (b[1].order ?? 99)).map(([id, w]) => [id, w.name, w.desc]) }));
