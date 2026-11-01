@@ -4,7 +4,7 @@
   --bg:#eef2f6; --surface:#ffffff; --sunken:#e3e9f0; --ink:#13202d; --muted:#566576; --line:#cfd8e2;
   --link:#0e6f68; --packet:#c45a12; --attack:#b42318; --ok:#17803d; --warn:#9a6700; --info:#2f5fb3;
   --attack-soft:#fbe9e7; --ok-soft:#e5f4ea; --warn-soft:#fbf1d9; --packet-soft:#fbeadd; --info-soft:#e6eefb; --link-soft:#e0f2ef;
-  --c1:#2f5fb3; --c2:#0e6f68; --c3:#7a4bb3; --c4:#b42318; --c5:#9a6700; --c6:#c45a12; --c7:#17803d; --c8:#566576;
+  --c1:#2f5fb3; --c2:#0e6f68; --c3:#7a4bb3; --c4:#b42318; --c5:#9a6700; --c6:#c45a12; --c7:#17803d; --c8:#566576; --c9:#a3367a;
   --f-body:"IBM Plex Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN",system-ui,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
   --r:10px;
@@ -13,13 +13,13 @@
   --bg:#0e151d; --surface:#16202b; --sunken:#0b1118; --ink:#e4ebf2; --muted:#93a2b3; --line:#283543;
   --link:#3bbfae; --packet:#f0954a; --attack:#f2705f; --ok:#4cc277; --warn:#e3b341; --info:#7aa7f0;
   --attack-soft:#3a1b18; --ok-soft:#14301f; --warn-soft:#352a10; --packet-soft:#3a2414; --info-soft:#17263f; --link-soft:#11302c;
-  --c1:#7aa7f0; --c2:#3bbfae; --c3:#b48ae8; --c4:#f2705f; --c5:#e3b341; --c6:#f0954a; --c7:#4cc277; --c8:#93a2b3;
+  --c1:#7aa7f0; --c2:#3bbfae; --c3:#b48ae8; --c4:#f2705f; --c5:#e3b341; --c6:#f0954a; --c7:#4cc277; --c8:#93a2b3; --c9:#e58bbf;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0e151d; --surface:#16202b; --sunken:#0b1118; --ink:#e4ebf2; --muted:#93a2b3; --line:#283543;
   --link:#3bbfae; --packet:#f0954a; --attack:#f2705f; --ok:#4cc277; --warn:#e3b341; --info:#7aa7f0;
   --attack-soft:#3a1b18; --ok-soft:#14301f; --warn-soft:#352a10; --packet-soft:#3a2414; --info-soft:#17263f; --link-soft:#11302c;
-  --c1:#7aa7f0; --c2:#3bbfae; --c3:#b48ae8; --c4:#f2705f; --c5:#e3b341; --c6:#f0954a; --c7:#4cc277; --c8:#93a2b3;
+  --c1:#7aa7f0; --c2:#3bbfae; --c3:#b48ae8; --c4:#f2705f; --c5:#e3b341; --c6:#f0954a; --c7:#4cc277; --c8:#93a2b3; --c9:#e58bbf;
   color-scheme:dark}
 *{box-sizing:border-box}
 html,body{height:100%}

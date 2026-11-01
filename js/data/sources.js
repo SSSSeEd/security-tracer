@@ -50,5 +50,10 @@ ST.SRC = {
   rfc8446:  {org:"IETF", label:"RFC 8446 TLS 1.3", url:"https://www.rfc-editor.org/rfc/rfc8446", checked:"2026-10-27"},
   rfc1034:  {org:"IETF", label:"RFC 1034 Domain Names - Concepts and Facilities", url:"https://www.rfc-editor.org/rfc/rfc1034", checked:"2026-10-27"},
   fips180:  {org:"NIST", label:"FIPS 180-4 Secure Hash Standard", url:"https://csrc.nist.gov/pubs/fips/180-4/upd1/final", checked:"2026-10-27"},
-  fips197:  {org:"NIST", label:"FIPS 197 Advanced Encryption Standard (AES)", url:"https://csrc.nist.gov/pubs/fips/197/final", checked:"2026-10-27"}
+  fips197:  {org:"NIST", label:"FIPS 197 Advanced Encryption Standard (AES)", url:"https://csrc.nist.gov/pubs/fips/197/final", checked:"2026-10-27"},
+  ipasms:   {org:"IPA", label:"安心相談窓口だより：宅配便業者をかたる偽ショートメッセージに関する相談が急増中（2018年8月8日）", url:"https://www.ipa.go.jp/security/anshin/attention/2018/mgdayori20180808.html", checked:"2026-10-31"},
+  ipaprof:  {org:"IPA", label:"安心相談窓口だより：宅配便業者をかたる偽ショートメッセージで、また新たな手口が出現（2019年3月20日）", url:"https://www.ipa.go.jp/security/anshin/attention/2019/mgdayori20190320.html", checked:"2026-10-31"},
+  ipaent:   {org:"IPA", label:"安心相談窓口だより：App Store以外の配信アプリによるセクストーション被害を確認（2019年12月24日）", url:"https://www.ipa.go.jp/security/anshin/attention/2019/mgdayori20191224.html", checked:"2026-10-31"},
+  fksim:    {org:"福岡県警察", label:"SIMスワップ（注意喚起資料）", url:"https://www.police.pref.fukuoka.jp/data/open/cnt/3/22941/1/HP_SIM.pdf", checked:"2026-10-31"},
+  rbsim:    {org:"楽天銀行", label:"SIMスワップ詐欺", url:"https://www.rakuten-bank.co.jp/security/crime/sim-swap-fraud.html", checked:"2026-10-31"}
 };
