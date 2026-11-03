@@ -3,6 +3,25 @@
    Updated weekly from JPCERT/CC and IPA primary sources. Newest first. */
 ST.NEWS_STATIC = [
  {
+  "id": "ipa-jre-2026-10",
+  "date": "2026-10-21",
+  "org": "IPA",
+  "severity": "注意",
+  "title": "Oracle Java の脆弱性対策について(2026年10月)",
+  "url": "https://www.ipa.go.jp/security/security-alert/2026/1021-jre.html",
+  "summary": "Oracle Java の定例のセキュリティ更新。悪用されると、アプリケーションが異常終了したり、攻撃者にパソコンを制御されたりするおそれがあるとして、早急な更新が呼びかけられている。",
+  "points": [
+   "対策: Oracle の Java Downloads ページから最新版をインストールする",
+   "対象: サポート中の Oracle Java SE 各版（8・11・17・21・25・26・27）",
+   "2019年4月16日以降のリリースはライセンスが変わっており、商用利用ではライセンスの確認が必要"
+  ],
+  "terms": [
+   "patch",
+   "vulnerability"
+  ],
+  "verifiedAt": "2026-11-03"
+ },
+ {
   "id": "jpcert-at260034",
   "date": "2026-10-26",
   "org": "JPCERT/CC",
@@ -33,14 +52,19 @@ ST.NEWS_STATIC = [
   "points": [
    "修正版: PHP 8.5.12、8.4.27、8.3.36、8.2.35 以降",
    "PHP 8.1以前には修正版が提供されないため、サポート対象バージョンへの移行が推奨されている",
-   "緩和策（session.upload_progress.enabled=0）は特定の攻撃経路への対処で、根本対策は更新"
+   "緩和策（session.upload_progress.enabled=0）は特定の攻撃経路への対処で、根本対策は更新",
+   "10月27日（IPA）: CISAのKEVカタログへの登録について追記",
+   "10月29日（JPCERT/CC）: あるファイアウォール製品で侵害の成功を示唆する痕跡が報告された。Linuxカーネルの権限昇格の脆弱性と組み合わせ、内部ネットワークへの横展開も試みられたとされる",
+   "11月2日（IPA）: PHPはVPN機器やセキュリティアプライアンスのWeb画面などでも使われているため、製品開発者の対策情報を注視するよう追記"
   ],
   "terms": [
    "rce",
    "patch",
-   "vulnerability"
+   "vulnerability",
+   "kev",
+   "lateral-movement"
   ],
-  "verifiedAt": "2026-10-27"
+  "verifiedAt": "2026-11-03"
  },
  {
   "id": "ipa-ms-2026-10",
