@@ -61,5 +61,6 @@ ST.SRC = {
   s3new:    {org:"AWS", label:"Amazon S3 now applies two security best practices to all new buckets by default (2023年4月)", url:"https://aws.amazon.com/about-aws/whats-new/2023/04/amazon-s3-security-best-practices-buckets-default", checked:"2026-11-01"},
   awsiam:   {org:"AWS", label:"Security best practices in IAM", url:"https://docs.aws.amazon.com/IAM/latest/UserGuide/IAMBestPractices.html", checked:"2026-11-01"},
   awskey:   {org:"AWS", label:"What to do if you inadvertently expose an AWS access key（AWS Security Blog）", url:"https://aws.amazon.com/blogs/security/what-to-do-if-you-inadvertently-expose-an-aws-access-key/", checked:"2026-11-01"},
-  ghsecret: {org:"GitHub", label:"About secret scanning", url:"https://docs.github.com/en/code-security/secret-scanning/introduction", checked:"2026-11-01"}
+  ghsecret: {org:"GitHub", label:"About secret scanning", url:"https://docs.github.com/en/code-security/secret-scanning/introduction", checked:"2026-11-01"},
+  ipa10org: {org:"IPA", label:"情報セキュリティ10大脅威 2026 解説書（組織編）", url:"https://www.ipa.go.jp/security/10threats/omgdg50000008fi8-att/kaisetsu_2026_soshiki.pdf", checked:"2026-11-03"}
 };
