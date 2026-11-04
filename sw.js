@@ -20,6 +20,7 @@ const SHELL = [
   "js/widgets/net.js",
   "js/widgets/net-lan.js",
   "js/widgets/crypto-keyx.js",
+  "js/widgets/crypto-pwstore.js",
   "js/widgets/crypto.js",
   "js/widgets/auth.js",
   "js/widgets/web.js",
