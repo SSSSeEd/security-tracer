@@ -51,6 +51,14 @@ window.ST = window.ST || {};
   ST.masteryDots = id => { const m = ST.mastery(id); return `<span class="mastery" title="理解度 ${m}/3">${[0, 1, 2].map(i => `<i class="${i < m ? "on" : ""}"></i>`).join("")}</span>`; };
   ST.markLesson = id => { if (!ST.P.lessons[id]) { ST.P.lessons[id] = Date.now(); ST.touchStreak(); ST.save(); } };
   ST.markLab = id => { if (!ST.P.labs[id]) { ST.P.labs[id] = Date.now(); ST.touchStreak(); ST.save(); } };
+  /* ---------- Skill tree: lesson.requires (js/data/courses.js). Derived from ST.P.lessons only; nothing new is stored. ---------- */
+  ST.LOCK = "soft"; // "soft": show a gate with a "read anyway" button; "hard": no button; "off": order hints only.
+  ST.peek = new Set(); // gates opened with "read anyway" in this page session (not saved)
+  ST.missingReqs = id => ((ST.LESSON[id] || {}).requires || []).filter(r => !ST.P.lessons[r]);
+  ST.lessonState = id => ST.P.lessons[id] ? "done" : !ST.missingReqs(id).length ? "open" : "locked";
+  ST.labOpeners = w => ST.COURSES.flatMap(c => c.lessons).filter(l => l.blocks.some(b => b.w === w));
+  ST.labOpen = w => { const ls = ST.labOpeners(w); return !ls.length || ls.some(l => ST.P.lessons[l.id]); };
+  ST.gated = key => ST.LOCK !== "off" && !ST.peek.has(key);
   /* ---------- Handoff code: copy progress as text on one device, paste on another. No server; merged, never overwritten. ---------- */
   const CODE_PREFIX = "ST1-", CODE_MAX = 200000;
   ST.exportCode = () => CODE_PREFIX + btoa(unescape(encodeURIComponent(JSON.stringify(ST.P)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");

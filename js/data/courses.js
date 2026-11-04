@@ -1,10 +1,11 @@
 "use strict";
 /* Courses and lessons. Block types: {p}, {h}, {list}, {w: widget, o: opts}, {callout, kind}, {key: [...]}.
-   Text uses ST.md markup (**bold**, `code`, [[term-id]]). Every lesson lists its sources. */
+   Text uses ST.md markup (**bold**, `code`, [[term-id]]). Every lesson lists its sources.
+   requires: lesson ids to read first (skill tree). [] = entry point. Labs open when any lesson that embeds them is read. */
 ST.COURSES = [
  {id:"net", n:"01", title:"ネットワークの基礎", color:"var(--c1)", desc:"データがどう包まれ、どう届くのか。攻撃と防御を理解する土台。",
   lessons:[
-   {id:"net-layers", title:"層とカプセル化", min:6, terms:["osi","ip-address","port"], src:["rfc9293","nist"], blocks:[
+   {id:"net-layers", title:"層とカプセル化", min:6, requires:[], terms:["osi","ip-address","port"], src:["rfc9293","nist"], blocks:[
      {p:"インターネットの通信は、役割の違う「層」が協力して成り立っています。Webページを見るとき、ブラウザが作ったHTTPのデータは、送り出される前に何重にも「封筒」に入れられます。これを**カプセル化**と呼びます。"},
      {w:"encap"},
      {h:"なぜ層で考えるのか"},
@@ -13,7 +14,7 @@ ST.COURSES = [
      {callout:"上のツールで「HTTPS」をオンにしてみてください。TLSで暗号化すると、途中の機器や盗聴者からはHTTPの中身が見えなくなります。一方で、IPアドレスやポート番号は見えたままです。", kind:"info"},
      {key:["送る側は上の層から順にヘッダを付け、受け取る側は下の層から外す","ファイアウォールは主に3〜4層、WAFは7層（HTTP）を見る","HTTPSでもIPアドレスや接続先のポートは隠れない"]}
    ]},
-   {id:"net-dns", title:"DNSのしくみと攻撃", min:7, terms:["dns","udp"], src:["rfc1034","nist"], blocks:[
+   {id:"net-dns", title:"DNSのしくみと攻撃", min:7, requires:["net-layers"], terms:["dns","udp"], src:["rfc1034","nist"], blocks:[
      {p:"`www.example.com` のような名前を、通信に必要なIPアドレスに変換するのが[[dns]]です。ブラウザがページを開く前に、裏では何段階もの問い合わせが行われています。"},
      {w:"dns"},
      {h:"キャッシュは速さの源で、狙われる場所でもある"},
@@ -21,7 +22,7 @@ ST.COURSES = [
      {p:"利用者がURLを正しく入力していても防げない点が怖いところです。対策として、権威DNSサーバーの応答に署名を付けて検証する**DNSSEC**があります。"},
      {key:["DNSはルート → TLD → 権威サーバーと順にたどって答えを得る","キャッシュに偽の答えを入れられると、正しいURLでも偽サイトへ誘導される","DNSSECは応答の正当性を署名で検証する"]}
    ]},
-   {id:"net-tcp", title:"TCPと通信の始まり", min:6, terms:["tcp","udp","ddos"], src:["rfc9293","t1498"], blocks:[
+   {id:"net-tcp", title:"TCPと通信の始まり", min:6, requires:["net-layers"], terms:["tcp","udp","ddos"], src:["rfc9293","t1498"], blocks:[
      {p:"Webやメールの通信の多くは[[tcp]]の上で行われます。TCPは、データが確実に順番どおり届くように管理するプロトコルで、通信を始める前に**3ウェイハンドシェイク**というあいさつを交わします。"},
      {w:"tcp"},
      {h:"あいさつの仕組みを悪用するSYNフラッド"},
@@ -29,7 +30,7 @@ ST.COURSES = [
      {p:"上のツールの「SYNフラッド攻撃」で、SYN Cookieのオン・オフを比べてみてください。SYN Cookieは、接続待ちの情報をサーバーに記憶させず、返す番号に埋め込むことでこの攻撃をかわす工夫です。"},
      {key:["TCPはSYN → SYN-ACK → ACKで接続を確立する","SYNフラッドは接続待ちの記憶領域を埋めてサービスを妨害する","DDoS攻撃にはプロトコルの仕組みを突くものが多い"]}
    ]},
-   {id:"net-fw", title:"ファイアウォールのルール", min:8, terms:["firewall","port","nat"], src:["nist"], blocks:[
+   {id:"net-fw", title:"ファイアウォールのルール", min:8, requires:["net-tcp"], terms:["firewall","port","nat"], src:["nist"], blocks:[
      {p:"[[firewall]]は、通信をルールに従って通したり止めたりする「関所」です。ルールは上から順に評価され、最初に一致したものが適用されるのが一般的です。"},
      {w:"firewall"},
      {h:"よくある失敗"},
@@ -37,13 +38,13 @@ ST.COURSES = [
      {p:"原則は**必要な通信だけを許可し、最後にすべて拒否する**ことです。リモートデスクトップ（3389番）やファイル共有（445番）をインターネットに公開していると、総当たり攻撃やワームの標的になります。"},
      {key:["ルールは上から順に評価される","最後に「すべて拒否」を置くデフォルト拒否が基本","公開しなくてよいサービスは公開しない"]}
    ]},
-   {id:"net-wifi", title:"公衆Wi‑Fiと中間者攻撃", min:6, terms:["mitm","tls"], src:["t1557","soumu"], blocks:[
+   {id:"net-wifi", title:"公衆Wi‑Fiと中間者攻撃", min:6, requires:["net-layers"], terms:["mitm","tls"], src:["t1557","soumu"], blocks:[
      {p:"Wi‑Fiの名前（SSID）は誰でも自由に付けられます。カフェの無料Wi‑Fiと同じ名前の偽アクセスポイントに接続してしまうと、通信はすべて攻撃者を経由します。これが[[mitm]]です。"},
      {w:"packetsim", o:{id:"mitm"}},
      {p:"防御をオンにして再生し直してみてください。HTTPSで暗号化されていれば、攻撃者は通信の中身を読めません。ただし、証明書の警告が出たときに「続行」を押してしまうと、この守りは崩れます。"},
      {key:["SSIDは偽装できる","HTTPS（TLS）なら経路上の盗聴者から中身を守れる","証明書の警告は「接続をやめる」合図"]}
    ]},
-   {id:"net-arp", title:"LANの中のなりすまし（ARP）", min:7, terms:["arp","mitm"], src:["rfc826","t1557_002"], blocks:[
+   {id:"net-arp", title:"LANの中のなりすまし（ARP）", min:7, requires:["net-layers"], terms:["arp","mitm"], src:["rfc826","t1557_002"], blocks:[
      {p:"同じLANの中では、IPアドレスだけでは相手に届けられません。「このIPアドレスの機器のMACアドレスは？」と尋ねて答えを表に覚えておく仕組みが[[arp]]です（1982年のRFC 826）。"},
      {h:"ARPには「本当にその機器か」を確かめる仕組みがない"},
      {p:"ARPの応答には認証がなく、受け取った側はそのまま表を更新します。そのため、LAN内の不審な機器が「ルーターのMACアドレスは私です」と偽の応答を送ると、通信がその機器を経由してしまうことがあります。MITRE ATT&CKではT1557.002（ARP Cache Poisoning）として整理されています。"},
@@ -56,7 +57,7 @@ ST.COURSES = [
   ]},
  {id:"crypto", n:"02", title:"暗号のしくみ", color:"var(--c3)", desc:"ハッシュ、共通鍵、公開鍵、署名。ブラウザの中で本物の暗号を動かして確かめる。",
   lessons:[
-   {id:"cr-hash", title:"ハッシュ関数", min:7, terms:["hash","salt"], src:["fips180","nist63b"], blocks:[
+   {id:"cr-hash", title:"ハッシュ関数", min:7, requires:[], terms:["hash","salt"], src:["fips180","nist63b"], blocks:[
      {p:"[[hash]]は、どんなデータからも決まった長さの「指紋」を作ります。下のツールは、ブラウザに組み込まれた本物のSHA-256で計算しています。"},
      {w:"hash"},
      {h:"ハッシュの3つの性質"},
@@ -65,7 +66,7 @@ ST.COURSES = [
      {callout:"パスワードの保存に SHA-256 を1回だけ使うのは不十分です。GPUで1秒間に膨大な回数を試せるため、bcrypt・scrypt・Argon2 のような、わざと計算に時間がかかる方式を使います。", kind:"warn"},
      {key:["ハッシュは一方向の指紋","わずかな違いで値が大きく変わる","パスワードはソルト付きの低速なハッシュで保存する"]}
    ]},
-   {id:"cr-keys", title:"共通鍵と公開鍵", min:8, terms:["symmetric","asymmetric"], src:["fips197","nist"], blocks:[
+   {id:"cr-keys", title:"共通鍵と公開鍵", min:8, requires:[], terms:["symmetric","asymmetric"], src:["fips197","nist"], blocks:[
      {p:"暗号には、同じ鍵で暗号化と復号を行う[[symmetric]]と、ペアになった2つの鍵を使う[[asymmetric]]があります。下のツールでは、実際にAES-GCMとRSA-OAEPで暗号化しています。"},
      {w:"crypto"},
      {h:"それぞれの長所と短所"},
@@ -73,7 +74,7 @@ ST.COURSES = [
      {p:"そこでHTTPS（TLS）などでは、公開鍵の仕組み（鍵交換）で共通鍵を安全に共有し、データ本体は速い共通鍵暗号で暗号化する、という組み合わせ（ハイブリッド方式）を使っています。"},
      {key:["共通鍵は速いが鍵の受け渡しが課題","公開鍵は鍵配送を解決するが遅い","実際の通信では両方を組み合わせる"]}
    ]},
-   {id:"cr-dh", title:"鍵交換（Diffie-Hellman）", min:7, terms:["dh","forward-secrecy"], src:["rfc8446"], blocks:[
+   {id:"cr-dh", title:"鍵交換（Diffie-Hellman）", min:7, requires:["cr-keys"], terms:["dh","forward-secrecy"], src:["rfc8446"], blocks:[
      {p:"共通鍵暗号は速いけれど、「最初の鍵をどうやって相手と共有するか」が問題でした。[[dh]]は、盗み見られている通信路でも、秘密そのものを送らずに2人で同じ鍵を作れる方法です。"},
      {w:"dh"},
      {h:"なぜ盗み見ても鍵が分からないのか"},
@@ -83,14 +84,14 @@ ST.COURSES = [
      {callout:"鍵交換だけでは「相手が本物か」は分かりません。間に入った攻撃者と鍵交換してしまう恐れがあるため、TLSでは証明書と署名で相手を確かめます（次のレッスン）。", kind:"warn"},
      {key:["秘密を送らずに共通鍵を作れる","安全性は離散対数問題の難しさに基づく","使い捨ての鍵で前方秘匿性が得られる","相手の確認には証明書と署名が必要"]}
    ]},
-   {id:"cr-sign", title:"デジタル署名と証明書", min:7, terms:["signature","pki"], src:["nist","rfc8446"], blocks:[
+   {id:"cr-sign", title:"デジタル署名と証明書", min:7, requires:["cr-hash","cr-keys"], terms:["signature","pki"], src:["nist","rfc8446"], blocks:[
      {p:"公開鍵暗号を逆向きに使うと、[[signature]]が作れます。秘密鍵で署名し、誰でも公開鍵で検証できる仕組みです。上のツールの「署名 (ECDSA)」モードで、文書を1文字書き換えると検証に失敗することを確かめてください。"},
      {w:"crypto"},
      {h:"「その公開鍵は本物？」を保証する証明書"},
      {p:"署名を検証するには相手の公開鍵が必要ですが、その公開鍵自体がすり替えられていたら意味がありません。そこで、信頼できる認証局（CA）が「この公開鍵はこのドメインのもの」と署名したものが**電子証明書**です。ブラウザはあらかじめ信頼する認証局のリストを持っていて、証明書を検証します（[[pki]]）。"},
      {key:["署名は「本人が作った」「改ざんされていない」ことを示す","証明書は公開鍵と持ち主の結び付きを認証局が保証したもの","証明書は運営者の善良さまでは保証しない"]}
    ]},
-   {id:"cr-tls", title:"HTTPSとTLS", min:7, terms:["tls","pki","mitm"], src:["rfc8446","soumu"], blocks:[
+   {id:"cr-tls", title:"HTTPSとTLS", min:7, requires:["cr-dh","cr-sign","net-tcp"], terms:["tls","pki","mitm"], src:["rfc8446","soumu"], blocks:[
      {p:"ここまでの部品（鍵交換、共通鍵暗号、署名、証明書）を組み合わせたものが[[tls]]です。ブラウザの鍵マークの裏で、次のようなやり取りが行われています。"},
      {w:"tls"},
      {p:"「攻撃者が割り込む」をオンにすると、攻撃者は本物のサーバーの秘密鍵を持っていないため、正しい証明書と署名を出せず、ブラウザが警告を出すことが分かります。"},
@@ -100,7 +101,7 @@ ST.COURSES = [
   ]},
  {id:"auth", n:"03", title:"認証とアカウントの守り方", color:"var(--c2)", desc:"パスワード、多要素認証、パスキー。乗っ取りはどう起き、どう防ぐのか。",
   lessons:[
-   {id:"au-pw", title:"強いパスワードとは", min:7, terms:["password","brute-force","credential-stuffing"], src:["nist63b","t1110","ipameasure"], blocks:[
+   {id:"au-pw", title:"強いパスワードとは", min:7, requires:[], terms:["password","brute-force","credential-stuffing"], src:["nist63b","t1110","ipameasure"], blocks:[
      {p:"パスワードの強さは、攻撃者が試さなければならない候補の数で決まります。下のツールで、長さと文字の種類による違いを比べてみましょう（実際のパスワードは入力しないでください）。"},
      {w:"password"},
      {h:"最新の考え方"},
@@ -108,7 +109,7 @@ ST.COURSES = [
      {p:"どれだけ強いパスワードでも、複数のサービスで使い回していると、どこか1つから漏れた時点で[[credential-stuffing]]によって他のサービスも破られます。"},
      {key:["長さが最も効く","使い回さない（パスワード管理機能を使う）","パスワードだけに頼らず、多要素認証やパスキーを併用する"]}
    ]},
-   {id:"au-mfa", title:"多要素認証とパスキー", min:8, terms:["mfa","passkey","phishing"], src:["nist63b","fido","soumu"], blocks:[
+   {id:"au-mfa", title:"多要素認証とパスキー", min:8, requires:["au-pw"], terms:["mfa","passkey","phishing"], src:["nist63b","fido","soumu"], blocks:[
      {p:"[[mfa]]は、パスワードが漏れても乗っ取られにくくする強力な対策です。ただし、方式によって「フィッシングに強いかどうか」が大きく違います。"},
      {w:"auth"},
      {h:"フィッシング耐性という考え方"},
@@ -116,7 +117,7 @@ ST.COURSES = [
      {p:"[[passkey]]（FIDO/WebAuthn）は、認証に使う鍵がサイトのドメインに結び付いているため、偽サイトでは使われません。そもそも入力するものがないので、だまし取られる心配もありません。"},
      {key:["多要素認証はパスワードの漏えいに強い","手入力のコードはリアルタイムフィッシングで中継されうる","パスキーはドメインに結び付いており、フィッシングに強い"]}
    ]},
-   {id:"au-phish", title:"フィッシングを体験する", min:10, terms:["phishing","smishing","social-engineering"], src:["apj","ipa10","t1566"], blocks:[
+   {id:"au-phish", title:"フィッシングを体験する", min:10, requires:["au-mfa"], terms:["phishing","smishing","social-engineering"], src:["apj","ipa10","t1566"], blocks:[
      {p:"[[phishing]]は、IPA「情報セキュリティ10大脅威 2026」でも個人向けの脅威に挙げられている、最も身近な攻撃の一つです。まずは攻撃の流れをパケット単位で追ってみましょう。"},
      {w:"packetsim", o:{id:"phishing"}},
      {h:"見分ける練習と、その限界"},
@@ -127,7 +128,7 @@ ST.COURSES = [
   ]},
  {id:"web", n:"04", title:"Webアプリの脆弱性", color:"var(--c6)", desc:"SQLインジェクション、XSS、CSRF、API。入力がどう悪用されるかを見る。",
   lessons:[
-   {id:"we-sqli", title:"SQLインジェクション", min:9, terms:["sqli","waf"], src:["ipaweb","owasp","jp030"], blocks:[
+   {id:"we-sqli", title:"SQLインジェクション", min:9, requires:["net-layers"], terms:["sqli","waf"], src:["ipaweb","owasp","jp030"],practice:["psqli"], blocks:[
      {p:"[[sqli]]は、入力欄に入れた文字が、アプリの意図に反して**SQLの命令として解釈されてしまう**脆弱性です。下のツールは、入力から組み立てられるSQL文を実際に解釈して、どの行が返るかを計算しています。"},
      {w:"sqli"},
      {h:"根本的な対策はプレースホルダ"},
@@ -135,26 +136,26 @@ ST.COURSES = [
      {w:"packetsim", o:{id:"sqli"}},
      {key:["入力を文字列連結でSQLに埋め込むと、命令として解釈される","プレースホルダで「構造」と「値」を分ける","WAFは緩和策で、アプリの修正の代わりにはならない"]}
    ]},
-   {id:"we-xss", title:"クロスサイト・スクリプティング", min:8, terms:["xss","session"], src:["ipaweb","owasp","mdnhttp"], blocks:[
+   {id:"we-xss", title:"クロスサイト・スクリプティング", min:8, requires:["net-layers"], terms:["xss","session"], src:["ipaweb","owasp","mdnhttp"],practice:["psxss"], blocks:[
      {p:"[[xss]]は、利用者が入力した文字が、他の人のブラウザで**HTMLやJavaScriptとして解釈されてしまう**脆弱性です。攻撃者のスクリプトは、そのサイトの一部として動くため、Cookieの読み取りや画面の書き換えができてしまいます。"},
      {w:"xss"},
      {p:"「エスケープして出力」に切り替えると、`<` が `&lt;` に置き換えられ、タグではなくただの文字として表示されます。出力する場所に応じて、正しくエスケープすることが基本の対策です。CookieにHttpOnly属性を付けておけば、スクリプトからCookieを読まれることも防げます。"},
      {key:["XSSは入力がHTMLとして解釈される問題","出力時のエスケープが基本の対策","HttpOnly属性でCookieの窃取を防ぐ"]}
    ]},
-   {id:"we-csrf", title:"セッションとCSRF", min:7, terms:["csrf","session","sop"], src:["ipaweb","mdnhttp","mdnsop"], blocks:[
+   {id:"we-csrf", title:"セッションとCSRF", min:7, requires:["we-xss"], terms:["csrf","session","sop"], src:["ipaweb","mdnhttp","mdnsop"],practice:["pscsrf"], blocks:[
      {p:"ログイン状態は、ブラウザがCookieに保存したセッションIDを毎回自動で送ることで保たれています（[[session]]）。この「自動で送る」性質を悪用するのが[[csrf]]です。"},
      {w:"csrf"},
      {p:"ブラウザの[[sop]]により、罠サイトは銀行サイトのページの中身（CSRFトークンなど）を読むことはできません。しかし、リクエストを「送る」ことはできてしまいます。だからこそ、サーバー側で「本当に自分のページから送られたか」を確かめる必要があります。"},
      {key:["Cookieは自動で送られる","CSRFトークンやSameSite属性で、意図しないリクエストを拒否する","重要な操作の前の再認証も有効"]}
    ]},
-   {id:"we-api", title:"APIとアクセス制御", min:7, terms:["api-abuse","rate-limit","access-control"], src:["jp030","owasp"], blocks:[
+   {id:"we-api", title:"APIとアクセス制御", min:7, requires:["we-csrf"], terms:["api-abuse","rate-limit","access-control"], src:["jp030","owasp"], blocks:[
      {p:"スマホアプリの裏では、APIと呼ばれる窓口を通じてサーバーとデータをやり取りしています。JPCERT/CCは2026年10月、国内組織で相次いだ不正アクセスの手口として、公開されたアプリを解析してAPIの接続先やキーを特定し、APIを悪用する事例を報告しました。"},
      {w:"packetsim", o:{id:"api"}},
      {h:"「ログインしている」と「そのデータを見てよい」は別"},
      {p:"[[access-control]]の不備はOWASP Top 10でも主要なリスクとして扱われています。APIは要求のたびに「この利用者がこのデータにアクセスしてよいか」を確認しなければなりません。あわせて[[rate-limit]]で大量の探索を止め、トークンには最小限の権限と有効期限を付けます。"},
      {key:["アプリは解析される前提で設計する","すべてのAPIで、要求ごとに権限を確認する","レート制限とトークンの最小権限で被害を抑える"]}
    ]},
-   {id:"we-cmdi", title:"OSコマンド・インジェクション", min:7, terms:["cmdi","rce"], src:["ipaos","cwe78"], blocks:[
+   {id:"we-cmdi", title:"OSコマンド・インジェクション", min:7, requires:["we-sqli"], terms:["cmdi","rce"], src:["ipaos","cwe78"],practice:["pscmdi"], blocks:[
      {p:"Webアプリが内部でOSのコマンドを呼び出すとき、入力をそのままコマンドの文字列に組み込むと、[[cmdi]]が起きます。シェルは ; や && を「命令の区切り」と解釈するため、入力の後半が別の命令として実行されてしまいます。"},
      {w:"cmdi"},
      {h:"IPAが示す対策"},
@@ -163,7 +164,7 @@ ST.COURSES = [
      {callout:"成功すると、サーバー内のファイルの閲覧・改ざん・削除、不正なプログラムのダウンロードと実行、他のシステムへの攻撃の踏み台などにつながります（IPA）。", kind:"warn"},
      {key:["シェルは記号を命令の区切りとして解釈する","根本的解決はシェルを使わないこと","入力チェックは保険的な対策"]}
    ]},
-   {id:"we-ssrf", title:"SSRF（サーバーサイド・リクエスト・フォージェリ）", min:6, terms:["ssrf","firewall"], src:["cwe918"], blocks:[
+   {id:"we-ssrf", title:"SSRF（サーバーサイド・リクエスト・フォージェリ）", min:6, requires:["we-api"], terms:["ssrf","firewall"], src:["cwe918"],practice:["psssrf"], blocks:[
      {p:"URLを受け取ってサーバーが中身を取りに行く機能（リンクのプレビュー、画像の取り込み、Webhookなど）で、行き先を十分に確かめないと[[ssrf]]になります。"},
      {w:"ssrf"},
      {h:"ファイアウォールの内側から来るリクエスト"},
@@ -171,7 +172,7 @@ ST.COURSES = [
      {list:["取得先を許可リストに限る","名前解決した後の実際の接続先アドレスで判断する（名前だけで判断しない）","http/https 以外のスキームを受け付けない"]},
      {key:["サーバーは社内ネットワークの内側にいる","URLの文字列ではなく、実際の接続先で判断する","許可リスト方式が基本"]}
    ]},
-   {id:"we-upload", title:"ファイルアップロードの危険", min:5, terms:["file-upload","xss"], src:["cwe434"], blocks:[
+   {id:"we-upload", title:"ファイルアップロードの危険", min:5, requires:["we-cmdi"], terms:["file-upload","xss"], src:["cwe434"],practice:["psupload"], blocks:[
      {p:"画像やファイルを受け付ける機能で、危険な種類のファイル（サーバー上で実行されるスクリプトなど）を受け入れてしまう脆弱性が[[file-upload]]です（CWE-434）。アップロードされたファイルがサーバーで実行されると、任意のコードの実行につながります。"},
      {h:"CWE-434が挙げる主な対策"},
      {list:["保存するファイル名はサーバーが新しく生成し、利用者が付けた名前を使わない","ファイルは公開ディレクトリ（Webルート）の外に保存する","拡張子は許可リストで少数に限り、「photo.php.jpg」のような複数の拡張子は拒否する","チェックは必ずサーバー側で行う（ブラウザ側のチェックは回避できる）","Content-Typeやファイルの中身の検査だけに頼らない（正しい画像の中にコードを隠せる）"]},
@@ -181,20 +182,20 @@ ST.COURSES = [
   ]},
  {id:"malware", n:"05", title:"マルウェア", color:"var(--c4)", desc:"ウイルス、ワーム、ランサムウェア、ボットネット。広がり方と被害を動きで見る。",
   lessons:[
-   {id:"mw-types", title:"マルウェアの種類", min:6, terms:["malware","virus","worm","trojan","infostealer","spyware","rootkit"], src:["ipavirus","nist"], blocks:[
+   {id:"mw-types", title:"マルウェアの種類", min:6, requires:[], terms:["malware","virus","worm","trojan","infostealer","spyware","rootkit"], src:["ipavirus","nist"], blocks:[
      {p:"[[malware]]は悪意のあるソフトウェアの総称です。日常的にはまとめて「ウイルス」と呼ばれることも多いですが、増え方や目的によっていくつかの種類に分けられます。"},
      {w:"malwaredex"},
      {p:"実際のマルウェアは、1つの種類にきれいに収まらないことがほとんどです。トロイの木馬として入り込み、情報を盗み、ワームのように広がり、最後にランサムウェアとして暗号化する、といった組み合わせも見られます。"},
      {key:["増え方（寄生する／単独で広がる／広がらない）と目的で分類する","最近は情報窃取やランサムウェアなど金銭目的が中心","入口はメール、偽ソフト、脆弱性など多様"]}
    ]},
-   {id:"mw-worm", title:"ワームが広がる速さ", min:7, terms:["worm","patch"], src:["nist"], blocks:[
+   {id:"mw-worm", title:"ワームが広がる速さ", min:7, requires:["mw-types"], terms:["worm","patch"], src:["nist"], blocks:[
      {p:"[[worm]]は、人の操作なしにネットワーク越しに自分を複製して広がります。下のモデルで、パッチ適用率とネットワーク分割が広がり方にどう影響するかを試してみましょう。"},
      {w:"worm"},
      {p:"パッチ適用率が低いと、感染はねずみ算式に広がり、あっという間に頭打ちになります。適用率を上げたり、ネットワークを分割したりすると、広がる速さと範囲が大きく変わります。これは、更新とネットワーク分割が「組織全体」を守る対策であることを示しています。"},
      {callout:"このモデルは考え方を示すための単純化したものです。実際の感染速度は、ワームの探索方法やネットワークの構成によって大きく異なります。", kind:"info"},
      {key:["ワームは自動で広がる","パッチの適用率が高いほど広がりにくい","ネットワーク分割は感染の範囲を閉じ込める"]}
    ]},
-   {id:"mw-ransom", title:"ランサムウェアとバックアップ", min:10, terms:["ransomware","backup","vpn","lateral-movement"], src:["npa","ipa10","t1486"], blocks:[
+   {id:"mw-ransom", title:"ランサムウェアとバックアップ", min:10, requires:["mw-types"], terms:["ransomware","backup","vpn","lateral-movement"], src:["npa","ipa10","t1486"], blocks:[
      {p:"[[ransomware]]は、IPA「情報セキュリティ10大脅威 2026」組織向けで1位の脅威です。最近の攻撃は、侵入 → 権限の奪取 → データの持ち出し → 暗号化、と段階を踏んで進みます。"},
      {w:"ransom"},
      {p:"バックアップの取り方を変えて試してみてください。常時接続のバックアップは、侵入した攻撃者に見つかって一緒に暗号化されることがあります。オフラインのバックアップは最後の砦になりますが、盗まれたデータの公開（二重恐喝）は防げません。"},
@@ -202,7 +203,7 @@ ST.COURSES = [
      {w:"packetsim", o:{id:"ransomware"}},
      {key:["侵入口はVPN機器やリモートデスクトップが多い","暗号化の前にデータが盗まれる（二重恐喝）","バックアップはネットワークから切り離して保管し、復元を試しておく"]}
    ]},
-   {id:"mw-bot", title:"ボットネットとDDoS", min:6, terms:["botnet","c2","ddos"], src:["t1498","t1071","ipa10"], blocks:[
+   {id:"mw-bot", title:"ボットネットとDDoS", min:6, requires:["mw-worm"], terms:["botnet","c2","ddos"], src:["t1498","t1071","ipa10"], blocks:[
      {p:"マルウェアに感染して攻撃者の命令で動くようになった機器の集まりが[[botnet]]です。PCだけでなく、初期パスワードのままの防犯カメラやルーターなどのIoT機器も狙われます。"},
      {w:"botnet"},
      {p:"「初期パスワードを変更済み」をオンにすると、乗っ取られる機器が減り、攻撃の規模も小さくなります。自分の機器を守ることが、他の誰かへの攻撃を防ぐことにもつながります。"},
@@ -211,20 +212,20 @@ ST.COURSES = [
   ]},
  {id:"vuln", n:"06", title:"脆弱性を理解する", color:"var(--c5)", desc:"CVE、CVSS、KEV、メモリ破壊。ニュースに出てくる用語を自分で読み解く。",
   lessons:[
-   {id:"vu-cve", title:"脆弱性・CVE・KEV", min:6, terms:["vulnerability","kev","zeroday","rce"], src:["cve","jvn","kev"], blocks:[
+   {id:"vu-cve", title:"脆弱性・CVE・KEV", min:6, requires:[], terms:["vulnerability","kev","zeroday","rce"], src:["cve","jvn","kev"], blocks:[
      {p:"ニュースで「CVE-2026-109618」のような番号を見かけたことがあるでしょう。これは[[vulnerability]]に付けられる世界共通の識別番号です。番号で検索すれば、開発元やJVN、JPCERT/CCなどの一次情報にたどり着けます。"},
      {h:"「深刻度」と「悪用されているか」は別の情報"},
      {p:"CVSSは脆弱性の性質から深刻度を数値化したものです。一方、米国CISAの[[kev]]は「実際に悪用が確認された」脆弱性の一覧です。スコアが高くても悪用されていないもの、スコアがそれほど高くなくても実際に悪用されているものがあり、対応の優先順位は両方を見て決めます。"},
      {p:"修正プログラムが出る前に悪用されるものを[[zeroday]]と呼びます。2026年10月のMicrosoftの更新でも、既に悪用が確認された脆弱性が修正されました。"},
      {key:["CVE番号で一次情報を探せる","CVSS＝性質としての深刻度、KEV＝実際の悪用","「悪用を確認」とあれば最優先で対応する"]}
    ]},
-   {id:"vu-cvss", title:"CVSSを計算してみる", min:8, terms:["cvss"], src:["cvss31"], blocks:[
+   {id:"vu-cvss", title:"CVSSを計算してみる", min:8, requires:["vu-cve"], terms:["cvss"], src:["cvss31"], blocks:[
      {p:"[[cvss]]は、攻撃のしやすさ（どこから、どれだけ簡単に、権限や利用者の操作が必要か）と、影響の大きさ（機密性・完全性・可用性）を組み合わせて0.0〜10.0の値を計算します。"},
      {w:"cvss"},
      {p:"「攻撃元区分」をネットワークからローカルに変えたり、「ユーザー関与」を要に変えたりすると、スコアがどう下がるかを確かめてみてください。注意喚起の文中にあるベクトル文字列（`CVSS:3.1/AV:N/...`）も、これで読み解けるようになります。"},
      {key:["ネットワーク経由・認証不要・操作不要ほど深刻","影響範囲が他に及ぶ（スコープ変更）と高くなる","9.0以上が「緊急（Critical）」"]}
    ]},
-   {id:"vu-mem", title:"バッファオーバーフロー", min:9, terms:["buffer-overflow","oob-write","rce"], src:["cwe787","jp034"], blocks:[
+   {id:"vu-mem", title:"バッファオーバーフロー", min:9, requires:["vu-cve"], terms:["buffer-overflow","oob-write","rce"], src:["cwe787","jp034"], blocks:[
      {p:"C言語などでは、プログラムが用意したメモリの枠を超えてデータを書き込めてしまうことがあります。これが[[buffer-overflow]]で、より広くは[[oob-write]]（CWE-787）と分類されます。2026年10月に注意喚起されたBrotliの脆弱性もこの種類でした。"},
      {w:"overflow"},
      {p:"「Aを24個」を入力すると、8バイトの枠からあふれたデータが、関数の**戻り先アドレス**まで上書きします。攻撃者はここに好きなアドレスを書き込むことで、処理を乗っ取ろうとします。スタック保護（カナリア）は、戻る前に枠の外が壊れていないかを確かめる仕組みです。"},
@@ -233,25 +234,25 @@ ST.COURSES = [
   ]},
  {id:"defense", n:"07", title:"防御と運用", color:"var(--c7)", desc:"多層防御、キルチェーン、ログ監視、ゼロトラスト。組織を守る考え方。",
   lessons:[
-   {id:"de-layers", title:"多層防御", min:6, terms:["defense-in-depth","edr","least-privilege"], src:["nist","npa"], blocks:[
+   {id:"de-layers", title:"多層防御", min:6, requires:["net-fw"], terms:["defense-in-depth","edr","least-privilege"], src:["nist","npa"], blocks:[
      {p:"完璧な対策は存在しません。だからこそ、性質の違う対策を何重にも重ねて、どれかが破られても被害を止める[[defense-in-depth]]が基本になります。"},
      {w:"layers"},
      {p:"どの攻撃にも効く万能の対策はありません。攻撃ごとに効く対策が違うので、組み合わせることで「すべての攻撃が途中で止まりやすい」状態を作ります。"},
      {key:["1つの対策に頼らない","入口・端末・内部・出口・復旧のそれぞれに対策を置く","侵入される前提で、気づく仕組みと復旧の備えを持つ"]}
    ]},
-   {id:"de-chain", title:"キルチェーンとATT&CK", min:8, terms:["kill-chain","attack-framework","apt","lateral-movement"], src:["killchain","attack"], blocks:[
+   {id:"de-chain", title:"キルチェーンとATT&CK", min:8, requires:["de-layers"], terms:["kill-chain","attack-framework","apt","lateral-movement"], src:["killchain","attack"], blocks:[
      {p:"攻撃を段階に分けて捉えると、「どこで止めるか」を考えやすくなります。Lockheed Martinが提唱した[[kill-chain]]は、攻撃を7つの段階に分けます。"},
      {w:"killchain"},
      {p:"より細かく攻撃の手口を整理したのが[[attack-framework]]です。戦術（目的）ごとに実際の攻撃で観測された技術がまとめられていて、T1566（フィッシング）のようなIDで参照できます。内容は定期的に更新されており、2026年10月時点のエンタープライズ版の戦術は15個です。"},
      {key:["攻撃は段階を踏んで進む","早い段階で断つほど被害は小さい","ATT&CKのIDで手口を正確に参照できる"]}
    ]},
-   {id:"de-logs", title:"ログから攻撃を見つける", min:10, terms:["siem","brute-force","c2"], src:["nist","jp030"], blocks:[
+   {id:"de-logs", title:"ログから攻撃を見つける", min:10, requires:["de-chain"], terms:["siem","brute-force","c2"], src:["nist","jp030"], blocks:[
      {p:"侵入を完全に防ぐことはできないため、「侵入に早く気づく」ことが重要です。その手がかりになるのがログです。[[siem]]のような仕組みは、さまざまな機器のログを集めて関連づけます。"},
      {w:"logs"},
      {p:"1行だけを見ると見逃してしまう記録も、送信元や時間で並べ直すと攻撃の流れが見えてきます。JPCERT/CCの2026年10月の注意喚起でも、従業員向けシステムやBIツールのように「不特定多数のアクセスを想定していないシステム」も点検対象に含めるよう求められています。"},
      {key:["ログは取るだけでなく、保存期間と見る仕組みが大事","同じ送信元・同じアカウントで関連づけて読む","深夜・大量・一定間隔は要注意のサイン"]}
    ]},
-   {id:"de-zt", title:"ゼロトラストと最小権限", min:5, terms:["zero-trust","least-privilege","access-control"], src:["nist207","jp030"], blocks:[
+   {id:"de-zt", title:"ゼロトラストと最小権限", min:5, requires:["de-layers","au-mfa"], terms:["zero-trust","least-privilege","access-control"], src:["nist207","jp030"], blocks:[
      {p:"かつては「社内ネットワークの中は安全、外は危険」という境界型の考え方が主流でした。しかし、VPN機器や委託先を経由した侵入、クラウドの利用、テレワークの広がりで、境界の内側も安全とは言えなくなりました。"},
      {p:"[[zero-trust]]は、場所に関係なく、すべてのアクセスをその都度確認する考え方です（NIST SP 800-207）。利用者、端末の状態、アクセス先を毎回確かめ、[[least-privilege]]に従って必要最小限の権限だけを与えます。"},
      {w:"layers"},
@@ -260,7 +261,7 @@ ST.COURSES = [
   ]},
  {id:"mobile", n:"08", title:"スマホを守る", color:"var(--c9)", desc:"不正アプリ、構成プロファイル、SIMスワップ。スマホならではの入り口と守り方。",
   lessons:[
-   {id:"mb-apps", title:"不正アプリはどこから来るか", min:6, terms:["malicious-app","smishing"], src:["ipasms","ipaent","ipa10"], blocks:[
+   {id:"mb-apps", title:"不正アプリはどこから来るか", min:6, requires:["mw-types"], terms:["malicious-app","smishing"], src:["ipasms","ipaent","ipa10"], blocks:[
      {p:"スマホの被害で多いのが、正規のアプリを装った[[malicious-app]]です。IPA「情報セキュリティ10大脅威 2026」の個人向け脅威にも「不正アプリによるスマートフォン利用者への被害」が入っています。"},
      {p:"よくある入り口は、宅配業者などをかたる偽SMS（[[smishing]]）です。リンク先は画面のどこをタップしてもダウンロードが始まるように作られていることがあり、配られるアプリは公式ストアにはありません。"},
      {w:"app-perm"},
@@ -272,7 +273,7 @@ ST.COURSES = [
      {callout:"入れてしまったときは、まず**機内モード**にして通信とSMSの送信を止めます。そのうえで不審なアプリを削除し、IPAは影響が分からないため初期化も勧めています。初期化後は、Googleアカウントなどのパスワードを変え、キャリア決済に身に覚えのない請求がないか確かめます。", kind:"warn"},
      {key:["偽SMSのリンクからアプリを入れない。配送状況は公式アプリや公式サイトで確かめる","Androidの「提供元不明のアプリ」はオフのまま。警告が出たらキャンセル","求められる権限が目的に合っているかを見る"]}
    ]},
-   {id:"mb-profile", title:"構成プロファイルという裏口", min:5, terms:["config-profile","phishing"], src:["ipaprof","ipaent"], blocks:[
+   {id:"mb-profile", title:"構成プロファイルという裏口", min:5, requires:["mb-apps"], terms:["config-profile","phishing"], src:["ipaprof","ipaent"], blocks:[
      {p:"[[config-profile]]は、iPhoneの各種設定を自動で行うためのファイルです（IPAの説明）。設定をまとめて入れられる便利な仕組みです。"},
      {p:"便利な反面、設定を大きく変えられるので、攻撃にも使われます。IPAは、偽SMSのリンクからiPhoneでアクセスすると、不審な構成プロファイルのインストールに誘導される手口を紹介しています。"},
      {w:"app-perm", o:{os:"iphone"}},
@@ -282,7 +283,7 @@ ST.COURSES = [
      {callout:"誤って入れてしまった場合、IPAは**機内モード**（Wi‑Fiもオフ）にしてから端末を初期化し、復元にはプロファイルを入れた**後**のバックアップを使わないよう勧めています。初期化後は Apple ID などに不正利用がないか確かめ、パスワードを変えます。", kind:"warn"},
      {key:["構成プロファイルは設定を自動で変える仕組み。だからこそ悪用される","身に覚えのないインストール画面は閉じる","入れてしまったら、機内モード→初期化。入れた後のバックアップは使わない"]}
    ]},
-   {id:"mb-simswap", title:"SIMスワップ：電話番号を奪う", min:6, terms:["sim-swap","mfa","phishing"], src:["fksim","rbsim"], blocks:[
+   {id:"mb-simswap", title:"SIMスワップ：電話番号を奪う", min:6, requires:["au-mfa"], terms:["sim-swap","mfa","phishing"], src:["fksim","rbsim"], blocks:[
      {p:"[[sim-swap]]は、正規の利用者になりすましてSIMカードの再発行手続きを行い、携帯電話番号を乗っ取る手口です。スマホ本体には触れずに、番号だけを奪います。"},
      {w:"simswap"},
      {h:"なぜ電話番号が狙われるのか"},
@@ -295,7 +296,7 @@ ST.COURSES = [
   ]},
  {id:"cloud", n:"09", title:"クラウドを守る", color:"var(--c10)", desc:"設定ミスによる公開、IAMと最小権限、アクセスキーの漏えい。クラウドは「設定」が守りの中心。",
   lessons:[
-   {id:"cl-misconfig", title:"設定ミスで全世界に公開", min:6, terms:["cloud-misconfig"], src:["soumucfg","s3bpa","s3new"], blocks:[
+   {id:"cl-misconfig", title:"設定ミスで全世界に公開", min:6, requires:["net-layers"], terms:["cloud-misconfig"], src:["soumucfg","s3bpa","s3new"], blocks:[
      {p:"クラウドでは、サーバーやストレージを画面の操作だけで用意できます。便利な反面、設定を1つ誤るだけで、社外秘のファイルがインターネットに公開されてしまうことがあります。これが[[cloud-misconfig]]です。"},
      {p:"総務省の「クラウドの設定ミス対策ガイドブック」（2024年）は、誤った値を設定する**誤設定**、必要な設定をしない**未設定**、環境が変わっても直さない**未変更**をまとめて設定ミスとしています。何も設定しなかったために、不都合な値が有効になっている場合も含まれます。"},
      {w:"bucket"},
@@ -306,7 +307,7 @@ ST.COURSES = [
      {callout:"ガイドブックは、設定する人とチェックする人を分けてダブルチェックすること、マニュアルを見て作業すること、設定診断ツールで機械的に見つけることを勧めています。", kind:"info"},
      {key:["設定ミスには、誤設定・未設定・未変更がある","ストレージはブロックパブリックアクセスをオンのままにする","人の確認とツールの両方で見つける"]}
    ]},
-   {id:"cl-iam", title:"IAMと最小権限", min:5, terms:["iam","least-privilege"], src:["awsiam"], blocks:[
+   {id:"cl-iam", title:"IAMと最小権限", min:5, requires:["cl-misconfig"], terms:["iam","least-privilege"], src:["awsiam"], blocks:[
      {p:"クラウドでは、「誰が、どの資源に、何をしてよいか」を[[iam]]で決めます。人だけでなく、アプリやサーバーにも権限を与えて動かします。"},
      {w:"iam-key"},
      {h:"AWSが勧めていること"},
@@ -314,7 +315,7 @@ ST.COURSES = [
      {p:"「とりあえず全権限」で動かすと、その認証情報が盗まれたとき、攻撃者もアカウント全体を操作できてしまいます。権限の大きさが、そのまま被害の大きさになります。"},
      {key:["IAMは「誰が・何に・何をしてよいか」を決める","必要な権限だけを与える","長期のキーより一時的な認証情報"]}
    ]},
-   {id:"cl-keys", title:"アクセスキーが漏れたら", min:5, terms:["access-key","iam"], src:["awskey","ghsecret","awsiam"], blocks:[
+   {id:"cl-keys", title:"アクセスキーが漏れたら", min:5, requires:["cl-iam"], terms:["access-key","iam"], src:["awskey","ghsecret","awsiam"], blocks:[
      {p:"アクセスキーは、プログラムからクラウドを操作するための認証情報です。ソースコードに書いたままリポジトリに登録すると、そこから漏れます（[[access-key]]）。GitHubは、リポジトリに登録されたAPIキーやパスワードは第三者に悪用されうるとして、それを見つける**シークレットスキャン**や、push の時点で止める**プッシュ保護**を用意しています。"},
      {w:"iam-key"},
      {h:"漏れたときの手順（AWS）"},
@@ -325,7 +326,7 @@ ST.COURSES = [
   ]},
  {id:"ai", n:"10", title:"AIと安全に付き合う", color:"var(--c11)", desc:"プロンプトインジェクション、ハルシネーション、シャドーAI。10大脅威2026で初選出の組織3位。",
   lessons:[
-   {id:"ai-risks", title:"AIの利用をめぐるリスク", min:6, terms:["shadow-ai","hallucination","phishing","mfa"], src:["ipa10","ipa10org"], blocks:[
+   {id:"ai-risks", title:"AIの利用をめぐるリスク", min:6, requires:[], terms:["shadow-ai","hallucination","phishing","mfa"], src:["ipa10","ipa10org"], blocks:[
      {p:"IPA「情報セキュリティ10大脅威 2026」で、「AIの利用をめぐるサイバーリスク」が組織向けの3位に初めて選ばれました。解説書は、大きく2つの問題を挙げています。AIへの理解が足りないことで起きる問題と、AIの悪用で攻撃が容易になる問題です。"},
      {h:"使う側のリスク"},
      {list:["**[[shadow-ai]]**：個人で使っているAIサービスに業務データを入れ、情報が組織の管理外に出る","**[[hallucination]]**：AIが架空の情報を事実のように生成し、それをうのみにしてしまう","**入力した情報の扱い**：外部のAIサービスでは、入力データを学習に使わせない設定（オプトアウト）を徹底する"]},
@@ -335,7 +336,7 @@ ST.COURSES = [
      {callout:"このサイトもAIの助けを借りて作っています。だからこそ、すべての解説に一次情報へのリンクと確認日を付けています。AIの要約は入口として使い、大事な判断は原文で。", kind:"info"},
      {key:["未許可のAIサービスに業務データを入れない","AIの答えは一次情報で確かめる","AIで巧妙になった攻撃にも、既存の対策（多要素認証など）が効く"]}
    ]},
-   {id:"ai-inject", title:"プロンプトインジェクション", min:6, terms:["prompt-injection","least-privilege"], src:["ipa10org"], blocks:[
+   {id:"ai-inject", title:"プロンプトインジェクション", min:6, requires:["ai-risks"], terms:["prompt-injection","least-privilege"], src:["ipa10org"], blocks:[
      {p:"[[prompt-injection]]は、AIに不正な指示を与えて、本来の保護や利用者の意図に反する動作をさせる攻撃です。2つの型があります。"},
      {list:["**直接型**：利用者自身が不正な指示を入力し、AIの保護を外そうとする（ジェイルブレイク）","**間接型**：AIが動作の途中で自分で参照したデータに不正な指示が含まれていて、それを取り込んでしまう"]},
      {p:"IPAの解説書は、最近の攻撃の多くに共通するのが間接型だとしています。メールやWebページ、ファイルの中に指示を隠しておけば、利用者が何も入力しなくても成立します。"},
@@ -349,7 +350,7 @@ ST.COURSES = [
   ]},
  {id:"law", n:"11", title:"法律と倫理", color:"var(--c12)", desc:"不正アクセス禁止法と、脆弱性を見つけたときの届け出。知識を使う前に、守る線を知る。",
   lessons:[
-   {id:"law-uaa", title:"不正アクセス禁止法", min:6, terms:["uaa-law","brute-force"], src:["egovuaa"], blocks:[
+   {id:"law-uaa", title:"不正アクセス禁止法", min:6, requires:[], terms:["uaa-law","brute-force"], src:["egovuaa"], blocks:[
      {p:"このサイトで学ぶ攻撃の仕組みは、守るために知るものです。人のシステムに試してよいわけではありません。日本で最も基本になる法律が、「不正アクセス行為の禁止等に関する法律」（平成11年法律第128号）です。"},
      {h:"何を禁じているか"},
      {list:["**目的（第1条）**：不正アクセス行為を禁止し、罰則と再発防止の援助措置を定めて、電気通信回線を通じたコンピュータ犯罪を防ぎ、アクセス制御で実現される電気通信の秩序を保つ","**不正アクセス行為（第2条・第3条）**：他人の識別符号（ID・パスワードなど）の入力や、アクセス制御を免れる情報・指令の入力によって、制限された機能を使えるようにする行為。何人もしてはならない","**識別符号の不正取得（第4条）**：不正アクセス行為に使う目的で、他人の識別符号を取得すること"]},
@@ -359,7 +360,7 @@ ST.COURSES = [
      {callout:"条文は改正されます（このサイトで確認したのは、e-Govが載せる令和4年の改正までの内容です）。実際の判断が必要なときは、必ずe-Govで最新の条文を開くか、専門家に相談してください。", kind:"warn"},
      {key:["他人のID・パスワードでの無断ログインは禁止","不正アクセス行為は3年以下の拘禁刑または100万円以下の罰金","学習や検証は、自分の環境か、許可された練習環境で"]}
    ]},
-   {id:"law-vuln", title:"脆弱性を見つけたら", min:5, terms:["vuln-report","vulnerability","uaa-law"], src:["ipavulnrep","egovuaa"], blocks:[
+   {id:"law-vuln", title:"脆弱性を見つけたら", min:5, requires:["law-uaa","vu-cve"], terms:["vuln-report","vulnerability","uaa-law"], src:["ipavulnrep","egovuaa"], blocks:[
      {p:"セキュリティを学ぶと、いつか[[vulnerability]]を見つける日が来るかもしれません。そのときの正規の道が、IPAの「脆弱性関連情報の届出制度」です。"},
      {h:"誰が、どこに、何を"},
      {list:["**誰が**：脆弱性を見つけた人（発見者）","**どこに**：IPAの届出受付窓口（ウェブフォームまたはメール。メールではPGP暗号化が推奨されるが、必須ではない）","**何を**：国内で使われているソフトウェア製品（OS、ブラウザ、ウェブサーバなど）や、主に国内からアクセスされるウェブサイトの脆弱性"]},
@@ -372,14 +373,14 @@ ST.COURSES = [
   ]},
  {id:"news", n:"12", title:"ニュースを読み解く", color:"var(--c8)", desc:"注意喚起の読み方と、正しい情報の確かめ方。学んだ知識を最新の出来事につなげる。",
   lessons:[
-   {id:"nw-alert", title:"注意喚起の読み方", min:6, terms:["vulnerability","patch","rce","cvss"], src:["jp033","jpat","ipaalert"], blocks:[
+   {id:"nw-alert", title:"注意喚起の読み方", min:6, requires:["vu-cve"], terms:["vulnerability","patch","rce","cvss"], src:["jp033","jpat","ipaalert"], blocks:[
      {p:"JPCERT/CCやIPAの注意喚起には、だいたい決まった項目があります。2026年10月のPHPの脆弱性（通称 PHP2shell）の注意喚起を例に見てみましょう。"},
      {list:["**何が起きるか**：リモートから任意のコードを実行されるおそれ（[[rce]]）","**影響を受けるバージョン**：PHP 8.5.12より前の8.5系、8.4.27より前の8.4系など","**悪用の状況**：10月26日の更新で、悪用を主張する実証コードの公開や、悪用を試みる通信の観測報告が追記された","**対策**：修正版（8.5.12、8.4.27、8.3.36、8.2.35以降）への更新","**緩和策**：更新できない場合の設定変更（特定の攻撃経路への対処で、根本対策ではない）"]},
      {p:"読むときは「自分が使っているか」「バージョンは該当するか」「悪用されているか」「修正版はあるか」の順に確かめると、取るべき行動がはっきりします。"},
      {callout:"注意喚起は更新されます。最初の公開後に「悪用を確認」が追記されることも多いので、更新日も必ず確認しましょう。", kind:"warn"},
      {key:["影響バージョン・悪用状況・修正版・緩和策を確認する","緩和策は根本対策ではない","更新日をチェックする"]}
    ]},
-   {id:"nw-threats", title:"情報セキュリティ10大脅威 2026", min:5, terms:["ransomware","supply-chain","apt","ddos","bec","phishing","support-scam"], src:["ipa10"], blocks:[
+   {id:"nw-threats", title:"情報セキュリティ10大脅威 2026", min:5, requires:["nw-alert"], terms:["ransomware","supply-chain","apt","ddos","bec","phishing","support-scam"], src:["ipa10"], blocks:[
      {p:"IPAは毎年、前年に社会的影響が大きかったセキュリティの事案から「情報セキュリティ10大脅威」を選んでいます。2026年版は2026年1月29日に公開されました。"},
      {h:"組織向け（順位あり）"},
      {list:["1位 ランサム攻撃による被害","2位 サプライチェーンや委託先を狙った攻撃","3位 AIの利用をめぐるサイバーリスク","4位 システムの脆弱性を悪用した攻撃","5位 機密情報を狙った標的型攻撃","6位 地政学的リスクに起因するサイバー攻撃（情報戦を含む）","7位 内部不正による情報漏えい等","8位 リモートワーク等の環境や仕組みを狙った攻撃","9位 DDoS攻撃（分散型サービス妨害攻撃）","10位 ビジネスメール詐欺"]},
@@ -387,7 +388,7 @@ ST.COURSES = [
      {list:["インターネット上のサービスからの個人情報の窃取","インターネット上のサービスへの不正ログイン","インターネットバンキングの不正利用","クレジットカード情報の不正利用","サポート詐欺（偽警告）による金銭被害","スマホ決済の不正利用","ネット上の誹謗・中傷・デマ","フィッシングによる個人情報等の詐取","不正アプリによるスマートフォン利用者への被害","メールやSNS等を使った脅迫・詐欺の手口による金銭要求"]},
      {key:["組織向けは毎年ランサム攻撃が上位","個人向けは順位なしで、詐欺や不正利用が中心","このサイトの各コースで、多くの脅威の仕組みを体験できる"]}
    ]},
-   {id:"nw-verify", title:"正しい情報の確かめ方", min:5, terms:["vulnerability","kev"], src:["jpat","ipaalert","jvn","kev","apj"], blocks:[
+   {id:"nw-verify", title:"正しい情報の確かめ方", min:5, requires:["nw-alert"], terms:["vulnerability","kev"], src:["jpat","ipaalert","jvn","kev","apj"], blocks:[
      {p:"セキュリティのニュースは、まとめサイトやSNSで広がるうちに、数字や対象が変わってしまうことがあります。このサイトでも、解説は一次情報へのリンクと確認日を必ず付けています。"},
      {list:["**一次情報に当たる**：開発元のアドバイザリ、JPCERT/CC、IPA、JVN、CISAなど","**日付を見る**：公開日と更新日。古い情報で判断しない","**番号で照合する**：CVE番号やATT&CKのIDで、話題が同じものかを確かめる","**断定に注意**：「〜のおそれ」「〜と報告されている」の違いを読み分ける","**AIの要約もうのみにしない**：このサイトの要約も含め、大事な判断の前には原文を開く"]},
      {callout:"このサイトのニュース欄は、毎週JPCERT/CCとIPAの一次情報を開いて確認したうえで更新しています。誤りに気づいたら、原文を優先してください。", kind:"info"},
