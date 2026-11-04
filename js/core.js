@@ -28,22 +28,17 @@ window.ST = window.ST || {};
   /* Oldest check date among the given sources (falls back to the site-wide date). */
   ST.checkedOf = keys => (keys || []).map(k => ST.SRC[k] && ST.SRC[k].checked).filter(Boolean).sort()[0] || ST.CHECKED;
 
-  /* ---------- Progress (per viewer): localStorage, mirrored to the artifact DB when available ---------- */
+  /* ---------- Progress (per device): localStorage. Move between devices with the handoff code below. ---------- */
   const LS_KEY = "sectracer.progress.v2";
   ST.P = { terms: {}, sims: {}, lessons: {}, labs: {}, quiz: { answered: 0, correct: 0 }, streak: { last: "", days: 0 }, updated: 0 };
   try {
     const s = JSON.parse(localStorage.getItem(LS_KEY) || localStorage.getItem("sectracer.progress.v1") || "null");
     if (s && s.terms) ST.P = Object.assign(ST.P, s);
   } catch (e) {}
-  let progRef = null, saveTimer = null;
   ST.save = () => {
     ST.P.updated = Date.now();
     try { localStorage.setItem(LS_KEY, JSON.stringify(ST.P)); } catch (e) {}
-    if (!progRef) return;
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => { progRef.set(ST.P).then(() => ST.setSync("同期済み")).catch(() => ST.setSync("この端末に保存")); }, 800);
   };
-  ST.setSync = t => { const el = document.getElementById("sync"); if (el) el.textContent = t; };
   ST.touchStreak = () => {
     const today = new Date().toISOString().slice(0, 10);
     const st = ST.P.streak || (ST.P.streak = { last: "", days: 0 });
@@ -85,17 +80,6 @@ window.ST = window.ST || {};
     };
   };
   ST.importCode = text => { ST.P = ST.mergeProgress(ST.P, ST.parseCode(text)); ST.save(); };
-  ST.bindRemoteProgress = async (db, userId) => {
-    progRef = db.collection("data/users/" + userId).doc("progress");
-    const snap = await progRef.get();
-    const remote = snap.exists ? snap.data() : null;
-    if (remote && remote.updated > (ST.P.updated || 0)) {
-      ST.P = Object.assign({ terms: {}, sims: {}, lessons: {}, labs: {}, quiz: { answered: 0, correct: 0 }, streak: { last: "", days: 0 } }, remote);
-      try { localStorage.setItem(LS_KEY, JSON.stringify(ST.P)); } catch (e) {}
-      return true;
-    } else if (ST.P.updated) progRef.set(ST.P).catch(() => {});
-    return false;
-  };
 
   /* ---------- Widgets: ST.widget(name, {title, mount(el, opts) -> optional cleanup}) ---------- */
   ST.W = {};

@@ -23,7 +23,7 @@
   const nextLesson = () => allLessons().find(l => !ST.P.lessons[l.id]) || allLessons()[0];
   const sevChip = s => s === "緊急" ? `<span class="chip attack">緊急</span>` : s === "注意" ? `<span class="chip warn">注意</span>` : `<span class="chip">${esc(s || "情報")}</span>`;
 
-  /* ---------- News source: static snapshot, replaced by the artifact DB when available ---------- */
+  /* ---------- News source: static snapshot (js/data/news.js), updated weekly ---------- */
   ST.NEWS = (ST.NEWS_STATIC || []).slice();
   ST.newsRow = (n, full) => `<div class="row newsitem"><div class="sev">${sevChip(n.severity)}</div><div class="body"><div class="date">${esc(n.date)} · ${esc(n.org || "")}</div><a class="t" href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a>${n.summary ? `<div class="s">${esc(n.summary)}</div>` : ""}
     ${full && (n.points || []).length ? `<ul class="pts">${n.points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
