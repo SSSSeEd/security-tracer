@@ -13,7 +13,7 @@
   root.innerHTML = `<div class="app">
     <header class="top"><div class="top-in">
       <a class="brand" href="#home"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="6" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7" cy="18" r="2.4" fill="currentColor"/><circle cx="19" cy="8" r="2.4" fill="currentColor"/><path d="M8.8 16.4 17.2 9.6" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="10.4" width="5" height="3.6" rx=".8" fill="var(--packet)"/></svg><span>Security Tracer <small>LAB</small></span></a>
-      <span class="sync" id="sync">この端末に保存</span></div></header>
+      <span class="sync">この端末に保存</span></div></header>
     <main><div class="wrap" id="view"></div></main>
     <nav class="tabs" aria-label="メイン"><div class="in">${TABS.map(([v, l, d]) => `<a href="#${v}" data-v="${v}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">${d}</svg>${l}</a>`).join("")}</div></nav>
   </div>
@@ -32,21 +32,4 @@
 </svg>`;
   addEventListener("hashchange", () => ST.go());
   ST.go();
-
-  // Optional: shared news + cross-device progress when running as a claude.ai artifact.
-  (async () => {
-    try {
-      if (!window.claude || !window.claude.use) return;
-      const db = await window.claude.use("db");
-      if (!db) return;
-      db.collection("news").orderBy("date", "desc").limit(60).onSnapshot(snap => {
-        if (snap.empty) return;
-        ST.NEWS = snap.docs.map(d => Object.assign({ id: d.id }, d.data()));
-        if (["home", "news", "term"].includes(ST.current.view)) ST.refresh();
-      }, () => {});
-      const user = await window.claude.use("user");
-      const id = user && await user.id();
-      if (id) { const changed = await ST.bindRemoteProgress(db, id); ST.setSync("同期済み"); if (changed && !["sim", "labitem", "lesson"].includes(ST.current.view)) ST.refresh(); }
-    } catch (e) { console.warn(e); }
-  })();
 })(window.ST);

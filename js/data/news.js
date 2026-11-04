@@ -1,5 +1,5 @@
 "use strict";
-/* News snapshot shipped with the site (works without the artifact database, e.g. on GitHub Pages).
+/* News snapshot shipped with the site (GitHub Pages serves it as is).
    Updated weekly from JPCERT/CC and IPA primary sources. Newest first. */
 ST.NEWS_STATIC = [
  {

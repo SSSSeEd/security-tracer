@@ -8,7 +8,7 @@ const problems = [];
 const bad = m => problems.push(m);
 
 const scripts = f => [...fs.readFileSync(path.join(root, f), "utf8").matchAll(/<script src="([^"]+)"/g)].map(m => m[1]);
-const pages = ["index.html", "artifact.html"].filter(f => fs.existsSync(path.join(root, f)));
+const pages = ["index.html"];
 const lists = pages.map(scripts);
 lists.forEach((l, i) => { if (JSON.stringify(l) !== JSON.stringify(lists[0])) bad(`${pages[i]} の script 一覧が ${pages[0]} と違う`); });
 const loaded = new Set(lists[0]);
