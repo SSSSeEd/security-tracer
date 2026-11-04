@@ -1,7 +1,7 @@
 "use strict";
 /* Offline support. Network first (so lessons and news stay current), falling back to the cached copy when offline.
    Same-origin GET only; web fonts from other origins are not cached (system fonts are used offline). */
-const CACHE = "sectracer-v1";
+const CACHE = "sectracer-v2";
 const SHELL = [
   "./",
   "index.html",
@@ -25,6 +25,9 @@ const SHELL = [
   "js/widgets/auth.js",
   "js/widgets/web.js",
   "js/widgets/web-server.js",
+  "js/widgets/web-sql.js",
+  "vendor/sqljs/sql-wasm.js",
+  "vendor/sqljs/sql-wasm.wasm",
   "js/widgets/malware.js",
   "js/widgets/vuln.js",
   "js/widgets/defense.js",

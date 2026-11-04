@@ -137,6 +137,15 @@ ST.COURSES = [
   ]},
  {id:"web", n:"04", title:"Webアプリの脆弱性", color:"var(--c6)", desc:"SQLインジェクション、XSS、CSRF、API。入力がどう悪用されるかを見る。",
   lessons:[
+   {id:"we-sql", title:"SQLでデータベースを動かす", min:8, requires:[], terms:["sql","sqli"], src:["sqlitelang","sqlitelic","sqljs"], blocks:[
+     {p:"Webアプリの多くは、データをデータベースに入れ、[[sql]]という言語で出し入れします。下のラボでは、本物のSQLiteをブラウザの中で動かして、命令を自分で書けます。データは架空の本屋のもので、この端末の中だけにあります。"},
+     {w:"sql"},
+     {h:"4つの基本の命令"},
+     {list:["SELECT：条件に合う行を探す（WHERE、ORDER BY、GROUP BY、JOIN で絞る・並べる・集める・つなぐ）","INSERT：行を追加する","UPDATE：行の値を直す（WHERE を付け忘れると全行が変わる）","DELETE：行を消す（これも WHERE が大切）"]},
+     {p:"UPDATE や DELETE は、実行したあとにもう一度 SELECT で確かめる習慣をつけましょう。「値の渡し方」モードでは、入力を連結したときとプレースホルダで渡したときの違いを、同じデータベースで確かめられます。この違いが[[sqli]]の仕組みの核心です。"},
+     {callout:"このラボのSQLiteは、サイトに同梱したsql.js（MIT）で動いています。SQLite自体はパブリックドメインです。外部サーバーとは通信しません。", kind:"info"},
+     {key:["SQLはデータベースへの命令で、4つの基本は SELECT・INSERT・UPDATE・DELETE","UPDATE・DELETE は WHERE と実行後の確認が大切","入力は連結せず、プレースホルダで「値」として渡す"]}
+   ]},
    {id:"we-sqli", title:"SQLインジェクション", min:9, requires:["net-layers"], terms:["sqli","waf"], src:["ipaweb","owasp","jp030"],practice:["psqli"], blocks:[
      {p:"[[sqli]]は、入力欄に入れた文字が、アプリの意図に反して**SQLの命令として解釈されてしまう**脆弱性です。下のツールは、入力から組み立てられるSQL文を実際に解釈して、どの行が返るかを計算しています。"},
      {w:"sqli"},

@@ -22,6 +22,7 @@ css/style.css
 js/core.js          ルーター、進捗保存、ウィジェット登録
 js/data/*.js        出典・用語・コース・クイズ・シナリオ・ニュース
 js/widgets/*.js     図解ラボ（ウィジェット）
+vendor/sqljs/       同梱した sql.js（MIT。SQLラボを開いたときだけ読み込む。sw.js のキャッシュ対象）
 js/views.js         各ページ
 js/app.js           画面の枠と起動処理
 ```
