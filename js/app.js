@@ -30,6 +30,7 @@
     <symbol id="i-web" viewBox="-14 -14 28 28"><rect x="-12" y="-11" width="24" height="22" rx="2"/><path d="M-12 -5h24" fill="none"/><circle cx="-8.5" cy="-8" r="1"/><circle cx="-5.5" cy="-8" r="1"/></symbol>
   </defs>
 </svg>`;
+  if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
   addEventListener("hashchange", () => ST.go());
   ST.go();
 })(window.ST);

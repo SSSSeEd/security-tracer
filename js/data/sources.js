@@ -37,6 +37,7 @@ ST.SRC = {
   cwe918:   {org:"MITRE", label:"CWE-918: Server-Side Request Forgery (SSRF)", url:"https://cwe.mitre.org/data/definitions/918.html", checked:"2026-10-30"},
   cwe434:   {org:"MITRE", label:"CWE-434: Unrestricted Upload of File with Dangerous Type", url:"https://cwe.mitre.org/data/definitions/434.html", checked:"2026-10-30"},
   t1557:    {org:"MITRE ATT&CK", label:"T1557 Adversary-in-the-Middle", url:"https://attack.mitre.org/techniques/T1557/", checked:"2026-10-27"},
+  npabec:   {org:"警察庁", label:"ビジネスメール詐欺の被害防止対策", url:"https://www.npa.go.jp/bureau/cyber/countermeasures/bec.html", checked:"2026-11-04"},
   t1190:    {org:"MITRE ATT&CK", label:"T1190 Exploit Public-Facing Application", url:"https://attack.mitre.org/techniques/T1190/", checked:"2026-10-27"},
   t1486:    {org:"MITRE ATT&CK", label:"T1486 Data Encrypted for Impact", url:"https://attack.mitre.org/techniques/T1486/", checked:"2026-10-27"},
   t1498:    {org:"MITRE ATT&CK", label:"T1498 Network Denial of Service", url:"https://attack.mitre.org/techniques/T1498/", checked:"2026-10-27"},

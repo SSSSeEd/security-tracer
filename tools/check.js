@@ -14,6 +14,9 @@ lists.forEach((l, i) => { if (JSON.stringify(l) !== JSON.stringify(lists[0])) ba
 const loaded = new Set(lists[0]);
 fs.readdirSync(path.join(root, "js/widgets")).filter(f => f.endsWith(".js")).forEach(f => { if (!loaded.has("js/widgets/" + f)) bad(`js/widgets/${f} が script タグにない`); });
 lists[0].forEach(f => { if (!fs.existsSync(path.join(root, f))) bad(`${f} が存在しない`); });
+const swText = fs.existsSync(path.join(root, "sw.js")) ? fs.readFileSync(path.join(root, "sw.js"), "utf8") : "";
+if (!swText) bad("sw.js がない");
+lists[0].forEach(f => { if (swText && !swText.includes(`"${f}"`)) bad(`sw.js のキャッシュ一覧に ${f} がない（オフラインで開けなくなる）`); });
 
 /* Run everything up to (not including) app.js in a stub browser to inspect the catalogs. */
 const noop = () => {}, el = () => new Proxy(function () {}, { get: () => el(), apply: () => el(), set: () => true });
