@@ -72,5 +72,26 @@ if (ST && ST.W) {
   console.log(`ウィジェット ${widgets.size}、ラボ ${Object.keys(ST.LAB).length}、レッスン ${lessons.length}、用語 ${ST.TERMS.length}`);
 } else bad("ST.W が作られていない");
 
+/* The repository is public: scan every text file for personal data and secrets (email, phone number, private key, token).
+   A line carrying the marker "scan-ok" is skipped (for deliberate dummy examples such as example.com addresses). */
+const SCAN_RULES = [
+  ["メールアドレス", /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g, m => !/@(?:[\w.-]+\.)?(?:example\.(?:com|org|net|jp)|example|test|invalid|localhost)$/i.test(m) && !/^[\w.+-]+@\d/.test(m)],
+  ["電話番号", /(?<![\d-])(?:0\d{1,4}-\d{1,4}-\d{3,4}|0[789]0\d{8}|\+81[- ]?\d{1,4}[- ]?\d{1,4}[- ]?\d{3,4})(?![\d-])/g],
+  ["秘密鍵", /-----BEGIN (?:[A-Z]+ )*PRIVATE KEY-----/g],
+  ["トークンの形", /\b(?:ghp_|gho_|ghs_|github_pat_|xox[baprs]-|sk-[A-Za-z0-9]{20}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{30}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.)/g] // scan-ok
+];
+(function scanText(dir) {
+  fs.readdirSync(dir, { withFileTypes: true }).forEach(d => {
+    if (d.name === ".git" || d.name === "node_modules") return;
+    const f = path.join(dir, d.name);
+    if (d.isDirectory()) return scanText(f);
+    if (!/\.(js|html|css|md|json|svg|webmanifest|txt|yml|yaml)$/i.test(d.name)) return;
+    fs.readFileSync(f, "utf8").split("\n").forEach((line, i) => {
+      if (line.includes("scan-ok")) return;
+      SCAN_RULES.forEach(([name, re, keep]) => { (line.match(re) || []).forEach(m => { if (!keep || keep(m)) bad(`${path.relative(root, f)}:${i + 1} に${name}らしき文字列（公開リポジトリには置かない）: ${m.slice(0, 8)}…`); }); });
+    });
+  });
+})(root);
+
 if (problems.length) { console.error("NG:\n- " + problems.join("\n- ")); process.exit(1); }
 console.log("OK");
