@@ -41,7 +41,7 @@
     <section class="hero" style="display:grid;gap:14px">
       <div><div class="eyebrow">Security Tracer · 情報セキュリティを動かして学ぶ</div>
       <h1>攻撃と防御を、目で見て、手で動かして理解する</h1>
-      <p class="lead">8つのコースと${Object.keys(ST.LAB).length}個の図解ラボ、${ST.SCEN.length}本の攻撃シミュレーター。解説には必ず公的機関や一次情報へのリンクを付けています。</p></div>
+      <p class="lead">${ST.COURSES.length}のコースと${Object.keys(ST.LAB).length}個の図解ラボ、${ST.SCEN.length}本の攻撃シミュレーター。解説には必ず公的機関や一次情報へのリンクを付けています。</p></div>
       <div class="stats">
         <div class="stat"><b>${done}<span>/${L.length}</span></b><span>完了したレッスン</span></div>
         <div class="stat"><b>${labs}<span>/${Object.keys(ST.LAB).length}</span></b><span>触ったラボ</span></div>
@@ -63,7 +63,28 @@
         <div class="card"><div class="eyebrow">今日の用語</div><a class="row" href="#term-${today.id}" style="border:0"><div class="body"><div class="term-name"><span class="t">${esc(today.name)}</span><span class="en">${esc(today.en)}</span></div><div class="s">${md(today.summary)}</div></div></a></div>
       </div>
     </section>
+    <section class="card" data-handoff style="display:grid;gap:8px">
+      <div class="eyebrow">進み具合を別の端末に引き継ぐ</div>
+      <p class="cap" style="margin:0">サーバーは使いません。この端末で「コードを作る」→コピー→別の端末の同じ場所に貼り付けて「読み込む」。読み込みは今の記録と合算され、上書きはされません。</p>
+      <textarea data-code rows="3" placeholder="ST1-…" spellcheck="false" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--surface);font-family:var(--f-mono);font-size:12px"></textarea>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" type="button" data-make>コードを作る</button><button class="btn primary" type="button" data-load>読み込む</button></div>
+      <div class="cap" data-msg role="status"></div>
+    </section>
     <p class="notice">解説はClaudeが公的機関などの一次情報をもとに作成し、${ST.CHECKED} に出典を確認しました。誤りがありえるため、大事な判断の前には必ず出典を開いて確認してください。</p>`;
+  });
+  document.addEventListener("click", e => {
+    const box = e.target.closest && e.target.closest("[data-handoff]");
+    if (!box) return;
+    const ta = box.querySelector("[data-code]"), msg = box.querySelector("[data-msg]");
+    if (e.target.closest("[data-make]")) {
+      ta.value = ST.exportCode(); ta.select();
+      const ok = () => { msg.textContent = "コードを作りました（コピー済み）。別の端末で貼り付けてください。"; };
+      const manual = () => { msg.textContent = "コードを作りました。上の欄を長押ししてコピーしてください。"; };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(ok, manual); else manual();
+    } else if (e.target.closest("[data-load]")) {
+      try { ST.importCode(ta.value); ST.refresh(); const m2 = document.querySelector("[data-handoff] [data-msg]"); if (m2) m2.textContent = "読み込みました。今の記録と合算しました。"; }
+      catch (err) { msg.textContent = err.message; }
+    }
   });
   const courseCard = c => {
     const n = c.lessons.length, d = c.lessons.filter(l => ST.P.lessons[l.id]).length;
@@ -100,7 +121,7 @@
       ${html}
       <div class="card"><div class="eyebrow">関連する用語</div><div class="filters" style="margin-top:8px">${l.terms.filter(t => ST.TERM[t]).map(t => `<a class="tag" href="#term-${t}">${esc(ST.TERM[t].name)}</a>`).join("")}</div>
         <div class="eyebrow" style="margin-top:14px;margin-bottom:6px">出典</div>${ST.srcList(l.src)}
-        <p class="verify" style="margin-top:12px">出典確認日 ${ST.CHECKED}。本文はClaudeが出典をもとに作成した解説です。</p></div>
+        <p class="verify" style="margin-top:12px">出典確認日 ${ST.checkedOf(l.src)}。本文はClaudeが出典をもとに作成した解説です。</p></div>
       <div class="lesson-nav">${prev ? `<a class="btn" href="#l-${prev.id}">‹ ${esc(prev.title)}</a>` : "<span></span>"}<button class="btn primary" type="button" data-done>${ST.P.lessons[l.id] ? "完了済み ✓" : "このレッスンを完了"}</button>${next ? `<a class="btn" href="#l-${next.id}">${esc(next.title)} ›</a>` : ""}</div>
     </article>`;
     v.querySelector("[data-done]").onclick = () => { ST.markLesson(l.id); next ? (location.hash = "l-" + next.id) : (location.hash = "course-" + c.id); };
@@ -164,7 +185,7 @@
         ${ls.length ? `<section><h2>この用語が出てくるレッスン</h2><div class="list">${ls.map(l => `<a class="row" href="#l-${l.id}"><div class="body"><div class="t">${esc(l.title)}</div><div class="s">${esc(ST.COURSE[l.course].title)}</div></div></a>`).join("")}</div></section>` : ""}
         ${rel.length ? `<section><h2>関連ニュース</h2><div class="list">${rel.map(n => ST.newsRow(n)).join("")}</div></section>` : ""}
         <section><h2>出典</h2>${ST.srcList(t.src)}</section>
-        <p class="verify">出典確認日 ${ST.CHECKED}。解説はClaudeが出典をもとに作成した要約です。正確な内容は出典で確認してください。</p>
+        <p class="verify">出典確認日 ${ST.checkedOf(t.src)}。解説はClaudeが出典をもとに作成した要約です。正確な内容は出典で確認してください。</p>
       </article>`;
   });
 

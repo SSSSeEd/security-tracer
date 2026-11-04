@@ -25,6 +25,9 @@ window.ST = window.ST || {};
   /* ---------- Sources ---------- */
   ST.srcList = keys => `<ul class="sources">${keys.filter(k => ST.SRC[k]).map(k => { const s = ST.SRC[k]; return `<li><span class="org">${ST.esc(s.org)}</span><a href="${ST.esc(s.url)}" target="_blank" rel="noopener">${ST.esc(s.label)}</a></li>`; }).join("")}</ul>`;
 
+  /* Oldest check date among the given sources (falls back to the site-wide date). */
+  ST.checkedOf = keys => (keys || []).map(k => ST.SRC[k] && ST.SRC[k].checked).filter(Boolean).sort()[0] || ST.CHECKED;
+
   /* ---------- Progress (per viewer): localStorage, mirrored to the artifact DB when available ---------- */
   const LS_KEY = "sectracer.progress.v2";
   ST.P = { terms: {}, sims: {}, lessons: {}, labs: {}, quiz: { answered: 0, correct: 0 }, streak: { last: "", days: 0 }, updated: 0 };
@@ -53,6 +56,35 @@ window.ST = window.ST || {};
   ST.masteryDots = id => { const m = ST.mastery(id); return `<span class="mastery" title="理解度 ${m}/3">${[0, 1, 2].map(i => `<i class="${i < m ? "on" : ""}"></i>`).join("")}</span>`; };
   ST.markLesson = id => { if (!ST.P.lessons[id]) { ST.P.lessons[id] = Date.now(); ST.touchStreak(); ST.save(); } };
   ST.markLab = id => { if (!ST.P.labs[id]) { ST.P.labs[id] = Date.now(); ST.touchStreak(); ST.save(); } };
+  /* ---------- Handoff code: copy progress as text on one device, paste on another. No server; merged, never overwritten. ---------- */
+  const CODE_PREFIX = "ST1-", CODE_MAX = 200000;
+  ST.exportCode = () => CODE_PREFIX + btoa(unescape(encodeURIComponent(JSON.stringify(ST.P)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  const isObj = o => o && typeof o === "object" && !Array.isArray(o);
+  ST.parseCode = text => {
+    const t = String(text || "").trim();
+    if (!t.startsWith(CODE_PREFIX) || t.length > CODE_MAX) throw new Error("引き継ぎコードの形式が違います");
+    let o;
+    try { o = JSON.parse(decodeURIComponent(escape(atob(t.slice(CODE_PREFIX.length).replace(/-/g, "+").replace(/_/g, "/"))))); } catch (e) { throw new Error("コードを読み取れませんでした（途中で切れていないか確認してください）"); }
+    if (!isObj(o) || !isObj(o.terms) || !isObj(o.lessons) || !isObj(o.labs)) throw new Error("コードの中身が学習記録ではありません");
+    return o;
+  };
+  /* Union of completed items (earliest time kept); per term, the entry with more answers; the larger quiz tally; the later streak. */
+  ST.mergeProgress = (a, b) => {
+    const union = (x, y, pick) => { const r = Object.assign({}, x); for (const k in y) r[k] = k in r ? pick(r[k], y[k]) : y[k]; return r; };
+    const early = (p, q) => (typeof p === "number" && typeof q === "number" ? Math.min(p, q) : p);
+    const n = s => (s.c || 0) + (s.w || 0) + (s.seen || 0);
+    const qa = a.quiz || { answered: 0, correct: 0 }, qb = b.quiz || { answered: 0, correct: 0 };
+    return {
+      terms: union(a.terms || {}, b.terms || {}, (p, q) => (n(q) > n(p) ? q : p)),
+      sims: union(a.sims || {}, b.sims || {}, (p, q) => ((q && q.at || 0) < (p && p.at || 0) ? q : p)),
+      lessons: union(a.lessons || {}, b.lessons || {}, early),
+      labs: union(a.labs || {}, b.labs || {}, early),
+      quiz: (qb.answered || 0) > (qa.answered || 0) ? qb : qa,
+      streak: ((b.streak && b.streak.last) || "") > ((a.streak && a.streak.last) || "") ? b.streak : (a.streak || { last: "", days: 0 }),
+      updated: Date.now()
+    };
+  };
+  ST.importCode = text => { ST.P = ST.mergeProgress(ST.P, ST.parseCode(text)); ST.save(); };
   ST.bindRemoteProgress = async (db, userId) => {
     progRef = db.collection("data/users/" + userId).doc("progress");
     const snap = await progRef.get();
