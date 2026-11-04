@@ -127,7 +127,7 @@ ST.COURSES = [
   ]},
  {id:"web", n:"04", title:"Webアプリの脆弱性", color:"var(--c6)", desc:"SQLインジェクション、XSS、CSRF、API。入力がどう悪用されるかを見る。",
   lessons:[
-   {id:"we-sqli", title:"SQLインジェクション", min:9, terms:["sqli","waf"], src:["ipaweb","owasp","jp030"], blocks:[
+   {id:"we-sqli", title:"SQLインジェクション", min:9, terms:["sqli","waf"], src:["ipaweb","owasp","jp030"],practice:["psqli"], blocks:[
      {p:"[[sqli]]は、入力欄に入れた文字が、アプリの意図に反して**SQLの命令として解釈されてしまう**脆弱性です。下のツールは、入力から組み立てられるSQL文を実際に解釈して、どの行が返るかを計算しています。"},
      {w:"sqli"},
      {h:"根本的な対策はプレースホルダ"},
@@ -135,13 +135,13 @@ ST.COURSES = [
      {w:"packetsim", o:{id:"sqli"}},
      {key:["入力を文字列連結でSQLに埋め込むと、命令として解釈される","プレースホルダで「構造」と「値」を分ける","WAFは緩和策で、アプリの修正の代わりにはならない"]}
    ]},
-   {id:"we-xss", title:"クロスサイト・スクリプティング", min:8, terms:["xss","session"], src:["ipaweb","owasp","mdnhttp"], blocks:[
+   {id:"we-xss", title:"クロスサイト・スクリプティング", min:8, terms:["xss","session"], src:["ipaweb","owasp","mdnhttp"],practice:["psxss"], blocks:[
      {p:"[[xss]]は、利用者が入力した文字が、他の人のブラウザで**HTMLやJavaScriptとして解釈されてしまう**脆弱性です。攻撃者のスクリプトは、そのサイトの一部として動くため、Cookieの読み取りや画面の書き換えができてしまいます。"},
      {w:"xss"},
      {p:"「エスケープして出力」に切り替えると、`<` が `&lt;` に置き換えられ、タグではなくただの文字として表示されます。出力する場所に応じて、正しくエスケープすることが基本の対策です。CookieにHttpOnly属性を付けておけば、スクリプトからCookieを読まれることも防げます。"},
      {key:["XSSは入力がHTMLとして解釈される問題","出力時のエスケープが基本の対策","HttpOnly属性でCookieの窃取を防ぐ"]}
    ]},
-   {id:"we-csrf", title:"セッションとCSRF", min:7, terms:["csrf","session","sop"], src:["ipaweb","mdnhttp","mdnsop"], blocks:[
+   {id:"we-csrf", title:"セッションとCSRF", min:7, terms:["csrf","session","sop"], src:["ipaweb","mdnhttp","mdnsop"],practice:["pscsrf"], blocks:[
      {p:"ログイン状態は、ブラウザがCookieに保存したセッションIDを毎回自動で送ることで保たれています（[[session]]）。この「自動で送る」性質を悪用するのが[[csrf]]です。"},
      {w:"csrf"},
      {p:"ブラウザの[[sop]]により、罠サイトは銀行サイトのページの中身（CSRFトークンなど）を読むことはできません。しかし、リクエストを「送る」ことはできてしまいます。だからこそ、サーバー側で「本当に自分のページから送られたか」を確かめる必要があります。"},
@@ -154,7 +154,7 @@ ST.COURSES = [
      {p:"[[access-control]]の不備はOWASP Top 10でも主要なリスクとして扱われています。APIは要求のたびに「この利用者がこのデータにアクセスしてよいか」を確認しなければなりません。あわせて[[rate-limit]]で大量の探索を止め、トークンには最小限の権限と有効期限を付けます。"},
      {key:["アプリは解析される前提で設計する","すべてのAPIで、要求ごとに権限を確認する","レート制限とトークンの最小権限で被害を抑える"]}
    ]},
-   {id:"we-cmdi", title:"OSコマンド・インジェクション", min:7, terms:["cmdi","rce"], src:["ipaos","cwe78"], blocks:[
+   {id:"we-cmdi", title:"OSコマンド・インジェクション", min:7, terms:["cmdi","rce"], src:["ipaos","cwe78"],practice:["pscmdi"], blocks:[
      {p:"Webアプリが内部でOSのコマンドを呼び出すとき、入力をそのままコマンドの文字列に組み込むと、[[cmdi]]が起きます。シェルは ; や && を「命令の区切り」と解釈するため、入力の後半が別の命令として実行されてしまいます。"},
      {w:"cmdi"},
      {h:"IPAが示す対策"},
@@ -163,7 +163,7 @@ ST.COURSES = [
      {callout:"成功すると、サーバー内のファイルの閲覧・改ざん・削除、不正なプログラムのダウンロードと実行、他のシステムへの攻撃の踏み台などにつながります（IPA）。", kind:"warn"},
      {key:["シェルは記号を命令の区切りとして解釈する","根本的解決はシェルを使わないこと","入力チェックは保険的な対策"]}
    ]},
-   {id:"we-ssrf", title:"SSRF（サーバーサイド・リクエスト・フォージェリ）", min:6, terms:["ssrf","firewall"], src:["cwe918"], blocks:[
+   {id:"we-ssrf", title:"SSRF（サーバーサイド・リクエスト・フォージェリ）", min:6, terms:["ssrf","firewall"], src:["cwe918"],practice:["psssrf"], blocks:[
      {p:"URLを受け取ってサーバーが中身を取りに行く機能（リンクのプレビュー、画像の取り込み、Webhookなど）で、行き先を十分に確かめないと[[ssrf]]になります。"},
      {w:"ssrf"},
      {h:"ファイアウォールの内側から来るリクエスト"},
@@ -171,7 +171,7 @@ ST.COURSES = [
      {list:["取得先を許可リストに限る","名前解決した後の実際の接続先アドレスで判断する（名前だけで判断しない）","http/https 以外のスキームを受け付けない"]},
      {key:["サーバーは社内ネットワークの内側にいる","URLの文字列ではなく、実際の接続先で判断する","許可リスト方式が基本"]}
    ]},
-   {id:"we-upload", title:"ファイルアップロードの危険", min:5, terms:["file-upload","xss"], src:["cwe434"], blocks:[
+   {id:"we-upload", title:"ファイルアップロードの危険", min:5, terms:["file-upload","xss"], src:["cwe434"],practice:["psupload"], blocks:[
      {p:"画像やファイルを受け付ける機能で、危険な種類のファイル（サーバー上で実行されるスクリプトなど）を受け入れてしまう脆弱性が[[file-upload]]です（CWE-434）。アップロードされたファイルがサーバーで実行されると、任意のコードの実行につながります。"},
      {h:"CWE-434が挙げる主な対策"},
      {list:["保存するファイル名はサーバーが新しく生成し、利用者が付けた名前を使わない","ファイルは公開ディレクトリ（Webルート）の外に保存する","拡張子は許可リストで少数に限り、「photo.php.jpg」のような複数の拡張子は拒否する","チェックは必ずサーバー側で行う（ブラウザ側のチェックは回避できる）","Content-Typeやファイルの中身の検査だけに頼らない（正しい画像の中にコードを隠せる）"]},

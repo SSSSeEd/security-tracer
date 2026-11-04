@@ -121,7 +121,8 @@
       ${html}
       <div class="card"><div class="eyebrow">関連する用語</div><div class="filters" style="margin-top:8px">${l.terms.filter(t => ST.TERM[t]).map(t => `<a class="tag" href="#term-${t}">${esc(ST.TERM[t].name)}</a>`).join("")}</div>
         <div class="eyebrow" style="margin-top:14px;margin-bottom:6px">出典</div>${ST.srcList(l.src)}
-        <p class="verify" style="margin-top:12px">出典確認日 ${ST.checkedOf(l.src)}。本文はClaudeが出典をもとに作成した解説です。</p></div>
+        ${(l.practice || []).length ? `<div class="eyebrow" style="margin-top:14px;margin-bottom:6px">実践・外部教材</div>${ST.srcList(l.practice)}<p class="cap" style="margin:6px 0 0">練習は、用意された演習環境の中だけで行います（<a href="#l-law-uaa">不正アクセス禁止法</a>）。外部サイトの内容は転載せず、リンクだけを案内しています。</p>` : ""}
+        <p class="verify" style="margin-top:12px">出典確認日 ${ST.checkedOf(l.src.concat(l.practice || []))}。本文はClaudeが出典をもとに作成した解説です。</p></div>
       <div class="lesson-nav">${prev ? `<a class="btn" href="#l-${prev.id}">‹ ${esc(prev.title)}</a>` : "<span></span>"}<button class="btn primary" type="button" data-done>${ST.P.lessons[l.id] ? "完了済み ✓" : "このレッスンを完了"}</button>${next ? `<a class="btn" href="#l-${next.id}">${esc(next.title)} ›</a>` : ""}</div>
     </article>`;
     v.querySelector("[data-done]").onclick = () => { ST.markLesson(l.id); next ? (location.hash = "l-" + next.id) : (location.hash = "course-" + c.id); };
