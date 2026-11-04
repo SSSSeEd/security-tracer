@@ -37,6 +37,16 @@ if (ST && ST.W) {
     if (!(l.src || []).length) bad(`lesson ${l.id}: 出典（src）が1つもない`);
     (l.practice || []).forEach(s => { if (!ST.SRC[s]) bad(`lesson ${l.id}: 未登録の外部教材 ${s}`); });
   });
+  /* Skill tree: every lesson declares requires (lesson ids), no unknown ids, no cycles. */
+  lessons.forEach(l => {
+    if (!Array.isArray(l.requires)) return bad(`lesson ${l.id}: requires がない（入口なら []）`);
+    l.requires.forEach(r => { if (!ST.LESSON[r]) bad(`lesson ${l.id}: requires に未登録のレッスン ${r}`); if (r === l.id) bad(`lesson ${l.id}: requires に自分自身`); });
+  });
+  const seen = {}, visit = (id, stack) => {
+    if (seen[id] === 2) return; if (seen[id] === 1) return bad(`requires が循環している: ${[...stack, id].join(" → ")}`);
+    seen[id] = 1; ((ST.LESSON[id] || {}).requires || []).forEach(r => visit(r, [...stack, id])); seen[id] = 2;
+  };
+  lessons.forEach(l => visit(l.id, []));
   ST.TERMS.forEach(t => {
     if (t.lab && !(ST.W[t.lab] && ST.W[t.lab].group)) bad(`term ${t.id}: lab ${t.lab} がラボとして未登録`);
     if (t.sim && !ST.SC[t.sim]) bad(`term ${t.id}: 未登録のシミュレーター ${t.sim}`);
