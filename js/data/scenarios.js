@@ -67,5 +67,18 @@ ST.SCEN = [
    {f:"api",t:"db",p:"QUERY",title:"他人のデータを取得",text:"APIが「ログインしているか」だけを確認し、「その人のデータか」を確認していないと、他人の情報も返してしまう。",block:"authz",blockText:"APIが要求ごとに「このデータにアクセスしてよい利用者か」を確認するので、他人のデータは返らない。"},
    {f:"api",t:"atk",p:"JSON",title:"個人情報が漏えい",text:"会員の氏名やメールアドレスなどがまとめて持ち出される。"}],
   bad:"攻撃成功：会員情報が漏えい",good:"攻撃を阻止"}
+ ,{id:"bec",title:"取引先を装った振込先変更",tag:"組織",terms:["bec","phishing"],
+  intro:"取引先になりすましたメールで、振込先の変更を求められる場面を追います。手口の流れと対策は警察庁の解説に沿っています。",
+  nodes:[{id:"atk",type:"attacker",label:"攻撃者",x:60,y:60},{id:"vendor",type:"server",label:"本物の取引先",x:300,y:60},
+         {id:"acc",type:"pc",label:"経理担当者",x:60,y:200},{id:"bank",type:"cloud",label:"銀行",x:300,y:200}],
+  links:[["atk","acc"],["acc","vendor",1],["acc","bank"],["bank","atk",1]],
+  defs:[{id:"callback",label:"メール以外の方法で確認する",d:"名刺やアドレス帳にある連絡先へ電話などで確認",term:"bec"},
+        {id:"addr",label:"送信元アドレスを確かめる",d:"本物によく似せた偽装がないかを見直す",term:"phishing"}],
+  steps:[
+   {f:"atk",t:"acc",p:"MAIL",title:"取引先になりすましたメールが届く",text:"攻撃者は実在の取引先（や自社の経営者層）になりすまし、メールで振込先口座の変更などを指示する。",mitig:"addr",mitigText:"送信元アドレスを確かめ、本物によく似せた偽装だと気づけば、不自然な点として扱える。"},
+   {f:"acc",t:"vendor",p:"TEL",title:"本人に電話で確認する",text:"名刺やアドレス帳など、メールに書かれていない連絡先で担当者に確認する。確認しないと次の段階に進む。",block:"callback",blockText:"本物の取引先に確認し、振込先を変更していないと分かった。振込は行われない。"},
+   {f:"acc",t:"bank",p:"振込",title:"指定された口座へ振り込む",text:"メールに書かれた口座へ振込を依頼する。攻撃者が指定する口座は、多くが海外の口座とされる。"},
+   {f:"bank",t:"atk",p:"着金",title:"攻撃者が資金を受け取る",text:"一度海外へ送金されると、回収は非常に困難になる。"}],
+  bad:"攻撃成功：偽の口座へ送金された",good:"攻撃を阻止",mid:"被害の可能性が下がりました"}
 ];
 ST.SC = Object.fromEntries(ST.SCEN.map(s => [s.id, s]));
