@@ -63,6 +63,12 @@ ST.SRC = {
   awsiam:   {org:"AWS", label:"Security best practices in IAM", url:"https://docs.aws.amazon.com/IAM/latest/UserGuide/IAMBestPractices.html", checked:"2026-11-01"},
   awskey:   {org:"AWS", label:"What to do if you inadvertently expose an AWS access key（AWS Security Blog）", url:"https://aws.amazon.com/blogs/security/what-to-do-if-you-inadvertently-expose-an-aws-access-key/", checked:"2026-11-01"},
   ghsecret: {org:"GitHub", label:"About secret scanning", url:"https://docs.github.com/en/code-security/secret-scanning/introduction", checked:"2026-11-01"},
+  psqli:   {org:"PortSwigger", label:"Web Security Academy：SQL injection（無料の演習ラボつき）", url:"https://portswigger.net/web-security/sql-injection", checked:"2026-11-04"},
+  psxss:   {org:"PortSwigger", label:"Web Security Academy：Cross-site scripting（無料の演習ラボつき）", url:"https://portswigger.net/web-security/cross-site-scripting", checked:"2026-11-04"},
+  pscsrf:  {org:"PortSwigger", label:"Web Security Academy：CSRF（無料の演習ラボつき）", url:"https://portswigger.net/web-security/csrf", checked:"2026-11-04"},
+  psssrf:  {org:"PortSwigger", label:"Web Security Academy：SSRF（無料の演習ラボつき）", url:"https://portswigger.net/web-security/ssrf", checked:"2026-11-04"},
+  pscmdi:  {org:"PortSwigger", label:"Web Security Academy：OS command injection（無料の演習ラボつき）", url:"https://portswigger.net/web-security/os-command-injection", checked:"2026-11-04"},
+  psupload:{org:"PortSwigger", label:"Web Security Academy：File upload vulnerabilities（無料の演習ラボつき）", url:"https://portswigger.net/web-security/file-upload", checked:"2026-11-04"},
   egovuaa:  {org:"e-Gov法令検索", label:"不正アクセス行為の禁止等に関する法律（平成十一年法律第百二十八号）", url:"https://laws.e-gov.go.jp/law/411AC0000000128", checked:"2026-11-04"},
   ipavulnrep:{org:"IPA", label:"脆弱性関連情報の届出受付", url:"https://www.ipa.go.jp/security/vuln/report/index.html", checked:"2026-11-04"},
   ipa10org: {org:"IPA", label:"情報セキュリティ10大脅威 2026 解説書（組織編）", url:"https://www.ipa.go.jp/security/10threats/omgdg50000008fi8-att/kaisetsu_2026_soshiki.pdf", checked:"2026-11-03"}

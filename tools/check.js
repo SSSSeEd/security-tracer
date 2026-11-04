@@ -37,17 +37,26 @@ if (ST && ST.W) {
     l.blocks.forEach(b => { if (b.w && !widgets.has(b.w)) bad(`lesson ${l.id}: 未登録のウィジェット ${b.w}`); });
     (l.terms || []).forEach(t => { if (!ST.TERM[t]) bad(`lesson ${l.id}: 未登録の用語 ${t}`); });
     (l.src || []).forEach(s => { if (!ST.SRC[s]) bad(`lesson ${l.id}: 未登録の出典 ${s}`); });
+    if (!(l.src || []).length) bad(`lesson ${l.id}: 出典（src）が1つもない`);
+    (l.practice || []).forEach(s => { if (!ST.SRC[s]) bad(`lesson ${l.id}: 未登録の外部教材 ${s}`); });
   });
   ST.TERMS.forEach(t => {
     if (t.lab && !(ST.W[t.lab] && ST.W[t.lab].group)) bad(`term ${t.id}: lab ${t.lab} がラボとして未登録`);
     if (t.sim && !ST.SC[t.sim]) bad(`term ${t.id}: 未登録のシミュレーター ${t.sim}`);
     (t.src || []).forEach(s => { if (!ST.SRC[s]) bad(`term ${t.id}: 未登録の出典 ${s}`); });
+    if (!(t.src || []).length) bad(`term ${t.id}: 出典（src）が1つもない`);
     JSON.stringify([t.summary, t.how, t.risk, t.defense]).replace(/\[\[([\w-]+)(?:\|[^\]]*)?\]\]/g, (_, id) => { if (!ST.TERM[id]) bad(`term ${t.id}: リンク先の用語 ${id} がない`); });
   });
   lessons.forEach(l => JSON.stringify(l.blocks).replace(/\[\[([\w-]+)(?:\|[^\]]*)?\]\]/g, (_, id) => { if (!ST.TERM[id]) bad(`lesson ${l.id}: リンク先の用語 ${id} がない`); }));
   ST.QUIZ.forEach((q, i) => { if (q.term && !ST.TERM[q.term]) bad(`quiz #${i + 1}: 未登録の用語 ${q.term}`); });
   (ST.NEWS_STATIC || []).forEach(n => (n.terms || []).forEach(t => { if (!ST.TERM[t]) bad(`news ${n.id}: 未登録の用語 ${t}`); }));
-  const used = new Set([...lessons.flatMap(l => l.src || []), ...ST.TERMS.flatMap(t => t.src || [])]);
+  Object.entries(ST.SRC).forEach(([k, s]) => {
+    if (!s.org || !s.label) bad(`出典 ${k}: org / label がない`);
+    if (!/^https:\/\/[^\s]+$/.test(s.url || "")) bad(`出典 ${k}: url が https で始まっていない`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(s.checked || "")) bad(`出典 ${k}: 確認日（checked, YYYY-MM-DD）がない`);
+  });
+  ST.QUIZ.forEach((q, i) => { if (!q.term) bad(`quiz #${i + 1}: term がない（出典を引けない）`); if (!q.exp) bad(`quiz #${i + 1}: 解説（exp）がない`); });
+  const used = new Set([...lessons.flatMap(l => l.practice || []), ...lessons.flatMap(l => l.src || []), ...ST.TERMS.flatMap(t => t.src || [])]);
   const unused = Object.keys(ST.SRC).filter(k => !used.has(k));
   if (unused.length) console.log("（参考）どこからも引用されていない出典: " + unused.join(", "));
   console.log(`ウィジェット ${widgets.size}、ラボ ${Object.keys(ST.LAB).length}、レッスン ${lessons.length}、用語 ${ST.TERMS.length}`);
