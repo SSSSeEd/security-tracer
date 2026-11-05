@@ -5,6 +5,7 @@ Security Tracer（日本語の情報セキュリティ学習サイト）の開�
 ## 現状
 - 静的サイト（素のJS、ビルドなし、グローバル名前空間 `ST`）。iPhone と iPad/PC の両方で使う。ユーザーは主に iPad/PC で使う予定。
 - 規模: 12コース・45レッスン・31ラボ・5シミュレーター・用語86・クイズ約53問。
+- 公開: GitHub Pages 有効化済み（https://sssseed.github.io/security-tracer/）、noindex・robots.txt 済み、ラボのロックは `ST.LOCK = "off"`（PR #13）。定期タスクの現在のID: 毎日改善 trig_01EEzfq2QKRDyct8WkMfFkqj、週次ニュース trig_016DKpPX2qxHt7qc2Er7a5TY。
 - リポジトリ: https://github.com/SSSSeEd/security-tracer （main に初回の内容を直接 push 済み）。
 - PR の流れ: #1〜#10 はすべてマージ済み（#7 法律と倫理＋引き継ぎコード、#8 出典必須チェック＋外部教材欄、#9 スキルツリー requires と解放表示・#tree、#10 ビジネスメール詐欺シミュレーター＋PWAオフライン）。マージはユーザーが行う。
 - 構成は README.md を参照。ラボの追加手順は README の「ラボを足すとき」。
@@ -50,6 +51,7 @@ Security Tracer（日本語の情報セキュリティ学習サイト）の開�
 - 毎日確認して、少しずつ育てていく運用。
 
 ## 技術メモ
+- **`.nojekyll` を消さない**: GitHub Pages は既定で Jekyll が動き、`_` で始まるファイル（`js/widgets/_kit.js`）を配信しない。消すとスマホで「ST.segHtml is not a function」になる（2026-11-05）。
 - 新しい分野を足すとき: `ST.LAB_GROUPS`（js/views.js）に分野、`css/style.css` の3か所（ライト・ダーク2つ）に色トークン `--cN`、`ST.COURSES` でニュースの直前に挿入しニュースの番号を繰り下げる。
 - ウィジェット内の結果欄に `data-v` 属性を使わない（`ST.segHtml` のボタンが `data-v` を持つので `querySelector` が衝突する）。`data-out` などを使う。
 - 毎日の改善で前日の PR が未マージなら、その PR のブランチから切って積み、PR 説明に「#N を含む」と書く。
