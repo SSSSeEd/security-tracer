@@ -239,6 +239,9 @@ table.tbl td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;whi
 .lab-card{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit}
 .lab-card .ico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--sunken);color:var(--cc,var(--packet))}
 
+@keyframes hdr-in{from{transform:translateX(-26px) scale(.7);opacity:0}to{transform:none;opacity:1}}
+@keyframes hdr-out{from{transform:translateY(-14px);opacity:.25;filter:brightness(1.6)}to{transform:none;opacity:1}}
+.hdr-in{animation:hdr-in .55s ease-out both}.hdr-out{animation:hdr-out .55s ease-out both}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* Skill tree and locks (ST.lessonState: done / open / locked) */

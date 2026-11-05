@@ -51,6 +51,8 @@ Security Tracer（日本語の情報セキュリティ学習サイト）の開�
 - 毎日確認して、少しずつ育てていく運用。
 
 ## 技術メモ
+- **パケットのアニメーション**（2026-11-05）：`ST.flyPacket(svg, [{x,y}…], {label,color,blockAt})` と `ST.seq`（矢印ごとに動く）。ウィジェット定義に `motion: true` で「動き」切り替えがヘッダに出る。速さは `ST.motionScale()` を掛ける。攻撃シミュレーター（packetsim）と他ラボは未対応。
+- 定期タスクは新スレッドに付け替え済み（2026-11-05）：毎日改善 trig_014t94FyCADJrXw2BVi6C1qz、週次ニュース trig_01YK3wc6qteoWjFScY1q4PJH。
 - **`.nojekyll` を消さない**: GitHub Pages は既定で Jekyll が動き、`_` で始まるファイル（`js/widgets/_kit.js`）を配信しない。消すとスマホで「ST.segHtml is not a function」になる（2026-11-05）。
 - 新しい分野を足すとき: `ST.LAB_GROUPS`（js/views.js）に分野、`css/style.css` の3か所（ライト・ダーク2つ）に色トークン `--cN`、`ST.COURSES` でニュースの直前に挿入しニュースの番号を繰り下げる。
 - ウィジェット内の結果欄に `data-v` 属性を使わない（`ST.segHtml` のボタンが `data-v` を持つので `querySelector` が衝突する）。`data-out` などを使う。

@@ -4,6 +4,33 @@
   const esc = ST.esc;
   const KIND = { normal: "var(--ink)", attack: "var(--attack)", ok: "var(--ok)", info: "var(--info)", packet: "var(--packet)", muted: "var(--muted)" };
 
+  /* Fly a packet icon along a polyline inside an SVG. pts: [{x,y},...]; opts: {label, color, ms (per segment, default 700), blockAt (0..1 of the path: stop there and show a block mark), alive: () => bool}.
+     Resolves when finished. With motion "off" it resolves at once (the caller still shows the result). */
+  ST.flyPacket = (svg, pts, opts) => new Promise(res => {
+    opts = opts || {};
+    const k = ST.motionScale();
+    if (!k || !svg.isConnected) return res();
+    const color = opts.color || "var(--packet)", NS = "http://www.w3.org/2000/svg";
+    const g = document.createElementNS(NS, "g");
+    g.setAttribute("pointer-events", "none");
+    g.innerHTML = `<rect x="-11" y="-8" width="22" height="16" rx="2.5" fill="${color}"/><path d="M-11 -7 0 2 11 -7" fill="none" stroke="var(--surface)" stroke-width="1.5"/>${opts.label ? `<text y="-13" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="600" fill="${color}">${esc(opts.label)}</text>` : ""}`;
+    svg.appendChild(g);
+    const seg = [], total = pts.slice(1).reduce((a, p, i) => { const d = Math.hypot(p.x - pts[i].x, p.y - pts[i].y); seg.push(d); return a + d; }, 0) || 1;
+    const stop = opts.blockAt == null ? 1 : opts.blockAt, dur = (opts.ms || 700) * (pts.length - 1) * k * stop, t0 = performance.now();
+    const at = f => { let d = f * total; for (let i = 0; i < seg.length; i++) { if (d <= seg[i] || i === seg.length - 1) { const r = seg[i] ? Math.min(1, d / seg[i]) : 1; return { x: pts[i].x + (pts[i + 1].x - pts[i].x) * r, y: pts[i].y + (pts[i + 1].y - pts[i].y) * r }; } d -= seg[i]; } return pts[pts.length - 1]; };
+    const frame = now => {
+      if (!g.isConnected || (opts.alive && !opts.alive())) { g.remove(); return res(); }
+      const t = Math.min(1, (now - t0) / dur), e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2, p = at(e * stop);
+      g.setAttribute("transform", `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
+      if (t < 1) return requestAnimationFrame(frame);
+      if (opts.blockAt != null) {
+        g.innerHTML = `<circle r="11" fill="var(--ok)"/><path d="M-4.5 -4.5l9 9M4.5 -4.5l-9 9" stroke="var(--surface)" stroke-width="2.4"/>`;
+        setTimeout(() => { g.remove(); res(); }, 450 * k);
+      } else { g.remove(); res(); }
+    };
+    requestAnimationFrame(frame);
+  });
+
   /* Sequence diagram with a step player.
      cfg: {actors:[{id,label,atk}], steps:[{f,t,label,note,kind,dash,block?}], height?, onDone?}
      Steps are revealed one at a time; the note of the latest step is shown under the diagram. */
@@ -12,7 +39,7 @@
     const A = cfg.actors, n = A.length;
     const colX = i => Math.round(W / n * (i + 0.5));
     const xi = Object.fromEntries(A.map((a, i) => [a.id, colX(i)]));
-    let shown = 0, timer = null;
+    let shown = 0, timer = null, fly = false;
     el.innerHTML = `<div class="stage scroll-x"><svg viewBox="0 0 ${W} ${top + rowH * cfg.steps.length + 16}" role="img" aria-label="シーケンス図"></svg></div>
       <div class="btns"><button class="btn small" type="button" data-a="reset">↺ 最初から</button><button class="btn small" type="button" data-a="next">次へ ›</button><button class="btn small primary" type="button" data-a="all">▶ 再生</button></div>
       <div class="card" aria-live="polite" data-note style="padding:12px"></div>`;
@@ -47,12 +74,17 @@
       el.querySelector('[data-a="next"]').disabled = shown >= cfg.steps.length;
       el.querySelector('[data-a="all"]').disabled = shown >= cfg.steps.length;
       if (shown === cfg.steps.length && cfg.onDone) cfg.onDone();
+      if (fly && shown > 0) {
+        const st = cfg.steps[shown - 1], y = top + rowH * (shown - 1) + 24, x1 = xi[st.f], x2 = xi[st.t], my = shown;
+        if (x1 !== x2) ST.flyPacket(svg, [{ x: x1, y }, { x: x2, y }], { ms: 600, color: st.kind && st.kind !== "normal" ? KIND[st.kind] : KIND.packet, blockAt: st.block ? 0.55 : null, alive: () => my === shown });
+      }
+      fly = false;
     };
     el.querySelector('[data-a="reset"]').onclick = () => { clearInterval(timer); shown = 0; draw(); };
-    el.querySelector('[data-a="next"]').onclick = () => { clearInterval(timer); if (shown < cfg.steps.length) { shown++; draw(); } };
+    el.querySelector('[data-a="next"]').onclick = () => { clearInterval(timer); if (shown < cfg.steps.length) { shown++; fly = true; draw(); } };
     el.querySelector('[data-a="all"]').onclick = () => {
       clearInterval(timer);
-      timer = setInterval(() => { if (shown >= cfg.steps.length) return clearInterval(timer); shown++; draw(); }, ST.reduceMotion ? 150 : 1100);
+      timer = setInterval(() => { if (shown >= cfg.steps.length) return clearInterval(timer); shown++; fly = true; draw(); }, ST.motion === "off" ? 150 : 1100 * Math.max(1, ST.motionScale() * .8));
     };
     draw();
     return { stop: () => clearInterval(timer), redraw: draw, setSteps: steps => { cfg.steps = steps; shown = 0; draw(); } };
