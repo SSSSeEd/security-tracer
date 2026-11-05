@@ -52,7 +52,7 @@ window.ST = window.ST || {};
   ST.markLesson = id => { if (!ST.P.lessons[id]) { ST.P.lessons[id] = Date.now(); ST.touchStreak(); ST.save(); } };
   ST.markLab = id => { if (!ST.P.labs[id]) { ST.P.labs[id] = Date.now(); ST.touchStreak(); ST.save(); } };
   /* ---------- Skill tree: lesson.requires (js/data/courses.js). Derived from ST.P.lessons only; nothing new is stored. ---------- */
-  ST.LOCK = "soft"; // "soft": show a gate with a "read anyway" button; "hard": no button; "off": order hints only.
+  ST.LOCK = "off"; // "soft": show a gate with a "read anyway" button; "hard": no button; "off": order hints only.
   ST.peek = new Set(); // gates opened with "read anyway" in this page session (not saved)
   ST.missingReqs = id => ((ST.LESSON[id] || {}).requires || []).filter(r => !ST.P.lessons[r]);
   ST.lessonState = id => ST.P.lessons[id] ? "done" : !ST.missingReqs(id).length ? "open" : "locked";
