@@ -22,7 +22,7 @@ Security Tracer（日本語の情報セキュリティ学習サイト）の開�
 2. GitHub Pages の有効化（Settings → Pages、`main`、`/ (root)`）。ユーザー側の操作で、済んだら公開URL（https://sssseed.github.io/security-tracer/）が開けるか確認する。
 3. **引き継ぎコード**：実装済み（PR #7）。`ST.exportCode` / `ST.importCode`（js/core.js）、ホーム画面の下部に UI。統合は和集合で、上書きしない。
 4. ROADMAP の続き（スマホ・クラウド・AI・法律と倫理の基本は済）: 刑法のサイバー関連（e-Gov の条文本文が取得できなかったため保留。確認できてから）、攻撃シミュレーター追加（ビジネスメール詐欺は済。サプライチェーン・標的型メールは、IPA解説書PDFの本文が取得できないため別の一次情報を探す）、学習記録のレーダーチャート（スキルツリーと状態管理が重なるので、Opus 側の設計後に）。PWAオフラインは `sw.js` で済（HTTPSのGitHub Pages版で有効。キャッシュ一覧は `tools/check.js` が検査）。出典必須のチェックと、レッスンの `practice`（外部教材）欄は済（PortSwigger の6件）。OWASP Top 10:2025 の各項目は、本文を確認してから。ユーザー決定の方針（2026-11-04）：スキルツリー型、出典必須（OWASP・IPA）、実践は PortSwigger など既存教材と連携。スキルツリーは新しい状態管理を伴うので Opus 担当で相談（窓口に依頼）。
-5. 保守スレッドの任意の提案: `web-server.js` のようにファイルを分ける目安は約20KB。net/defense/malware は約20KB で、次に触るときに分割を検討。
+5. 保守スレッドの提案（2026-11-05）: net.js が約23.6KBで目安20KBを超えた。次に触るPRで net-dns.js・net-fw.js などに分割（index.html と sw.js のキャッシュ一覧も更新）。以前の提案: `web-server.js` のようにファイルを分ける目安は約20KB。net/defense/malware は約20KB で、次に触るときに分割を検討。
 
 ## 役割と交代（2026-11-04 ユーザー決定）
 - 窓口はコーディネーター。通常作業は Sonnet の作業スレッド。設計判断を伴う変更（新しい状態管理など）は理由付きで窓口に依頼し、Opus スレッドを立てる。使用率70%超は全て Sonnet。
