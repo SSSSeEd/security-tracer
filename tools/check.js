@@ -18,6 +18,9 @@ const swText = fs.existsSync(path.join(root, "sw.js")) ? fs.readFileSync(path.jo
 if (!swText) bad("sw.js がない");
 lists[0].forEach(f => { if (swText && !swText.includes(`"${f}"`)) bad(`sw.js のキャッシュ一覧に ${f} がない（オフラインで開けなくなる）`); });
 
+/* Lazy-loaded vendor files (not in index.html) must still be cached for offline use. */
+(function walk(d) { fs.readdirSync(path.join(root, d), { withFileTypes: true }).forEach(e => { const rel = d + "/" + e.name; if (e.isDirectory()) return walk(rel); if (/\.(js|wasm)$/.test(e.name) && swText && !swText.includes(`"${rel}"`)) bad(`sw.js のキャッシュ一覧に ${rel} がない`); }); })("vendor");
+
 /* Run everything up to (not including) app.js in a stub browser to inspect the catalogs. */
 const noop = () => {}, el = () => new Proxy(function () {}, { get: () => el(), apply: () => el(), set: () => true });
 const win = { addEventListener: noop, matchMedia: () => ({ matches: false, addEventListener: noop }), location: { hash: "" }, localStorage: { getItem: () => null, setItem: noop } };
