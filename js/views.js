@@ -43,6 +43,7 @@
     const acc = ST.P.quiz.answered ? Math.round(ST.P.quiz.correct / ST.P.quiz.answered * 100) : 0;
     const nx = nextLesson(), c = ST.COURSE[nx.course];
     const today = ST.TERMS[Math.floor(Date.now() / 86400000) % ST.TERMS.length];
+    const due = ST.dueLessons(Date.now()).filter(id => ST.LESSON[id]); // 復習が必要なレッスンidの配列
     const featured = ["sqli", "ransom", "worm", "crypto"];
     v.innerHTML = `
     <section class="hero" style="display:grid;gap:14px">
@@ -58,6 +59,11 @@
     </section>
     <a class="card" href="#l-${nx.id}" style="text-decoration:none;color:inherit;display:flex;gap:14px;align-items:center;border-left:4px solid ${c.color}">
       <div style="flex:1;min-width:0"><div class="eyebrow">${done ? "続きから" : "最初のレッスン"} · ${esc(c.title)}</div><div style="font-size:18px;font-weight:700">${esc(nx.title)}</div><div class="cap">約${nx.min}分</div></div><span class="btn primary">開く ›</span></a>
+      ${due.length ? `<div class="card">   <!-- 1件以上のときだけ、枠を出す -->
+      <div class="section-h"><h2>今日の復習 ${due.length}件</h2></div>   <!-- 件数は見出しの中に入れる -->
+      <div class="list">${due.map(id => `<a class="row" href="#l-${id}">
+      <div>${esc(ST.LESSON[id].title)}</div></a>`).join("")}</div></div>   <!-- idごとに1行 -->
+      </div>` : ""}
     <section class="col">
       <div class="section-h"><h2>コース</h2><a href="#courses">すべて</a></div>
       <div class="course-grid">${ST.COURSES.map(courseCard).join("")}</div>
