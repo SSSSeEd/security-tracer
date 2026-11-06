@@ -66,6 +66,11 @@ window.ST = window.ST || {};
   ST.isDue = (doneAt, count, now) => {
     return now  >= ST.nextReview(doneAt, count);
   };
+  /* 復習まであと何日か（整数）。時期なら 0。 */
+  ST.daysUntilReview = (doneAt, count, now) => {
+    const ms = ST.nextReview(doneAt, count) - now;
+    return ms <= 0 ? 0 : Math.ceil(ms / 86400000);
+  };
   /* ---------- Skill tree: lesson.requires (js/data/courses.js). Derived from ST.P.lessons only; nothing new is stored. ---------- */
   ST.LOCK = "off"; // "soft": show a gate with a "read anyway" button; "hard": no button; "off": order hints only.
   ST.peek = new Set(); // gates opened with "read anyway" in this page session (not saved)
