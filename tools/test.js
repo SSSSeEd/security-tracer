@@ -93,19 +93,20 @@ test("daysUntilReview: ほかの関数を壊さない（nextReview は関数の�
 });
 
 /* 復習が必要なレッスンid（バイト方式の第4題）。 */
+/* vm の中で作られた配列は別の Array なので、[...] でこちらの配列にしてから比べる。 */
 const hasDueLessons = typeof ST.dueLessons === "function";
 
 test("dueLessons: 配列を返す（undefined ではない）", { skip: !hasDueLessons }, () => {
   ST.P.lessons = {};
-  assert.deepStrictEqual(ST.dueLessons(0), []);
+  assert.deepStrictEqual([...ST.dueLessons(0)], []);
 });
 
 test("dueLessons: 1日以上たったレッスンだけ返す", { skip: !hasDueLessons }, () => {
   ST.P.lessons = { old: 0, fresh: 2 * DAY };
-  assert.deepStrictEqual(ST.dueLessons(DAY + 1), ["old"]);
+  assert.deepStrictEqual([...ST.dueLessons(DAY + 1)], ["old"]);
 });
 
 test("dueLessons: 学んだ直後は含まない", { skip: !hasDueLessons }, () => {
   ST.P.lessons = { a: 1000 };
-  assert.deepStrictEqual(ST.dueLessons(1000), []);
+  assert.deepStrictEqual([...ST.dueLessons(1000)], []);
 });
