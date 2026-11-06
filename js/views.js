@@ -44,6 +44,7 @@
     const nx = nextLesson(), c = ST.COURSE[nx.course];
     const today = ST.TERMS[Math.floor(Date.now() / 86400000) % ST.TERMS.length];
     const due = ST.dueLessons(Date.now()).filter(id => ST.LESSON[id]); // 復習が必要なレッスンidの配列
+    const soon = ST.upcomingReviews(Date.now(), 7).filter(id => ST.LESSON[id]); // 7日以内に復習になるレッスンid（近い順）
     const featured = ["sqli", "ransom", "worm", "crypto"];
     v.innerHTML = `
     <section class="hero" style="display:grid;gap:14px">
@@ -63,6 +64,10 @@
       <div class="section-h"><h2>今日の復習 ${due.length}件</h2></div>   <!-- 件数は見出しの中に入れる -->
       <div class="list">${due.map(id => `<a class="row" href="#l-${id}">
       <div>${esc(ST.LESSON[id].title)}</div></a>`).join("")}</div></div>   <!-- idごとに1行 -->
+      </div>` : ""}
+      ${soon.length ? `<div class="card">
+        <div class="section-h"><h2>もうすぐ復習</h2></div>
+        <div class="list">${soon.map(id => `<a class="row" href="#l-${id}"><div class="body"><div class="t">${esc(ST.LESSON[id].title)}</div><div class="s">あと${ST.daysUntilReview(ST.P.lessons[id], 0, Date.now())}日</div></div></a>`).join("")}</div>
       </div>` : ""}
     <section class="col">
       <div class="section-h"><h2>コース</h2><a href="#courses">すべて</a></div>
