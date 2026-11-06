@@ -6,7 +6,7 @@
   /* ---------- Encapsulation ---------- */
   ST.widget("encap", {
     title: "カプセル化：データが包まれていく様子",
-    group: "net", name: "カプセル化", desc: "データがヘッダで包まれていく様子", order: 0,
+    group: "net", name: "カプセル化", desc: "データがヘッダで包まれていく様子", order: 0, motion: true,
     mount(el) {
       const L = [
         { k: "app", name: "アプリケーション層", proto: "HTTP", color: "var(--c3)", fields: [["メソッド", "GET"], ["パス", "/login"], ["Host", "shop.example"], ["Cookie", "session=8f3a…"]], seen: "WAF・アプリ自身" },
@@ -14,7 +14,7 @@
         { k: "net", name: "インターネット層", proto: "IP", color: "var(--c1)", fields: [["送信元IP", "192.0.2.10"], ["宛先IP", "198.51.100.20"], ["TTL", "64"]], seen: "ルーター・ファイアウォール" },
         { k: "link", name: "リンク層", proto: "Ethernet / Wi‑Fi", color: "var(--c5)", fields: [["宛先MAC", "00:00:5e:00:53:01"], ["送信元MAC", "00:00:5e:00:53:af"]], seen: "スイッチ・同じLAN内の機器" }
       ];
-      let k = 1, tls = false, side = "send";
+      let k = 1, tls = false, side = "send", pop = false;
       el.innerHTML = `<div class="btns">${ST.segHtml("side", [["send", "送信側（包む）"], ["recv", "受信側（外す）"]], side)}<label class="toggle" style="padding:6px 10px"><input type="checkbox" id="encap-tls"><span>HTTPS（TLSで暗号化）</span></label></div>
         <div class="stage" style="padding:14px"><div data-bar style="display:flex;gap:2px;align-items:stretch;min-height:64px"></div></div>
         <div class="btns"><button class="btn small" type="button" data-a="prev">‹ 戻る</button><button class="btn small primary" type="button" data-a="next">次の層へ ›</button></div>
@@ -30,6 +30,9 @@
           : seg(L[0], "HTTPデータ", 3);
         if (k === 4) html += seg(L[3], "FCS", .6);
         bar.innerHTML = html;
+        const sc = ST.motionScale();
+        if (pop && sc && bar.firstElementChild) { const f = bar.firstElementChild; f.classList.add(side === "send" ? "hdr-in" : "hdr-out"); f.style.animationDuration = (0.55 * sc).toFixed(2) + "s"; }
+        pop = false;
         const cur = L[k - 1];
         const verb = side === "send" ? "付けました" : "読み取って外します";
         info.innerHTML = `<div class="card" style="padding:12px;border-left:4px solid ${cur.color}">
@@ -42,8 +45,8 @@
         el.querySelector('[data-a="next"]').textContent = side === "send" ? "次の層へ ›" : "1層外す ›";
         if ((side === "send" && k === 4) || (side === "recv" && k === 1)) ST.markLab("encap");
       };
-      el.querySelector('[data-a="next"]').onclick = () => { k += side === "send" ? 1 : -1; draw(); };
-      el.querySelector('[data-a="prev"]').onclick = () => { k += side === "send" ? -1 : 1; draw(); };
+      el.querySelector('[data-a="next"]').onclick = () => { k += side === "send" ? 1 : -1; pop = true; draw(); };
+      el.querySelector('[data-a="prev"]').onclick = () => { k += side === "send" ? -1 : 1; pop = true; draw(); };
       el.querySelector("#encap-tls").onchange = e => { tls = e.target.checked; draw(); };
       ST.wireSeg(el, "side", v => { side = v; k = v === "send" ? 1 : 4; draw(); });
       draw();
@@ -53,7 +56,7 @@
   /* ---------- DNS resolution ---------- */
   ST.widget("dns", {
     title: "DNS：名前からIPアドレスを調べる流れ",
-    group: "net", name: "DNSとキャッシュポイズニング", desc: "名前解決の流れと偽の応答", order: 1,
+    group: "net", name: "DNSとキャッシュポイズニング", desc: "名前解決の流れと偽の応答", order: 1, motion: true,
     mount(el) {
       el.innerHTML = `<div class="btns">${ST.segHtml("mode", [["first", "初めての問い合わせ"], ["cache", "2回目（キャッシュあり）"], ["poison", "キャッシュポイズニング"]], "first")}</div>
         <label class="toggle" data-dnssec hidden><input type="checkbox" id="dns-sec"><span>DNSSECで応答を検証する<br><span class="d">権威サーバーの署名を確かめ、偽の応答を捨てる</span></span></label><div data-seq></div>`;
@@ -92,7 +95,7 @@
   /* ---------- TCP handshake & SYN flood ---------- */
   ST.widget("tcp", {
     title: "TCP：3ウェイハンドシェイクとSYNフラッド",
-    group: "net", name: "TCPとSYNフラッド", desc: "3ウェイハンドシェイクと接続待ちの枯渇", order: 2,
+    group: "net", name: "TCPとSYNフラッド", desc: "3ウェイハンドシェイクと接続待ちの枯渇", order: 2, motion: true,
     mount(el) {
       el.innerHTML = `<div class="btns">${ST.segHtml("mode", [["hs", "3ウェイハンドシェイク"], ["flood", "SYNフラッド攻撃"]], "hs")}</div><div data-body></div>`;
       const body = el.querySelector("[data-body]");
@@ -144,7 +147,7 @@
   /* ---------- Firewall rule lab ---------- */
   ST.widget("firewall", {
     title: "ファイアウォール：ルールを直して攻撃を止める",
-    group: "net", name: "ファイアウォール演習", desc: "ルールを直して攻撃を止める", order: 3,
+    group: "net", name: "ファイアウォール演習", desc: "ルールを直して攻撃を止める", order: 3, motion: true,
     mount(el) {
       // A small company: web server 10.0.0.10 (public HTTPS), DB 10.0.0.20 (internal only).
       let rules = [
@@ -163,11 +166,20 @@
       ];
       const match = (r, p) => (r.src === "any" || r.src === p.src) && (r.dst === "any" || r.dst === p.dst) && (r.port === "any" || r.port === p.port);
       el.innerHTML = `<p class="cap">ルールは<b>上から順に</b>評価され、最初に一致したルールが適用されます。すべての攻撃を止め、正常な通信だけを通すように直してください。</p>
+        <div class="stage"><svg data-fw viewBox="0 0 360 110" role="img" aria-label="通信がファイアウォールを通る様子"></svg></div>
         <div class="scroll-x"><table class="tbl" data-rules></table></div>
         <div class="btns"><button class="btn small primary" type="button" data-a="run">▶ 通信を流す</button><button class="btn small" type="button" data-a="reset">↺ 初期状態</button></div>
         <div class="scroll-x"><table class="tbl" data-pk></table></div><div data-v></div>`;
       const init = JSON.parse(JSON.stringify(rules));
       let results = [], hi = -1;
+      const fwSvg = el.querySelector("[data-fw]"), FW = { out: { x: 34, y: 55 }, fw: { x: 180, y: 55 }, web: { x: 316, y: 28 }, db: { x: 316, y: 84 } };
+      const node = (n, label, fill) => `<g transform="translate(${n.x} ${n.y})"><circle r="17" fill="var(--surface)" stroke="${fill || "var(--line)"}" stroke-width="1.5"/><text y="4" text-anchor="middle" class="svg-t" style="font-size:9.5px">${label}</text></g>`;
+      const drawFw = () => {
+        fwSvg.innerHTML = [["web", "Web"], ["db", "DB"]].map(([k]) => `<line x1="${FW.fw.x}" y1="${FW.fw.y}" x2="${FW[k].x}" y2="${FW[k].y}" class="lnk dash"/>`).join("") + `<line x1="${FW.out.x}" y1="${FW.out.y}" x2="${FW.fw.x}" y2="${FW.fw.y}" class="lnk dash"/>`
+          + `<rect x="${FW.fw.x - 7}" y="12" width="14" height="86" rx="3" fill="var(--attack-soft)" stroke="var(--attack)"/><text x="${FW.fw.x}" y="9" text-anchor="middle" class="svg-m" style="font-size:9px">FW</text>`
+          + node(FW.out, "外部") + node(FW.web, "Web") + node(FW.db, "DB");
+      };
+      const where = ip => ip === "10.0.0.10" ? FW.web : ip === "10.0.0.20" ? FW.db : FW.out;
       const drawRules = () => {
         el.querySelector("[data-rules]").innerHTML = `<thead><tr><th>#</th><th>動作</th><th>送信元</th><th>宛先</th><th>ポート</th><th>説明</th><th></th></tr></thead><tbody>${rules.map((r, i) => `<tr style="${hi === i ? "background:var(--packet-soft)" : ""}">
           <td class="num">${i + 1}</td>
@@ -193,12 +205,15 @@
           const ri = rules.findIndex(r => match(r, pk[i]));
           hi = ri; drawRules();
           results.push({ act: ri >= 0 ? rules[ri].act : "deny", rule: ri });
-          drawPk(); await ST.sleep(380);
+          drawPk(); drawFw();
+          const p = pk[i], deny = results[i].act === "deny";
+          await ST.flyPacket(fwSvg, [where(p.src), FW.fw, where(p.dst)], { label: p.port, color: p.want === "deny" ? "var(--attack)" : "var(--packet)", blockAt: deny ? 0.5 : null, alive: () => el.isConnected });
+          await ST.sleep(380);
         }
         hi = -1; drawRules();
       };
       el.querySelector('[data-a="reset"]').onclick = () => { rules = JSON.parse(JSON.stringify(init)); results = []; drawAll(); };
-      drawAll();
+      drawAll(); drawFw();
     }
   });
 })(window.ST);

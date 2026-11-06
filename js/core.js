@@ -9,6 +9,10 @@ window.ST = window.ST || {};
   ST.$ = (s, root) => (root || document).querySelector(s);
   ST.$$ = (s, root) => Array.from((root || document).querySelectorAll(s));
   ST.reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* Motion setting for packet animations: "normal" | "slow" | "off" (per device; default follows the OS reduce-motion setting). */
+  ST.motion = (() => { try { const v = localStorage.getItem("st.motion"); if (v === "normal" || v === "slow" || v === "off") return v; } catch (e) {} return ST.reduceMotion ? "off" : "normal"; })();
+  ST.motionScale = () => ST.motion === "off" ? 0 : ST.motion === "slow" ? 2.4 : 1;
+  ST.MOTION_LABEL = { normal: "動き：標準", slow: "動き：ゆっくり", off: "動き：停止" };
   ST.sleep = ms => new Promise(r => setTimeout(r, ST.reduceMotion ? Math.min(ms, 60) : ms));
   ST.shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   ST.uid = (() => { let n = 0; return p => (p || "u") + (++n); })();
@@ -96,8 +100,10 @@ window.ST = window.ST || {};
   ST.mountWidget = (host, name, opts) => {
     const def = ST.W[name];
     if (!def) { host.innerHTML = `<p class="empty">ウィジェット「${ST.esc(name)}」は準備中です。</p>`; return; }
-    host.innerHTML = `<div class="bench"><div class="bench-h"><span class="led"></span><span class="eyebrow">${ST.esc((opts && opts.title) || def.title)}</span>${def.group ? `<a class="chip" href="#lab-${name}" title="単独で開く">LAB</a>` : ""}</div><div class="bench-b"></div></div>`;
+    host.innerHTML = `<div class="bench"><div class="bench-h"><span class="led"></span><span class="eyebrow">${ST.esc((opts && opts.title) || def.title)}</span>${def.motion ? `<button type="button" class="chip" data-motion title="パケットの動きの速さを切り替える">${ST.MOTION_LABEL[ST.motion]}</button>` : ""}${def.group ? `<a class="chip" href="#lab-${name}" title="単独で開く">LAB</a>` : ""}</div><div class="bench-b"></div></div>`;
     const body = host.querySelector(".bench-b");
+    const mb = host.querySelector("[data-motion]");
+    if (mb) mb.onclick = () => { ST.motion = ST.motion === "normal" ? "slow" : ST.motion === "slow" ? "off" : "normal"; try { localStorage.setItem("st.motion", ST.motion); } catch (e) {} ST.$$("[data-motion]").forEach(b => b.textContent = ST.MOTION_LABEL[ST.motion]); };
     try {
       const cleanup = def.mount(body, opts || {});
       if (typeof cleanup === "function") live.push(cleanup);

@@ -5,7 +5,7 @@
 
   ST.widget("arp", {
     title: "ARPテーブルを監視して、なりすましに気づく",
-    group: "net", name: "ARPテーブル監視", desc: "LAN内のなりすましに気づき、防ぐ", order: 4,
+    group: "net", name: "ARPテーブル監視", desc: "LAN内のなりすましに気づき、防ぐ", order: 4, motion: true,
     mount(el) {
       const MAC = { gw: "00:00:5e:00:53:01", prn: "00:00:5e:00:53:20", sus: "00:00:5e:00:53:66" };
       const N = { pc: { x: 60, y: 180, l: "あなたのPC", ip: ".10", i: "pc" }, sw: { x: 180, y: 100, l: "スイッチ", i: "router" }, gw: { x: 300, y: 180, l: "ルーター", ip: ".1", i: "router" }, sus: { x: 300, y: 36, l: "不審な機器", ip: ".66", i: "attacker" } };
@@ -60,7 +60,14 @@
         () => { done = true; log.push(poisoned ? `PCがログイン情報を送信 → 不審な機器を経由してルーターへ${on("tls") ? "（TLSで暗号化済み）" : "（平文）"}` : "PCがログイン情報を送信 → 正しくルーターへ届く"); }
       ];
       const play = () => { reset(); const list = steps(); let i = 0;
-        const next = () => { list[i++](); draw(); if (i < list.length) timer = setTimeout(next, 900);
+        const sc = ST.motionScale(), P = k => N[k], alive = () => el.isConnected;
+        const fx = [
+          () => ST.flyPacket(svg, [P("pc"), P("sw"), P("gw")], { label: "ARP?", alive }),
+          () => {},
+          () => ST.flyPacket(svg, [P("sus"), P("sw"), P("pc")], { label: "偽の応答", color: "var(--attack)", blockAt: on("dai") ? 0.5 : null, alive }),
+          () => ST.flyPacket(svg, poisoned ? [P("pc"), P("sw"), P("sus"), P("sw"), P("gw")] : [P("pc"), P("sw"), P("gw")], { label: on("tls") ? "暗号化" : "ログイン", color: poisoned && !on("tls") ? "var(--attack)" : "var(--packet)", ms: 450, alive })
+        ];
+        const next = () => { const n = i; list[i++](); draw(); fx[n](); if (i < list.length) timer = setTimeout(next, sc ? 1500 * sc : 900);
           else if (!poisoned) verdict("good", "なりすましは成立しませんでした", on("dai") ? "スイッチが不正なARP応答を止めました。表に怪しい行はありません。" : "静的エントリは上書きされませんでした。ただし、すべての機器で設定し続けるのは大変です。");
           else if (on("tls")) verdict("mid", "経路は変えられたが、中身は守られた", "ARPテーブルは書き換えられましたが、TLSで暗号化しているので内容は読めません。表から怪しい行を探してみましょう。"); };
         next(); };
