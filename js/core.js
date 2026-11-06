@@ -71,6 +71,8 @@ window.ST = window.ST || {};
     const ms = ST.nextReview(doneAt, count) - now;
     return ms <= 0 ? 0 : Math.ceil(ms / 86400000);
   };
+  /*復習が必要なレッスンidの配列*/
+  ST.dueLessons = now => { return Object.keys(ST.P.lessons) .filter( id => ST.isDue(ST.P.lessons[id],0,now)) };
   /* ---------- Skill tree: lesson.requires (js/data/courses.js). Derived from ST.P.lessons only; nothing new is stored. ---------- */
   ST.LOCK = "off"; // "soft": show a gate with a "read anyway" button; "hard": no button; "off": order hints only.
   ST.peek = new Set(); // gates opened with "read anyway" in this page session (not saved)
