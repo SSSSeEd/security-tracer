@@ -29,8 +29,9 @@ Security Tracer（日本語の情報セキュリティ学習サイト）の開�
 使用量を抑えるため、**コードは SeEd が書き、Claude は出題・確認・テスト追加だけ**。完成版は先に作らない。SeEd は JS 初心者（C・Java の経験が薄くある。アロー関数は未経験、ラムダ式はなんとなく分かる）。
 - 流れ: 出題（仕様の全文＋書く場所＋ヒント）→ SeEd がブラウザ版 GitHub でブランチに書く → ブランチ名を伝える → Claude が main との差分を確認し `node tools/test.js` を実行 → 修正点か OK を返す → OK なら SeEd が PR を作ってマージ。Claude は PR を重複して作らない（テスト追加は SeEd のブランチに追加コミットしてよい。事後報告）。
 - 難易度の段階: 1 コピペ＋解説 → 2 穴埋め → 3 穴を増やす → 4 処理内容だけ渡す（他のコードを参考に考える）→ 5 Claude も完成版を作らず、SeEd のコードを見て実装できたか判断。最終的に Claude の使用量を減らす。設計判断が絡むところは Opus へ（窓口に依頼）。
-- 題材「復習スケジュール」: 段階1〜3 完了。`ST.REVIEW_DAYS`・`ST.nextReview`・`ST.isDue`・`ST.daysUntilReview`（js/core.js、PR #18〜#20 でマージ済み）と、`tools/test.js`（`node tools/test.js`、Node 標準の node:test、12件）。画面には未接続。
-- **次（段階4）**: `ST.P.lessons`（id→学んだ時刻）から、いま復習が必要なレッスン id を返す関数。復習回数は保存されていない（新しい状態を足すなら状態管理の設計なので Opus 相談）。まずは count を引数で渡す形か、全レッスン count=0 扱いで始める案から選ぶ。
+- 題材「復習スケジュール」: 段階1〜5 完了（2026-11-06）。`ST.REVIEW_DAYS`・`nextReview`・`isDue`・`daysUntilReview`・`dueLessons`・`upcomingReviews`（js/core.js、PR #18〜#25）、`tools/test.js`（19件、SeEd 自身が書いたテストを含む）。画面は Claude が担当（SeEd の希望：HTML/CSS は Claude、処理は SeEd）。ホームの「今日の復習」は SeEd が書き、「もうすぐ復習」は PR #26 で Claude が追加。
+- **次**: 「復習したと記録する」には復習回数の保存が要る（count は今 0 固定）。状態管理の設計なので、窓口へ Opus スレッドを依頼済み（SeEd の了承待ち）。設計メモが出たら、SeEd が処理を書き、Claude が画面とテストを担当。
+- 進め方の合意（2026-11-06）: コード例には `//` コメントをつける。仕様は最初に1通で決め、確認はブランチごとに1回にまとめる。SeEd はコミット前に `node tools/test.js` を自分で実行する。使用量はバイト方式のほうが単独実装より3〜5倍高い見積もり（未計測）なので、段階が進むほど往復を減らす。
 - 注意: SeEd の典型ミス（代入 `=` と呼び出しの取り違え）は、テストで検出してから指摘する。iPad では Codespaces で Node が使える（案内済み）。
 - マージ済みブランチ名の再利用は強制 push が必要で許可されない。HANDOFF など Claude が出す PR は新しいブランチ名で。
 
@@ -62,7 +63,7 @@ Security Tracer（日本語の情報セキュリティ学習サイト）の開�
 
 ## 技術メモ
 - **パケットのアニメーション**（2026-11-05）：`ST.flyPacket(svg, [{x,y}…], {label,color,blockAt})` と `ST.seq`（矢印ごとに動く）。ウィジェット定義に `motion: true` で「動き」切り替えがヘッダに出る。速さは `ST.motionScale()` を掛ける。攻撃シミュレーター（packetsim）と他ラボは未対応。
-- 定期タスクは新スレッドに付け替え済み（2026-11-05）：毎日改善 trig_014t94FyCADJrXw2BVi6C1qz、週次ニュース trig_01YK3wc6qteoWjFScY1q4PJH。
+- 定期タスク（2026-11-06 時点）：週次ニュース trig_011bVU67rTbtkiY9gzRqoNex（有効、このスレッドに付け替え済み。旧 trig_01YK3wc6qteoWjFScY1q4PJH は停止）。毎日改善 trig_014t94FyCADJrXw2BVi6C1qz は SeEd 了承のもと停止中（「再開して」と言われたら enabled を true に）。
 - **`.nojekyll` を消さない**: GitHub Pages は既定で Jekyll が動き、`_` で始まるファイル（`js/widgets/_kit.js`）を配信しない。消すとスマホで「ST.segHtml is not a function」になる（2026-11-05）。
 - 新しい分野を足すとき: `ST.LAB_GROUPS`（js/views.js）に分野、`css/style.css` の3か所（ライト・ダーク2つ）に色トークン `--cN`、`ST.COURSES` でニュースの直前に挿入しニュースの番号を繰り下げる。
 - ウィジェット内の結果欄に `data-v` 属性を使わない（`ST.segHtml` のボタンが `data-v` を持つので `querySelector` が衝突する）。`data-out` などを使う。
