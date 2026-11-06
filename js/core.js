@@ -73,6 +73,16 @@ window.ST = window.ST || {};
   };
   /*復習が必要なレッスンidの配列*/
   ST.dueLessons = now => { return Object.keys(ST.P.lessons) .filter( id => ST.isDue(ST.P.lessons[id],0,now)) };
+  ST.upcomingReviews = (now, days) => { 
+    return Object.keys(ST.P.lessons)
+      .filter( id => {
+        const y = ST.daysUntilReview(ST.P.lessons[id],0,now);
+        return 1 <= y && y <= days;})
+      .sort((a,b) => {
+        return ST.daysUntilReview(ST.P.lessons[a], 0, now) - ST.daysUntilReview(ST.P.lessons[b], 0, now);
+      }) }; // 今日は対象外で、days 日以内に復習になるレッスンidの配列
+  
+  
   /* ---------- Skill tree: lesson.requires (js/data/courses.js). Derived from ST.P.lessons only; nothing new is stored. ---------- */
   ST.LOCK = "off"; // "soft": show a gate with a "read anyway" button; "hard": no button; "off": order hints only.
   ST.peek = new Set(); // gates opened with "read anyway" in this page session (not saved)

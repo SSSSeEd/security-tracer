@@ -110,3 +110,23 @@ test("dueLessons: 学んだ直後は含まない", { skip: !hasDueLessons }, () 
   ST.P.lessons = { a: 1000 };
   assert.deepStrictEqual([...ST.dueLessons(1000)], []);
 });
+
+/* もうすぐ復習になるレッスンid（バイト方式の第5題）。 */
+const hasUpcoming = typeof ST.upcomingReviews === "function";
+
+test("upcomingReviews: 今日が復習のものは含まず、days 日以内のものだけ返す", { skip: !hasUpcoming }, () => {
+  ST.P.lessons = { today: 0, soon: 0.5 * DAY, far: 29 * DAY };
+  /* now = 1日。today は残り0日、soon は残り1日（切り上げ）、far は残り約29日。 */
+  assert.deepStrictEqual([...ST.upcomingReviews(DAY, 3)], ["soon"]);
+});
+
+test("upcomingReviews: 残り日数が少ない順に並ぶ", { skip: !hasUpcoming }, () => {
+  /* now = 0.1日。b は残り1日、a は残り2日、c は残り3日（count=0 の間隔は1日なので、学んだ時刻を未来にずらして作る）。 */
+  ST.P.lessons = { c: 2.1 * DAY, a: 1.1 * DAY, b: 0.1 * DAY };
+  assert.deepStrictEqual([...ST.upcomingReviews(0.1 * DAY - 1, 5)], ["b", "a", "c"]);
+});
+
+test("upcomingReviews: 該当なしなら空の配列", { skip: !hasUpcoming }, () => {
+  ST.P.lessons = {};
+  assert.deepStrictEqual([...ST.upcomingReviews(0, 3)], []);
+});
