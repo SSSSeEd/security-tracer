@@ -52,3 +52,23 @@ test("nextReview: 5回を超えても30日のまま（配列の外を読まな�
 test("nextReview: 学んだ時刻に足した値を返す", { skip: !hasReview }, () => {
   assert.strictEqual(ST.nextReview(1000, 0), 1000 + DAY);
 });
+
+/* 復習の時期かどうか（バイト方式の第2題）。 */
+const hasDue = typeof ST.isDue === "function";
+
+test("isDue: 次の復習の時刻より前なら false", { skip: !hasDue }, () => {
+  assert.strictEqual(ST.isDue(0, 0, DAY - 1), false);
+});
+
+test("isDue: ちょうど次の復習の時刻なら true", { skip: !hasDue }, () => {
+  assert.strictEqual(ST.isDue(0, 0, DAY), true);
+});
+
+test("isDue: 時刻を過ぎていれば true", { skip: !hasDue }, () => {
+  assert.strictEqual(ST.isDue(0, 0, 10 * DAY), true);
+});
+
+test("isDue: 復習回数が増えると間隔が延びる（2回目は3日後）", { skip: !hasDue }, () => {
+  assert.strictEqual(ST.isDue(0, 1, 2 * DAY), false);
+  assert.strictEqual(ST.isDue(0, 1, 3 * DAY), true);
+});

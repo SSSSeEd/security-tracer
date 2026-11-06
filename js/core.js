@@ -55,12 +55,16 @@ window.ST = window.ST || {};
   ST.masteryDots = id => { const m = ST.mastery(id); return `<span class="mastery" title="理解度 ${m}/3">${[0, 1, 2].map(i => `<i class="${i < m ? "on" : ""}"></i>`).join("")}</span>`; };
   ST.markLesson = id => { if (!ST.P.lessons[id]) { ST.P.lessons[id] = Date.now(); ST.touchStreak(); ST.save(); } };
   ST.markLab = id => { if (!ST.P.labs[id]) { ST.P.labs[id] = Date.now(); ST.touchStreak(); ST.save(); } };
-    /* 復習の間隔（日）。復習するたびに次の間隔へ進む。 */
+  /* 復習の間隔（日）。復習するたびに次の間隔へ進む。 */
   ST.REVIEW_DAYS = [1, 3, 7, 14, 30];
   /* 次に復習する時刻（ミリ秒）。doneAt は最後に学んだ時刻、count は復習した回数（0 なら初回の復習）。 */
   ST.nextReview = (doneAt, count) => {
     const i = Math.min(count, ST.REVIEW_DAYS.length - 1);
     return doneAt + ST.REVIEW_DAYS[i] * 86400000;
+  };
+  /* いま復習する時期なら true。now は現在時刻（ミリ秒）。 */
+  ST.isDue = (doneAt, count, now) => {
+    return now  >= ST.nextReview(doneAt, count);
   };
   /* ---------- Skill tree: lesson.requires (js/data/courses.js). Derived from ST.P.lessons only; nothing new is stored. ---------- */
   ST.LOCK = "off"; // "soft": show a gate with a "read anyway" button; "hard": no button; "off": order hints only.
