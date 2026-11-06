@@ -72,3 +72,22 @@ test("isDue: 復習回数が増えると間隔が延びる（2回目は3日後�
   assert.strictEqual(ST.isDue(0, 1, 2 * DAY), false);
   assert.strictEqual(ST.isDue(0, 1, 3 * DAY), true);
 });
+
+/* 復習まであと何日か（バイト方式の第3題）。 */
+const hasDays = typeof ST.daysUntilReview === "function";
+
+test("daysUntilReview: 時期ならちょうど 0", { skip: !hasDays }, () => {
+  assert.strictEqual(ST.daysUntilReview(0, 0, DAY), 0);
+  assert.strictEqual(ST.daysUntilReview(0, 0, 5 * DAY), 0);
+});
+
+test("daysUntilReview: 残りは日数を切り上げる", { skip: !hasDays }, () => {
+  assert.strictEqual(ST.daysUntilReview(0, 1, 0), 3);
+  assert.strictEqual(ST.daysUntilReview(0, 1, 1.5 * DAY), 2);
+  assert.strictEqual(ST.daysUntilReview(0, 1, 3 * DAY - 1), 1);
+});
+
+test("daysUntilReview: ほかの関数を壊さない（nextReview は関数のまま）", { skip: !hasDays }, () => {
+  ST.daysUntilReview(0, 0, 0);
+  assert.strictEqual(typeof ST.nextReview, "function");
+});
