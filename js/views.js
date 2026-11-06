@@ -22,6 +22,7 @@
   const allLessons = () => ST.COURSES.flatMap(c => c.lessons);
   const nextLesson = () => allLessons().find(l => ST.lessonState(l.id) === "open") || allLessons().find(l => !ST.P.lessons[l.id]) || allLessons()[0];
   const lessonLink = id => { const x = ST.LESSON[id]; return `<a class="row" href="#l-${id}" style="--cc:${ST.COURSE[x.course].color}"><span class="tree-dot ${ST.lessonState(id)}"></span><div class="body"><div class="t">${esc(x.title)}</div><div class="s">${esc(ST.COURSE[x.course].title)} · 約${x.min}分</div></div></a>`; };
+  const due = ST.dueLessons(Date.now()).filter(id => ST.LESSON[id]); // 復習が必要なレッスンidの配列
   /* Gate shown in place of a locked lesson or lab. key goes into ST.peek when the reader opens it anyway (soft lock). */
   const gate = (key, what, ids) => `<div class="card gate"><div class="eyebrow">🔒 まだ開いていません</div>
     <p>${what}</p><div class="list">${ids.map(lessonLink).join("")}</div>
@@ -57,6 +58,11 @@
       </div>
     </section>
     <a class="card" href="#l-${nx.id}" style="text-decoration:none;color:inherit;display:flex;gap:14px;align-items:center;border-left:4px solid ${c.color}">
+      ${due.length ? `<div class="card">   <!-- 1件以上のときだけ、枠を出す -->
+      <div class="section-h"><h2>今日の復習 ${due.length}件</h2></div>   <!-- 件数は見出しの中に入れる -->
+      <div class="list">${due.map(id => `<a class="row" href="#l-${id}">
+      <div>${esc(ST.LESSON[id].title)}<div></a>`).join("")}</div></div>   <!-- idごとに1行 -->
+      </div>` : ""}
       <div style="flex:1;min-width:0"><div class="eyebrow">${done ? "続きから" : "最初のレッスン"} · ${esc(c.title)}</div><div style="font-size:18px;font-weight:700">${esc(nx.title)}</div><div class="cap">約${nx.min}分</div></div><span class="btn primary">開く ›</span></a>
     <section class="col">
       <div class="section-h"><h2>コース</h2><a href="#courses">すべて</a></div>
