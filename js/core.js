@@ -77,7 +77,7 @@ window.ST = window.ST || {};
     return Object.keys(ST.P.lessons)
       .filter( id => {
         const y = ST.daysUntilReview(ST.P.lessons[id],0,now);
-        1 <= y && y <= days;})
+        return 1 <= y && y <= days;})
       .sort((a,b) => {
         return ST.daysUntilReview(ST.P.lessons[a], 0, now) - ST.daysUntilReview(ST.P.lessons[b], 0, now);
       }) }; // 今日は対象外で、days 日以内に復習になるレッスンidの配列
