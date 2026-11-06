@@ -136,7 +136,7 @@ test("upcomingReviews: days より先のものは含まない", () => {
   // ST.upcomingReviews(now, days) を呼ぶ
   // 結果を assert.deepStrictEqual([...結果], 期待する配列) で比べる // [...] はテスト用のおまじない
   ST.P.lessons={x:0};
-  assert.deepStrictEqual(...ST.upcomingReviews(0,0), []);
-  assert.deepStrictEqual(...ST.upcomingReviews(0,1), ["x"]);
+  assert.deepStrictEqual([...ST.upcomingReviews(0,0)], []);
+  assert.deepStrictEqual([...ST.upcomingReviews(0,1)], ["x"]);
 });
 
