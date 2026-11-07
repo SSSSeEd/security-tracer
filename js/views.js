@@ -45,21 +45,22 @@
     const today = ST.TERMS[Math.floor(Date.now() / 86400000) % ST.TERMS.length];
     const due = ST.dueLessons(Date.now()).filter(id => ST.LESSON[id]); // 復習が必要なレッスンidの配列
     const soon = ST.upcomingReviews(Date.now(), 7).filter(id => ST.LESSON[id]); // 7日以内に復習になるレッスンid（近い順）
+    const nextAfter = allLessons().find(l => (l.requires || []).includes(nx.id));
     const featured = ["sqli", "ransom", "worm", "crypto"];
     v.innerHTML = `
-    <section class="hero" style="display:grid;gap:14px">
-      <div><div class="eyebrow">Security Tracer · 情報セキュリティを動かして学ぶ</div>
-      <h1>攻撃と防御を、目で見て、手で動かして理解する</h1>
-      <p class="lead">${ST.COURSES.length}のコースと${Object.keys(ST.LAB).length}個の図解ラボ、${ST.SCEN.length}本の攻撃シミュレーター。解説には必ず公的機関や一次情報へのリンクを付けています。</p></div>
-      <div class="stats">
-        <div class="stat"><b>${done}<span>/${L.length}</span></b><span>完了したレッスン</span></div>
-        <div class="stat"><b>${labs}<span>/${Object.keys(ST.LAB).length}</span></b><span>触ったラボ</span></div>
-        <div class="stat"><b>${acc}<span>%</span></b><span>クイズ正答率</span></div>
-        <div class="stat"><b>${(ST.P.streak && ST.P.streak.days) || 0}<span>日</span></b><span>連続学習</span></div>
-      </div>
+    <section class="today card" style="--cc:${c.color}">
+      <div class="eyebrow">今日やること · 約${nx.min}分</div>
+      <h1>${esc(nx.title)}</h1>
+      <div class="chips">${due.length ? `<span class="chip warn">復習 ${due.length}件あり</span>` : ""}<span class="chip">${esc(c.title)}</span></div>
+      <a class="btn primary big" href="#l-${nx.id}">${done ? "続きから" : "はじめる"} ›</a>
+      ${nextAfter ? `<p class="cap">終わると「${esc(nextAfter.title)}」が開きます</p>` : ""}
     </section>
-    <a class="card" href="#l-${nx.id}" style="text-decoration:none;color:inherit;display:flex;gap:14px;align-items:center;border-left:4px solid ${c.color}">
-      <div style="flex:1;min-width:0"><div class="eyebrow">${done ? "続きから" : "最初のレッスン"} · ${esc(c.title)}</div><div style="font-size:18px;font-weight:700">${esc(nx.title)}</div><div class="cap">約${nx.min}分</div></div><span class="btn primary">開く ›</span></a>
+    <div class="stats">
+      <div class="stat"><b>${done}<span>/${L.length}</span></b><span>レッスン</span></div>
+      <div class="stat"><b>${labs}<span>/${Object.keys(ST.LAB).length}</span></b><span>ラボ</span></div>
+      <div class="stat"><b>${acc}<span>%</span></b><span>クイズ</span></div>
+      <div class="stat"><b>${(ST.P.streak && ST.P.streak.days) || 0}<span>日</span></b><span>連続</span></div>
+    </div>
       ${due.length ? `<div class="card">   <!-- 1件以上のときだけ、枠を出す -->
       <div class="section-h"><h2>今日の復習 ${due.length}件</h2></div>   <!-- 件数は見出しの中に入れる -->
       <div class="list">${due.map(id => `<a class="row" href="#l-${id}">
@@ -73,6 +74,7 @@
       <div class="section-h"><h2>コース</h2><a href="#courses">すべて</a></div>
       <div class="course-grid">${ST.COURSES.map(courseCard).join("")}</div>
     </section>
+    <p class="cap">Security Tracer は、攻撃と防御を目で見て、手で動かして学ぶ場所です。${ST.COURSES.length}のコースと${Object.keys(ST.LAB).length}個の図解ラボ、${ST.SCEN.length}本の攻撃シミュレーターがあり、解説には公的機関や一次情報へのリンクを付けています。</p>
     <section class="grid2">
       <div class="card"><div class="section-h"><h2>注目のラボ</h2><a href="#lab">すべて</a></div>
         <div class="list">${featured.map(id => { const l = ST.LAB[id]; return `<a class="row" href="#lab-${id}"><div class="body"><div class="t">${esc(l.n)}</div><div class="s">${esc(l.d)}</div></div><span class="chip" style="color:${l.color}">${esc(l.g)}</span></a>`; }).join("")}</div></div>
@@ -113,6 +115,7 @@
   /* ---------- Courses ---------- */
   ST.view("courses", v => {
     v.innerHTML = `<div class="page-h"><div class="eyebrow">Courses</div><h1>コース</h1><p class="lead">上から順に進めると、ネットワークの基礎からニュースの読み解きまでつながります。どこから始めても大丈夫です。</p><a class="btn" href="#tree">スキルツリーを見る ›</a></div>
+      <a class="card" href="#news" style="text-decoration:none;color:inherit;display:flex;gap:12px;align-items:center"><div style="flex:1;min-width:0"><div class="eyebrow">News</div><b>注意喚起と脆弱性ニュース</b><div class="cap">JPCERT/CC・IPAなどの一次情報から、毎週更新</div></div><span aria-hidden="true">›</span></a>
       <div class="course-grid">${ST.COURSES.map(courseCard).join("")}</div>`;
   });
   ST.view("course", (v, id) => {
@@ -295,5 +298,5 @@
   ST.route("terms", "terms", "terms");
   ST.route("term-", "term", "terms");
   ST.route("quiz", "quiz", "quiz");
-  ST.route("news", "news", "news");
+  ST.route("news", "news", "courses");
 })(window.ST);

@@ -164,6 +164,8 @@ window.ST = window.ST || {};
     cleanupWidgets();
     ST.current = ST.parseHash();
     ST.$$("nav.tabs a").forEach(a => { if (a.dataset.v === ST.current.tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+    const learn = document.querySelector('nav.tabs a[data-v="courses"]');
+    if (learn) learn.classList.toggle("dot", ST.dueLessons(Date.now()).some(id => ST.LESSON[id]));
     const view = document.getElementById("view");
     const fn = ST.views[ST.current.view] || ST.views.home;
     try { fn(view, ST.current.arg); } catch (e) { view.innerHTML = `<p class="empty">ページを表示できませんでした: ${ST.esc(e.message)}</p>`; console.error(e); }
