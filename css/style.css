@@ -270,3 +270,16 @@ table.tbl td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;whi
 .tree-dot.done{background:var(--ok);border-color:var(--ok)}
 .tree-dot.open{background:var(--surface);border-color:var(--ok)}
 .tree-dot.locked{border-style:dashed;border-color:var(--muted)}
+
+/* skill tree list: state = color + text + icon */
+.tbar{display:flex;margin-top:8px}.tbar i{background:var(--ok)}.tbar i.soft{background:var(--ok);opacity:.3}
+.tsec{display:grid;gap:8px}.tsec h2{font-size:17px}.tsec h2 .mono{font-size:12px;color:var(--muted);font-weight:400}.tsec .cap{margin:0;font-size:13px;color:var(--muted)}
+.tlist{padding:4px 12px;display:flex;flex-direction:column}
+.trow{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);text-decoration:none;color:inherit;min-height:48px}
+.trow:first-child{border-top:0}
+.trow .body{flex:1;min-width:0;display:grid;gap:1px}.trow .body b{font-size:16px;line-height:1.4}.trow .cap{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.trow .ti{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:15px;background:var(--sunken);color:var(--muted)}
+.trow .tag{font-size:12px;padding:2px 9px;border-radius:999px;white-space:nowrap;background:var(--sunken);color:var(--muted)}
+.trow.done .ti,.trow.done .tag,.trow.open .ti,.trow.open .tag{background:var(--ok-soft);color:var(--ok)}
+.trow.due .ti,.trow.due .tag{background:var(--warn-soft);color:var(--warn)}
+.trow.locked .body b{color:var(--muted)}

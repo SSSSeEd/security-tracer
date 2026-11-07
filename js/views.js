@@ -154,19 +154,30 @@
 
   /* ---------- Skill tree: tiers by depth (longest requires chain from an entry lesson) ---------- */
   ST.view("tree", v => {
-    const depth = {}, dep = id => depth[id] ?? (depth[id] = (ST.LESSON[id].requires || []).length ? 1 + Math.max(...ST.LESSON[id].requires.map(dep)) : 0);
-    const L = allLessons(), tiers = [];
-    L.forEach(l => (tiers[dep(l.id)] = tiers[dep(l.id)] || []).push(l));
-    const n = st => L.filter(l => ST.lessonState(l.id) === st).length;
-    const ready = L.filter(l => ST.lessonState(l.id) === "open");
-    const node = l => { const st = ST.lessonState(l.id), c = ST.COURSE[l.course];
-      return `<a class="tree-node ${st}" href="#l-${l.id}" style="--cc:${c.color}"><span class="tree-dot ${st}"></span><span class="body"><b>${esc(l.title)}</b><span class="cap">${esc(c.title)}${(l.requires || []).length ? " · ← " + l.requires.map(r => esc(ST.LESSON[r].title)).join("、") : ""}</span></span></a>`; };
+    const L = allLessons(), total = L.length;
+    const due = new Set(ST.dueLessons(Date.now()).filter(id => ST.LESSON[id]));
+    const st = l => due.has(l.id) ? "due" : ST.lessonState(l.id); // due: 読んだが復習の日
+    const by = { due: [], open: [], locked: [], done: [] };
+    L.forEach(l => by[st(l)].push(l));
+    by.locked.sort((x, y) => ST.missingReqs(x.id).length - ST.missingReqs(y.id).length);
+    const doneN = L.filter(l => ST.P.lessons[l.id]).length, openN = by.open.length;
+    const pct = n => total ? Math.round(n / total * 100) : 0;
+    /* 状態は「色＋文字＋アイコン」の3つで示す */
+    const ICON = { done: "✓", open: "○", due: "★", locked: "🔒" };
+    const row = (l, i) => {
+      const k = st(l), c = ST.COURSE[l.course], miss = ST.missingReqs(l.id);
+      const tag = k === "done" ? "読んだ" : k === "due" ? "復習" : k === "locked" ? `あと${miss.length}本` : (i === 0 ? "おすすめ" : "読める");
+      const sub = k === "locked" ? `先に「${miss.map(r => esc(ST.LESSON[r].title)).join("」「")}」を読むと分かりやすい` : k === "due" ? `${esc(c.title)} · 復習の日です` : `${esc(c.title)} · 約${l.min}分`;
+      return `<a class="trow ${k}" href="#l-${l.id}" style="--cc:${c.color}"><span class="ti" aria-hidden="true">${ICON[k]}</span><span class="body"><b>${esc(l.title)}</b><span class="cap">${sub}</span></span><span class="tag">${tag}</span></a>`;
+    };
+    const sec = (title, arr, note) => arr.length ? `<section class="tsec"><h2>${title} <span class="mono">${arr.length}</span></h2>${note ? `<p class="cap">${note}</p>` : ""}<div class="card tlist">${arr.map(row).join("")}</div></section>` : "";
     v.innerHTML = `<a href="#courses" style="font-size:14px">‹ コース一覧</a>
-      <div class="page-h"><div class="eyebrow">Skill tree</div><h1>スキルツリー</h1><p class="lead">レッスンには「先に読むと分かりやすいレッスン」が決めてあります。前提を読み終えると、次の段のレッスンが開きます。レッスンを読むと、そこで使うラボも単独で開きます。</p>
-      <div class="stats"><div class="stat"><b>${n("done")}</b><span>読んだ</span></div><div class="stat"><b>${n("open")}</b><span>今読める</span></div><div class="stat"><b>${n("locked")}</b><span>まだ閉じている</span></div><div class="stat"><b>${Object.keys(ST.LAB).filter(ST.labOpen).length}<span>/${Object.keys(ST.LAB).length}</span></b><span>開いたラボ</span></div></div></div>
-      ${ready.length ? `<div class="card"><div class="eyebrow">今読めるレッスン</div><div class="list">${ready.slice(0, 6).map(l => lessonLink(l.id)).join("")}</div></div>` : ""}
-      <div class="tree">${tiers.map((t, i) => `<section class="tree-tier"><div class="tree-h"><span class="mono">${i + 1}</span>${i ? `段目` : `段目 · 入口`}</div><div class="tree-row">${t.map(node).join("")}</div></section>`).join("")}</div>
-      <p class="cap"><span class="tree-dot done"></span> 読んだ <span class="tree-dot open"></span> 今読める <span class="tree-dot locked"></span> 前提がまだ。← の後ろが前提のレッスンです。</p>`;
+      <div class="page-h"><div class="eyebrow">Skill tree</div><h1>いま読めるレッスン</h1></div>
+      <div class="card"><div class="section-h"><h2>全体の進み具合</h2><span class="mono cap">${doneN} / ${total}</span></div>
+        <div class="progressbar tbar" role="img" aria-label="${doneN}/${total} 完了、今読める${openN}本"><i style="width:${pct(doneN)}%"></i><i class="soft" style="width:${pct(openN)}%"></i></div>
+        <p class="cap" style="margin:8px 0 0">${openN ? `今読める${openN}本を終えると、淡い部分（${pct(openN)}%）まで進みます。` : "今読めるレッスンはありません。"}</p></div>
+      ${sec("復習の日", by.due)}${sec("今読める", by.open)}${sec("まだ閉じている", by.locked, "閉じていても読めます。順番はおすすめです。")}${sec("読んだ", by.done)}
+      <p class="cap">レッスンを読むと、そこで使うラボも単独で開きます（開いたラボ ${Object.keys(ST.LAB).filter(ST.labOpen).length}/${Object.keys(ST.LAB).length}）。</p>`;
   });
 
   /* ---------- Lab ---------- */
