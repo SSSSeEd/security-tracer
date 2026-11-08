@@ -76,6 +76,13 @@ ST.SRC = {
   pscmdi:  {org:"PortSwigger", label:"Web Security Academy：OS command injection（無料の演習ラボつき）", url:"https://portswigger.net/web-security/os-command-injection", checked:"2026-11-04"},
   psupload:{org:"PortSwigger", label:"Web Security Academy：File upload vulnerabilities（無料の演習ラボつき）", url:"https://portswigger.net/web-security/file-upload", checked:"2026-11-04"},
   egovuaa:  {org:"e-Gov法令検索", label:"不正アクセス行為の禁止等に関する法律（平成十一年法律第百二十八号）", url:"https://laws.e-gov.go.jp/law/411AC0000000128", checked:"2026-11-04"},
+  egovpenal:{org:"e-Gov法令検索", label:"刑法（明治四十年法律第四十五号）", url:"https://laws.e-gov.go.jp/law/140AC0000000045", checked:"2026-11-08"},
+  mojvirus: {org:"法務省", label:"不正指令電磁的記録に関する罪の説明資料（法定刑の確認）", url:"https://www.moj.go.jp/content/001267492.pdf", checked:"2026-11-08"},
+  soumuth:  {org:"総務省", label:"通信の秘密（電気通信事業法第4条）に関するFAQ", url:"https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/th_faq.html", checked:"2026-11-08"},
+  juiceshop:{org:"OWASP", label:"OWASP Juice Shop（意図的に脆弱なWebアプリ。MITライセンス）", url:"https://owasp.org/www-project-juice-shop/", checked:"2026-11-08"},
+  dvwa:     {org:"DVWA（GitHub）", label:"Damn Vulnerable Web Application（README。公開サーバに置かない・仮想マシンで使う旨の警告つき）", url:"https://github.com/digininja/DVWA", checked:"2026-11-08"},
+  thmjuice: {org:"TryHackMe", label:"OWASP Juice Shop ルーム（仮想マシンを起動して学ぶ形式）", url:"https://tryhackme.com/r/room/owaspjuiceshop", checked:"2026-11-08"},
+  htb:      {org:"Hack The Box", label:"Hack The Box（実践ラボ・Academy・CTF。料金は公式で確認）", url:"https://www.hackthebox.com/", checked:"2026-11-08"},
   ipavulnrep:{org:"IPA", label:"脆弱性関連情報の届出受付", url:"https://www.ipa.go.jp/security/vuln/report/index.html", checked:"2026-11-04"},
   ipa10org: {org:"IPA", label:"情報セキュリティ10大脅威 2026 解説書（組織編）", url:"https://www.ipa.go.jp/security/10threats/omgdg50000008fi8-att/kaisetsu_2026_soshiki.pdf", checked:"2026-11-03"}
 };
