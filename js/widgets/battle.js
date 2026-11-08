@@ -86,7 +86,7 @@
             <button type="button" class="rl-hand" data-recon style="border-color:var(--ok)"><b>脆弱性診断を依頼する</b><br><span class="cap">許可を得た診断。1ラウンド使うが、攻撃側の次の手の候補と、それを止める防御が分かる。</span></button>
             ${S.tip ? `<div class="rl-res safe"><b>診断結果</b><p>${avail().map(a => `${esc(a.name)} → 止められる防御：${a.counter.map(c => esc(D[c].name)).join("／")}`).join("<br>")}</p></div>` : ""}</div>`;
         }
-        el.innerHTML = `${head()}<div class="stage">${svgHtml()}</div>${panel}<div class="card" style="padding:12px" aria-live="polite"><div class="eyebrow">ログ</div>${logHtml()}</div>`;
+        el.innerHTML = `${head()}<div class="bt"><div class="bt-field"><div class="stage">${svgHtml()}</div><div class="bt-msg" aria-live="polite"><div class="eyebrow">ログ</div>${logHtml()}</div></div><div class="bt-cmd">${panel}</div></div>`;
         ST.$$("[data-atk]", el).forEach(b => b.onclick = () => turn(b.dataset.atk, null));
         ST.$$("[data-def]", el).forEach(b => b.onclick = () => turn(null, b.dataset.def));
         ST.$$("[data-recon]", el).forEach(b => b.onclick = () => S.role === "atk" ? turn("recon", null) : turn(null, "recon"));
