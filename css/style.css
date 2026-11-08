@@ -111,7 +111,9 @@ label.field{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(
 .today h1{font-size:26px;font-weight:800}
 .today .chips{display:flex;gap:6px;flex-wrap:wrap}
 .today .cap{margin:0;text-align:center;font-size:13px;color:var(--muted)}
-.btn.big{min-height:48px;font-size:16px;font-weight:700}
+.btns.two{display:grid;grid-template-columns:1fr 1fr}
+.btns.two .btn{background:var(--surface);color:var(--muted)}
+.btn.big{width:100%;min-height:48px;font-size:16px;font-weight:700}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:8px 6px;text-align:center}
 .stat b{display:block;font-family:var(--f-mono);font-size:19px;font-variant-numeric:tabular-nums}
 .stat b span{font-size:12px;color:var(--muted);font-weight:400}

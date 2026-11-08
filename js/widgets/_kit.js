@@ -39,9 +39,10 @@
     const A = cfg.actors, n = A.length;
     const colX = i => Math.round(W / n * (i + 0.5));
     const xi = Object.fromEntries(A.map((a, i) => [a.id, colX(i)]));
-    let shown = 0, timer = null, fly = false;
-    el.innerHTML = `<div class="stage scroll-x"><svg viewBox="0 0 ${W} ${top + rowH * cfg.steps.length + 16}" role="img" aria-label="シーケンス図"></svg></div>
-      <div class="btns"><button class="btn small" type="button" data-a="reset">↺ 最初から</button><button class="btn small" type="button" data-a="next">次へ ›</button><button class="btn small primary" type="button" data-a="all">▶ 再生</button></div>
+    let shown = 1, timer = null, fly = false; /* 開いた時点で1コマ目を描く（空白をなくす） */
+    el.innerHTML = `${cfg.intro ? `<p class="cap" style="margin:0">${ST.md(cfg.intro)}</p>` : ""}<div class="stage scroll-x"><svg viewBox="0 0 ${W} ${top + rowH * cfg.steps.length + 16}" role="img" aria-label="シーケンス図"></svg></div>
+      <button class="btn primary big" type="button" data-a="next">次へ ›</button>
+      <div class="btns two"><button class="btn" type="button" data-a="reset">↺ 最初から</button><button class="btn" type="button" data-a="all">▶ 自動再生</button></div>
       <div class="card" aria-live="polite" data-note style="padding:12px"></div>`;
     const svg = el.querySelector("svg"), note = el.querySelector("[data-note]");
     const draw = () => {
@@ -70,7 +71,7 @@
       svg.innerHTML = s;
       const st = cfg.steps[shown - 1];
       note.innerHTML = shown === 0 ? `<div class="eyebrow">${cfg.steps.length} ステップ</div><p>${ST.md(cfg.intro || "「次へ」で1つずつ進みます。")}</p>`
-        : `<div class="eyebrow">ステップ ${shown}/${cfg.steps.length}</div><p>${ST.md(st.note || st.label)}</p>${shown === cfg.steps.length && cfg.outro ? `<div class="verdict ${cfg.outroKind || "good"}" style="margin-top:10px">${ST.md(cfg.outro)}</div>` : ""}`;
+        : `<div class="eyebrow"><span class="chip ok">ステップ ${shown} / ${cfg.steps.length}</span></div><p>${ST.md(st.note || st.label)}</p>${shown === cfg.steps.length && cfg.outro ? `<div class="verdict ${cfg.outroKind || "good"}" style="margin-top:10px">${ST.md(cfg.outro)}</div>` : ""}`;
       el.querySelector('[data-a="next"]').disabled = shown >= cfg.steps.length;
       el.querySelector('[data-a="all"]').disabled = shown >= cfg.steps.length;
       if (shown === cfg.steps.length && cfg.onDone) cfg.onDone();
@@ -80,14 +81,14 @@
       }
       fly = false;
     };
-    el.querySelector('[data-a="reset"]').onclick = () => { clearInterval(timer); shown = 0; draw(); };
+    el.querySelector('[data-a="reset"]').onclick = () => { clearInterval(timer); shown = 1; draw(); };
     el.querySelector('[data-a="next"]').onclick = () => { clearInterval(timer); if (shown < cfg.steps.length) { shown++; fly = true; draw(); } };
     el.querySelector('[data-a="all"]').onclick = () => {
       clearInterval(timer);
       timer = setInterval(() => { if (shown >= cfg.steps.length) return clearInterval(timer); shown++; fly = true; draw(); }, ST.motion === "off" ? 150 : 1100 * Math.max(1, ST.motionScale() * .8));
     };
     draw();
-    return { stop: () => clearInterval(timer), redraw: draw, setSteps: steps => { cfg.steps = steps; shown = 0; draw(); } };
+    return { stop: () => clearInterval(timer), redraw: draw, setSteps: steps => { cfg.steps = steps; shown = 1; draw(); } };
   };
 
   /* Segmented control: returns html; wire with ST.wireSeg(el, name, fn). */
