@@ -370,17 +370,23 @@ table.tbl td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;whi
   .redline:has([data-widget="battle"]) .rl-body{padding:4px 0}
   .rl-sim{padding:0 max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px))}
   .rl-sim .rl-score{font-size:12px}
-  .bt{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;margin-top:4px}
+  .bt{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;margin-top:4px}
   .bt-field{grid-template-rows:auto auto}
   .bt .stage svg{display:block;width:100%;max-height:calc(100dvh - 300px);min-height:110px}
   .bt-msg{max-height:calc(100dvh - 330px);min-height:60px;font-size:12px}
-  .bt-cmd{max-height:calc(100dvh - 190px);min-height:200px;overflow:auto;-webkit-overflow-scrolling:touch;padding-right:2px}
-  .bt-cmd .rl-card{font-size:12.5px;line-height:1.5}
+  .bt-cmd{max-height:calc(100dvh - 190px);min-height:200px;overflow:auto;-webkit-overflow-scrolling:touch;padding-right:8px}
+  .bt-cmd .rl-card{font-size:12.5px;line-height:1.4;padding:6px 8px;background:none;border:0}
+  .bt-cmd .rl-card>.rl-cap{position:sticky;top:0;z-index:1;background:#0b0607;padding:2px 4px 6px;margin:0}
   .bt-cmd .rl-hand{padding:8px 10px;margin-bottom:6px;font-size:12.5px}
   .bt-cmd .rl-hand .cap{font-size:11px}
-  .bt-cmd .rl-card{display:grid;grid-template-columns:1fr 1fr;gap:6px;align-content:start}
-  .bt-cmd .rl-card>*{grid-column:1/-1;margin:0}
-  .bt-cmd .rl-card>.rl-hand{grid-column:auto;margin:0}
-  .bt-cmd .rl-card>.rl-hand[data-recon]{grid-column:1/-1}
   .bt-cmd .rl-big{font-size:24px}
 }
+
+/* 技カード風（ポケモン対戦のコマンド画面のイメージ。配色は黒×赤×黄のまま） */
+.bt-cmd .rl-hand{position:relative;border:2px solid #7a2a31;border-radius:12px 4px 12px 4px;background:linear-gradient(100deg,#2a1013,#120a0b 70%);padding:8px 12px 8px 14px;transition:transform .1s}
+.bt-cmd .rl-hand b,.bt-cmd .rl-hand{font-weight:700}
+.bt-cmd .rl-hand .cap{display:block;font-weight:400;color:var(--rl-dim)}
+.bt-cmd .rl-hand:hover,.bt-cmd .rl-hand:focus-visible,.bt-cmd .rl-hand:active{border-color:var(--rl-yel);background:linear-gradient(100deg,#4a3a05,#170d0f 75%);transform:translateX(-6px);outline:0}
+.bt-cmd .rl-hand:hover::before,.bt-cmd .rl-hand:focus-visible::before{content:"▶";position:absolute;left:-18px;top:50%;transform:translateY(-50%);color:var(--rl-yel);font-size:14px}
+.bt-cmd .rl-hand .chip{font-size:10px;padding:1px 6px;margin-right:4px}
+.rl-sim .rl-score{background:linear-gradient(100deg,#3a0f14,#170d0f);border:2px solid #7a2a31;border-radius:4px 14px 4px 14px;padding:2px 12px}
