@@ -59,7 +59,9 @@
 
       const head = () => `<div class="rl-score"><span>ROUND <b>${Math.min(S.round, ROUNDS)}</b>/${ROUNDS}</span><span class="rl-cap">${S.role === "atk" ? "あなた：攻撃側（CPUが防御）" : "あなた：防御側（CPUが攻撃）"}</span></div>`;
 
-      const logHtml = () => S.log.length ? `<ol class="cap" style="margin:0;padding-left:18px;display:grid;gap:4px">${S.log.map(t => `<li>${t}</li>`).join("")}</ol>` : `<p class="cap">まだ何も起きていません。</p>`;
+      const sleep = ms => new Promise(r => setTimeout(r, ST.motion === "off" ? 0 : ms));
+      const showLive = () => { const b = $(".bt-msg"); if (b) b.innerHTML = `<div class="eyebrow">結果</div><ol class="cap" style="margin:0;padding-left:18px;display:grid;gap:4px">${S.live.map(t => `<li>${t}</li>`).join("")}</ol>`; };
+      const logHtml = () => S.busy ? "" : S.log.length ? `<ol class="cap" style="margin:0;padding-left:18px;display:grid;gap:4px">${S.log.map(t => `<li>${t}</li>`).join("")}</ol>` : `<p class="cap">まだ何も起きていません。</p>`;
 
       const draw = () => {
         if (!alive) return;
@@ -72,7 +74,9 @@
         }
         const e = S.end;
         let panel = "";
-        if (e) {
+        if (S.busy) {
+          panel = `<div class="rl-card"><div class="rl-cap">ターン進行中…</div><p class="cap">防御の配備 → 攻撃 → 結果の順に表示します。</p></div>`;
+        } else if (e) {
           panel = `<div class="rl-card"><div class="rl-big">${e.win ? "あなたの勝ち" : "あなたの負け"}</div><p>${esc(e.msg)}</p><p><b>学べること：</b>${esc(e.lesson)}</p>
             <p class="cap">⛔ ゲームの中だから成り立つ手です。現実では、許可のない相手に同じことをすれば犯罪になりえます（<a href="#course-law">法律と倫理コース</a>）。</p>
             <div class="btns two"><button class="btn primary" type="button" data-again>もう一度（同じ役）</button><button class="btn" type="button" data-swap>役を替える</button></div></div>`;
@@ -86,7 +90,7 @@
             <button type="button" class="rl-hand" data-recon style="border-color:var(--ok)"><b>脆弱性診断を依頼する</b><br><span class="cap">許可を得た診断。1ラウンド使うが、攻撃側の次の手の候補と、それを止める防御が分かる。</span></button>
             ${S.tip ? `<div class="rl-res safe"><b>診断結果</b><p>${avail().map(a => `${esc(a.name)} → 止められる防御：${a.counter.map(c => esc(D[c].name)).join("／")}`).join("<br>")}</p></div>` : ""}</div>`;
         }
-        el.innerHTML = `${head()}<div class="bt"><div class="bt-field"><div class="stage">${svgHtml()}</div><div class="bt-msg" aria-live="polite"><div class="eyebrow">ログ</div>${logHtml()}</div></div><div class="bt-cmd">${panel}</div></div>`;
+        el.innerHTML = `${head()}<div class="bt"><div class="bt-field"><div class="stage">${svgHtml()}</div><div class="bt-msg" aria-live="polite"><div class="eyebrow">${S.busy ? "結果" : "ログ"}</div>${logHtml()}</div></div><div class="bt-cmd">${panel}</div></div>`;
         ST.$$("[data-atk]", el).forEach(b => b.onclick = () => turn(b.dataset.atk, null));
         ST.$$("[data-def]", el).forEach(b => b.onclick = () => turn(null, b.dataset.def));
         ST.$$("[data-recon]", el).forEach(b => b.onclick = () => S.role === "atk" ? turn("recon", null) : turn(null, "recon"));
@@ -113,6 +117,7 @@
         if (df !== "recon" && S.role === "def") { S.def.add(df); S.tip = false; note.push(`防御を配備：${esc(D[df].name)}`); }
         if (S.role === "atk" && df !== "recon" && atk !== "recon") { S.def.add(df); note.push(`CPUが防御を配備：${esc(D[df].name)}`); }
         else if (S.role === "atk" && atk === "recon") { /* 偵察ラウンドでもCPUは防御を足す */ S.def.add(df); S.know = true; note.push(`CPUが防御を配備：${esc(D[df].name)}`); }
+        const preLen = note.length;
         let from = S.pos, blocked = false, a = null;
         if (atk && atk !== "recon") {
           a = A[atk];
@@ -121,12 +126,14 @@
           if (blocked) { S.caught++; note.push(`⛔ 攻撃「${esc(a.name)}」は <b>${esc(D[stop].name)}</b> で止まった。`); }
           else { S.pos = a.stage; note.push(`⛔ 攻撃「${esc(a.name)}」が通り、「${esc(NODES[S.pos].label)}」まで進まれた。`); }
         } else if (S.role === "def" && !atk) { note.push("攻撃側はこのラウンド様子を見ていた。"); }
-        draw();
+        S.live = []; draw();
+        for (const m of note.slice(0, preLen)) { S.live.push(m); showLive(); await sleep(650); if (!alive) return; }
         if (a) {
           const svg = $("[data-s]");
           if (svg) { const n0 = NODES[from], n1 = NODES[from + 1]; await ST.flyPacket(svg, [{ x: n0.x, y: n0.y }, { x: n1.x, y: n1.y }], { label: a.name.slice(0, 7), color: "var(--packet)", ms: 700, blockAt: blocked ? 0.6 : null, alive: () => alive }); }
         }
         if (!alive) return;
+        for (const m of note.slice(preLen)) { S.live.push(m); showLive(); await sleep(650); if (!alive) return; }
         S.log.unshift(`R${S.round}: ${note.join(" ")}`);
         if (S.pos >= 4) S.end = { win: S.role === "atk", msg: S.role === "atk" ? "重要データまで届いた。" : "重要データまで届かれてしまった。", lesson: "入口・端末・社内・外への持ち出しの4段階のどこかで止まる仕組みを、重ねて置いておく（多層防御）。" };
         else if (S.round >= ROUNDS) S.end = { win: S.role === "def", msg: S.role === "def" ? `${ROUNDS}ラウンド守り切った。止めた攻撃は${S.caught}回。` : `${ROUNDS}ラウンド以内に届かなかった。`, lesson: "一つの対策で全部は防げないが、段階ごとに別の対策を置くと進行を止められる。" };

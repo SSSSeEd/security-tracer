@@ -373,7 +373,7 @@ table.tbl td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;whi
   .bt{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start;margin-top:4px}
   .bt-field{grid-template-rows:auto auto}
   .bt .stage svg{display:block;width:100%;max-height:calc(100dvh - 250px);min-height:140px}
-  .bt-msg{max-height:64px;min-height:44px;font-size:12px;padding:4px 10px}
+  .bt-msg{max-height:56px;min-height:44px;font-size:12px;padding:4px 10px}
   .bt-cmd{max-height:calc(100dvh - 190px);min-height:200px;overflow:auto;-webkit-overflow-scrolling:touch;padding-right:8px}
   .bt-cmd .rl-card{font-size:12.5px;line-height:1.4;padding:6px 8px;background:none;border:0}
   .bt-cmd .rl-card>.rl-cap{position:sticky;top:0;z-index:1;background:#0b0607;padding:2px 4px 6px;margin:0}
