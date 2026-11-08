@@ -36,6 +36,7 @@ const SHELL = [
   "js/widgets/cloud.js",
   "js/widgets/ai.js",
   "js/widgets/packetsim.js",
+  "js/widgets/battle.js",
   "js/redline.js",
   "js/views.js",
   "js/app.js"
