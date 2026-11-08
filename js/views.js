@@ -143,6 +143,7 @@
       <a href="#course-${c.id}" style="font-size:14px">‹ ${esc(c.title)}</a>
       <header><div class="eyebrow" style="color:${c.color}">COURSE ${c.n} · LESSON ${l.idx + 1}/${c.lessons.length} · 約${l.min}分</div><h1>${esc(l.title)}</h1></header>
       ${html}
+      ${locked ? "" : ST.legalBox(ST.legalAreaOf.course(c.id))}
       <div class="card"><div class="eyebrow">関連する用語</div><div class="filters" style="margin-top:8px">${l.terms.filter(t => ST.TERM[t]).map(t => `<a class="tag" href="#term-${t}">${esc(ST.TERM[t].name)}</a>`).join("")}</div>
         <div class="eyebrow" style="margin-top:14px;margin-bottom:6px">出典</div>${ST.srcList(l.src)}
         ${(l.practice || []).length ? `<div class="eyebrow" style="margin-top:14px;margin-bottom:6px">実践・外部教材</div>${ST.P.lessons[l.id] || ST.LOCK === "off" ? ST.srcList(l.practice) : `<p class="cap" style="margin:0">🔒 このレッスンを完了すると、演習へのリンク（${l.practice.length}件）が開きます。座学のあとに手を動かす順番にしています。</p>`}<p class="cap" style="margin:6px 0 0">練習は、用意された演習環境の中だけで行います（<a href="#l-law-uaa">不正アクセス禁止法</a>）。外部サイトの内容は転載せず、リンクだけを案内しています。</p>` : ""}
@@ -183,6 +184,7 @@
   /* ---------- Lab ---------- */
   ST.view("lab", v => {
     v.innerHTML = `<div class="page-h"><div class="eyebrow">Lab</div><h1>図解ラボ</h1><p class="lead">それぞれ単独で触れる実験台です。レッスンの中にも組み込まれていて、そのレッスンを読むと単独でも開きます。</p></div>
+      <a class="rl-link" href="#redline"><b>RED LINE</b> · どこからがアウト？ 判定ゲーム・対戦・合法の練習場 ›</a>
       <section class="col"><div class="section-h"><h2>攻撃シミュレーター</h2><a href="#sim">開く</a></div>
         <div class="lab-grid">${ST.SCEN.map(s => `<a class="card lab-card" href="#sim-${s.id}" style="--cc:var(--packet)"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="5" cy="17" r="2.5"/><circle cx="19" cy="7" r="2.5"/><path d="M7.3 16 16.8 8.2"/><rect x="10" y="10" width="4.5" height="3.2" rx=".6" fill="currentColor"/></svg></div><b>${esc(s.title)}</b><span class="cap">${esc(s.tag)}${ST.P.sims[s.id] ? " · 済" : ""}</span></a>`).join("")}</div></section>
       ${ST.LABS.map(g => `<section class="col"><div class="section-h"><h2>${esc(g.g)}</h2></div><div class="lab-grid">${g.items.map(([id, n, d]) => `<a class="card lab-card" href="#lab-${id}" style="--cc:${g.color}"><div class="ico" style="color:${g.color}"><b class="mono" style="font-size:12px">${id.slice(0, 3).toUpperCase()}</b></div><b>${!ST.labOpen(id) && ST.LOCK !== "off" ? "🔒 " : ""}${esc(n)}</b><span class="cap">${esc(d)}${ST.P.labs[id] ? " · 済" : ""}${!ST.labOpen(id) && ST.LOCK !== "off" ? " · 「" + esc(ST.labOpeners(id)[0].title) + "」などを読むと開く" : ""}</span></a>`).join("")}</div></section>`).join("")}`;
@@ -191,6 +193,7 @@
     const l = ST.LAB[id]; if (!l) return ST.views.lab(v);
     const ls = lessonsUsing(id), ts = ST.TERMS.filter(t => t.lab === id);
     v.innerHTML = `<a href="#lab" style="font-size:14px">‹ 図解ラボ</a><div class="page-h"><div class="eyebrow" style="color:${l.color}">${esc(l.g)}</div><h1>${esc(l.n)}</h1><p class="lead">${esc(l.d)}</p></div>
+      ${ST.legalBox(ST.legalAreaOf.group(Object.keys(ST.W).includes(id) ? ST.W[id].group : ""))}
       ${!ST.labOpen(id) && ST.gated("lab-" + id) ? gate("lab-" + id, "このラボは、次のレッスンのどれかを読むと開きます。", ls.map(x => x.id)) : `<div data-widget="${id}"></div>`}
       <div class="grid2">${ls.length ? `<div class="card"><div class="eyebrow">このラボを使うレッスン</div><div class="list">${ls.map(x => `<a class="row" href="#l-${x.id}"><div class="body"><div class="t">${esc(x.title)}</div><div class="s">${esc(ST.COURSE[x.course].title)}</div></div></a>`).join("")}</div></div>` : ""}
       ${ts.length ? `<div class="card"><div class="eyebrow">関連する用語</div><div class="list">${ts.map(t => `<a class="row" href="#term-${t.id}"><div class="body"><div class="t">${esc(t.name)}</div><div class="s">${md(t.summary)}</div></div></a>`).join("")}</div></div>` : ""}</div>`;
@@ -199,10 +202,11 @@
   /* ---------- Simulator ---------- */
   ST.view("sim", (v, id) => {
     const s = ST.SC[id] || ST.SCEN[0];
-    v.innerHTML = `<div class="page-h"><div class="eyebrow">Simulation mode</div><h1>${esc(s.title)}</h1><p class="lead">${esc(s.intro)}</p></div>
+    v.innerHTML = `<div class="redline rl-sim"><div class="rl-tape" aria-hidden="true"></div><div class="page-h"><div class="eyebrow">Simulation mode // RED</div><h1>${esc(s.title)}</h1><p class="lead">${esc(s.intro)}</p></div>
+      ${ST.legalBox(ST.legalAreaOf.sim(s.id))}
       <div class="pills" role="group" aria-label="シナリオ">${ST.SCEN.map(x => `<button type="button" data-sc="${x.id}" aria-pressed="${x.id === s.id}">${esc(x.title)}</button>`).join("")}</div>
       <div data-widget="packetsim" data-opts='${esc(JSON.stringify({ id: s.id, title: "攻撃シミュレーター · " + s.title }))}'></div>
-      <div class="card"><div class="eyebrow">関連する用語</div><div class="list">${s.terms.map(t => `<a class="row" href="#term-${t}"><div class="body"><div class="t">${esc(ST.TERM[t].name)}</div><div class="s">${md(ST.TERM[t].summary)}</div></div></a>`).join("")}</div></div>`;
+      <div class="card"><div class="eyebrow">関連する用語</div><div class="list">${s.terms.map(t => `<a class="row" href="#term-${t}"><div class="body"><div class="t">${esc(ST.TERM[t].name)}</div><div class="s">${md(ST.TERM[t].summary)}</div></div></a>`).join("")}</div></div><div class="rl-tape" aria-hidden="true"></div></div>`;
     ST.$$("[data-sc]", v).forEach(b => b.onclick = () => { location.hash = "sim-" + b.dataset.sc; });
   });
 
@@ -233,6 +237,7 @@
         <section><h2>仕組み</h2><p>${md(t.how)}</p></section>
         <section><h2>危険性</h2><p>${md(t.risk)}</p></section>
         <section><h2>対策</h2><ul>${t.defense.map(d => `<li>${md(d)}</li>`).join("")}</ul></section>
+        ${ST.legalBox(ST.legalAreaOf.cat(t.cat))}
         ${t.lab && ST.LAB[t.lab] ? `<section><h2>図解で確かめる</h2><div data-widget="${t.lab}"></div></section>` : ""}
         ${t.sim ? `<section><h2>シミュレーション</h2><p><a class="btn" href="#sim-${t.sim}">「${esc(ST.SC[t.sim].title)}」を再生する ›</a></p></section>` : ""}
         ${ls.length ? `<section><h2>この用語が出てくるレッスン</h2><div class="list">${ls.map(l => `<a class="row" href="#l-${l.id}"><div class="body"><div class="t">${esc(l.title)}</div><div class="s">${esc(ST.COURSE[l.course].title)}</div></div></a>`).join("")}</div></section>` : ""}
