@@ -28,7 +28,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 a{color:var(--link)}
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--packet);outline-offset:2px}
-h1,h2,h3,h4{text-wrap:balance;line-height:1.35;margin:0}
+h1,h2,h3,h4{text-wrap:balance;word-break:auto-phrase;line-height:1.35;margin:0}
 p{margin:0}
 code,.mono{font-family:var(--f-mono)}
 code{font-size:.9em;background:var(--sunken);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
@@ -46,9 +46,11 @@ main{flex:1;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:m
 .reading{max-width:760px}
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);
   padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
-nav.tabs .in{max-width:620px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
+nav.tabs .in{max-width:620px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
 nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 6px;text-decoration:none;color:var(--muted);font-size:10.5px}
 nav.tabs a svg{width:22px;height:22px}
+nav.tabs a{position:relative}
+nav.tabs a.dot::after{content:"";position:absolute;top:6px;left:calc(50% + 6px);width:9px;height:9px;border-radius:50%;background:var(--attack);border:2px solid var(--surface)}
 nav.tabs a[aria-current="page"]{color:var(--packet)}
 @media (min-width:960px){
   nav.tabs{top:0;bottom:auto;left:max(16px,env(safe-area-inset-left,0px));right:auto;background:none;border:0;margin-top:78px}
@@ -104,12 +106,16 @@ label.field{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(
 
 /* home */
 .hero h1{font-size:26px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-@media (max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px}
-.stat b{display:block;font-family:var(--f-mono);font-size:22px;font-variant-numeric:tabular-nums}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.today{border-left:4px solid var(--cc);display:flex;flex-direction:column;gap:10px;align-items:stretch}
+.today h1{font-size:26px;font-weight:800}
+.today .chips{display:flex;gap:6px;flex-wrap:wrap}
+.today .cap{margin:0;text-align:center;font-size:13px;color:var(--muted)}
+.btn.big{min-height:48px;font-size:16px;font-weight:700}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:8px 6px;text-align:center}
+.stat b{display:block;font-family:var(--f-mono);font-size:19px;font-variant-numeric:tabular-nums}
 .stat b span{font-size:12px;color:var(--muted);font-weight:400}
-.stat > span{font-size:12px;color:var(--muted)}
+.stat > span{font-size:11px;color:var(--muted)}
 
 /* courses: a subway-style map, each course a line, lessons are stations */
 .course-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
