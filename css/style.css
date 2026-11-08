@@ -390,3 +390,14 @@ table.tbl td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;whi
 .bt-cmd .rl-hand:hover::before,.bt-cmd .rl-hand:focus-visible::before{content:"▶";position:absolute;left:-18px;top:50%;transform:translateY(-50%);color:var(--rl-yel);font-size:14px}
 .bt-cmd .rl-hand .chip{font-size:10px;padding:1px 6px;margin-right:4px}
 .rl-sim .rl-score{background:linear-gradient(100deg,#3a0f14,#170d0f);border:2px solid #7a2a31;border-radius:4px 14px 4px 14px;padding:2px 12px}
+
+/* 実インシデント対戦：キー表示・出典（黒×赤×黄を維持） */
+.bt-key{display:inline-block;min-width:2.4em;color:var(--rl-yel,#ffd400);font-weight:700}
+.bt-ref{background:#2a1013;color:var(--rl-yel,#ffd400);border:1px solid #5a1d22}
+.bt-scn{display:grid;gap:8px}
+.bt-src{margin:10px 0 0;border:1px solid #4a1a1f;border-radius:8px;padding:8px 12px;background:#0d0708;font-size:12.5px}
+.bt-src summary{cursor:pointer;color:var(--rl-yel,#ffd400);font-weight:700}
+.bt-src ul{margin:4px 0;padding-left:18px;display:grid;gap:3px}
+.bt-src a{word-break:break-all}
+.bt-msg li::marker{content:"> ";color:var(--rl-red,#ff3b47)}
+@media (min-width:900px){.bt-scn{grid-template-columns:repeat(2,minmax(0,1fr))}}
