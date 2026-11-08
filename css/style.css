@@ -347,3 +347,46 @@ table.tbl td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;whi
 .rl-sim .rl-tape{margin:0 -16px 12px}.rl-sim .rl-tape:last-child{margin:12px -16px -18px}
 .rl-sim .page-h{padding-top:6px}
 .rl-sim .btn.primary{background:#ff3b47;color:#fff;border-color:#ff3b47}
+
+/* 攻防対戦：縦は上から順、横画面は左=戦場+メッセージ / 右=コマンド（スクロールは各枠の中だけ） */
+.bt{display:grid;gap:10px;margin-top:8px}
+.bt-field{display:grid;gap:8px;min-width:0}
+.bt-msg{background:#0d0708;border:2px solid #5a1d22;border-radius:8px;padding:8px 12px;max-height:200px;overflow:auto;-webkit-overflow-scrolling:touch}
+.bt-cmd{min-width:0}
+.bt-cmd .rl-card{padding:10px}
+@media (orientation:landscape) and (max-height:560px){
+  .app:has([data-widget="battle"]) header.top{display:none}
+  .app:has([data-widget="battle"]) main{padding-block:0 60px}
+  body:has([data-widget="battle"])::before{display:none}
+  .redline:has([data-widget="battle"]) .rl-tape,.redline:has([data-widget="battle"]) .rl-head,.redline:has([data-widget="battle"]) .lg-disc{display:none}
+  .rl-sim .bench{border:0;border-radius:0;background:none}
+  .rl-sim .bench-h{display:none}
+  .rl-sim .bench-b{padding:0;gap:4px}
+  .redline:has([data-widget="battle"]) .rl-lead,.redline:has([data-widget="battle"]) .rl-eyebrow{display:none}
+  .redline:has([data-widget="battle"]) .rl-head{padding:6px 16px 0}
+  .redline:has([data-widget="battle"]) .rl-glitch{font-size:20px;margin:0}
+  .redline:has([data-widget="battle"]) .rl-tabs{padding:6px 16px 2px}
+  .redline:has([data-widget="battle"]) .rl-tabs button{padding:6px 10px}
+  .redline:has([data-widget="battle"]) .rl-body{padding:4px 0}
+  .rl-sim{padding:0 max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px))}
+  .rl-sim .rl-score{font-size:12px}
+  .bt{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;margin-top:4px}
+  .bt-field{grid-template-rows:auto auto}
+  .bt .stage svg{display:block;width:100%;max-height:calc(100dvh - 300px);min-height:110px}
+  .bt-msg{max-height:calc(100dvh - 330px);min-height:60px;font-size:12px}
+  .bt-cmd{max-height:calc(100dvh - 190px);min-height:200px;overflow:auto;-webkit-overflow-scrolling:touch;padding-right:8px}
+  .bt-cmd .rl-card{font-size:12.5px;line-height:1.4;padding:6px 8px;background:none;border:0}
+  .bt-cmd .rl-card>.rl-cap{position:sticky;top:0;z-index:1;background:#0b0607;padding:2px 4px 6px;margin:0}
+  .bt-cmd .rl-hand{padding:8px 10px;margin-bottom:6px;font-size:12.5px}
+  .bt-cmd .rl-hand .cap{font-size:11px}
+  .bt-cmd .rl-big{font-size:24px}
+}
+
+/* 技カード風（ポケモン対戦のコマンド画面のイメージ。配色は黒×赤×黄のまま） */
+.bt-cmd .rl-hand{position:relative;border:2px solid #7a2a31;border-radius:12px 4px 12px 4px;background:linear-gradient(100deg,#2a1013,#120a0b 70%);padding:8px 12px 8px 14px;transition:transform .1s}
+.bt-cmd .rl-hand b,.bt-cmd .rl-hand{font-weight:700}
+.bt-cmd .rl-hand .cap{display:block;font-weight:400;color:var(--rl-dim)}
+.bt-cmd .rl-hand:hover,.bt-cmd .rl-hand:focus-visible,.bt-cmd .rl-hand:active{border-color:var(--rl-yel);background:linear-gradient(100deg,#4a3a05,#170d0f 75%);transform:translateX(-6px);outline:0}
+.bt-cmd .rl-hand:hover::before,.bt-cmd .rl-hand:focus-visible::before{content:"▶";position:absolute;left:-18px;top:50%;transform:translateY(-50%);color:var(--rl-yel);font-size:14px}
+.bt-cmd .rl-hand .chip{font-size:10px;padding:1px 6px;margin-right:4px}
+.rl-sim .rl-score{background:linear-gradient(100deg,#3a0f14,#170d0f);border:2px solid #7a2a31;border-radius:4px 14px 4px 14px;padding:2px 12px}

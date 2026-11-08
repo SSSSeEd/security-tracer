@@ -6,7 +6,7 @@
   const esc = ST.esc;
   const NODES = [
     { id: "net", label: "インターネット", x: 36, y: 60, i: "attacker" },
-    { id: "gate", label: "入口（メール/公開Web）", x: 120, y: 60, i: "server" },
+    { id: "gate", label: "入口（メール・公開Web）", lines: ["入口", "メール・公開Web"], x: 120, y: 60, i: "server" },
     { id: "pc", label: "社員PC", x: 204, y: 60, i: "pc" },
     { id: "lan", label: "社内LAN", x: 288, y: 60, i: "router" },
     { id: "data", label: "重要データ", x: 324, y: 150, i: "server" }
@@ -53,7 +53,7 @@
         const N = Object.fromEntries(NODES.map(n => [n.id, n]));
         const path = [["net", "gate"], ["gate", "pc"], ["pc", "lan"], ["lan", "data"]];
         let s = path.map(([a, b], i) => `<line class="lnk${i >= S.pos ? " dash" : ""}" x1="${N[a].x}" y1="${N[a].y}" x2="${N[b].x}" y2="${N[b].y}"${i < S.pos ? ' style="stroke:var(--attack);stroke-width:3"' : ""}/>`).join("");
-        s += NODES.map((n, i) => `<g transform="translate(${n.x} ${n.y})"><circle r="22" fill="var(--surface)" stroke="${i === S.pos ? "var(--attack)" : "var(--line)"}" stroke-width="${i === S.pos ? 3 : 1.5}"/><use href="#i-${n.i}" x="-13" y="-13" width="26" height="26" class="n-ico${n.i === "attacker" ? " atk" : ""}"/><text class="n-label" y="38" text-anchor="middle" style="font-size:9px">${esc(n.label)}</text></g>`).join("");
+        s += NODES.map((n, i) => `<g transform="translate(${n.x} ${n.y})"><circle r="22" fill="var(--surface)" stroke="${i === S.pos ? "var(--attack)" : "var(--line)"}" stroke-width="${i === S.pos ? 3 : 1.5}"/><use href="#i-${n.i}" x="-13" y="-13" width="26" height="26" class="n-ico${n.i === "attacker" ? " atk" : ""}"/><text class="n-label" text-anchor="middle" style="font-size:9px">${(n.lines || [n.label]).map((t, k) => `<tspan x="0" y="${38 + k * 11}">${esc(t)}</tspan>`).join("")}</text></g>`).join("");
         return `<svg data-s viewBox="0 0 360 200" role="img" aria-label="会社ネットワークの図。攻撃側は${esc(NODES[S.pos].label)}まで進んでいる">${s}<text x="8" y="20" class="svg-m" style="font-size:10px">${S.def.size ? "配備中の防御：" + S.def.size + "個" : "防御はまだありません"}</text></svg>`;
       };
 
@@ -86,7 +86,7 @@
             <button type="button" class="rl-hand" data-recon style="border-color:var(--ok)"><b>脆弱性診断を依頼する</b><br><span class="cap">許可を得た診断。1ラウンド使うが、攻撃側の次の手の候補と、それを止める防御が分かる。</span></button>
             ${S.tip ? `<div class="rl-res safe"><b>診断結果</b><p>${avail().map(a => `${esc(a.name)} → 止められる防御：${a.counter.map(c => esc(D[c].name)).join("／")}`).join("<br>")}</p></div>` : ""}</div>`;
         }
-        el.innerHTML = `${head()}<div class="stage">${svgHtml()}</div>${panel}<div class="card" style="padding:12px" aria-live="polite"><div class="eyebrow">ログ</div>${logHtml()}</div>`;
+        el.innerHTML = `${head()}<div class="bt"><div class="bt-field"><div class="stage">${svgHtml()}</div><div class="bt-msg" aria-live="polite"><div class="eyebrow">ログ</div>${logHtml()}</div></div><div class="bt-cmd">${panel}</div></div>`;
         ST.$$("[data-atk]", el).forEach(b => b.onclick = () => turn(b.dataset.atk, null));
         ST.$$("[data-def]", el).forEach(b => b.onclick = () => turn(null, b.dataset.def));
         ST.$$("[data-recon]", el).forEach(b => b.onclick = () => S.role === "atk" ? turn("recon", null) : turn(null, "recon"));
