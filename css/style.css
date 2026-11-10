@@ -390,3 +390,61 @@ table.tbl td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;whi
 .bt-cmd .rl-hand:hover::before,.bt-cmd .rl-hand:focus-visible::before{content:"▶";position:absolute;left:-18px;top:50%;transform:translateY(-50%);color:var(--rl-yel);font-size:14px}
 .bt-cmd .rl-hand .chip{font-size:10px;padding:1px 6px;margin-right:4px}
 .rl-sim .rl-score{background:linear-gradient(100deg,#3a0f14,#170d0f);border:2px solid #7a2a31;border-radius:4px 14px 4px 14px;padding:2px 12px}
+
+/* 実インシデント対戦：キー表示・出典（黒×赤×黄を維持） */
+.bt-key{display:inline-block;min-width:2.4em;color:var(--rl-yel,#ffd400);font-weight:700}
+.bt-ref{background:#2a1013;color:var(--rl-yel,#ffd400);border:1px solid #5a1d22}
+.bt-scn{display:grid;gap:8px}
+.bt-src{margin:10px 0 0;border:1px solid #4a1a1f;border-radius:8px;padding:8px 12px;background:#0d0708;font-size:12.5px}
+.bt-src summary{cursor:pointer;color:var(--rl-yel,#ffd400);font-weight:700}
+.bt-src ul{margin:4px 0;padding-left:18px;display:grid;gap:3px}
+.bt-src a{word-break:break-all}
+.bt-msg li::marker{content:"> ";color:var(--rl-red,#ff3b47)}
+@media (min-width:900px){.bt-scn{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* 攻防端末（リアルタイム）：黒×赤×黄の固定配色。大画面・キーボード前提で、横に「端末｜ミッション」 */
+.ops-secs{display:grid;gap:12px;margin-top:12px}
+.ops-sec h3{margin:0 0 2px;color:var(--rl-yel,#ffd400);font-size:15px}
+.ops-sec .rl-hand{margin-top:6px}
+.ops-story{font-size:14.5px;line-height:1.8}
+.ops-chk{list-style:none;margin:6px 0;padding:0;display:grid;gap:4px}
+.ops-chk li{color:var(--rl-ink,#f4eaea)}
+.ops-chk li.ok{color:var(--rl-grn,#3ddc84)}
+.ops{display:grid;gap:10px;margin-top:8px}
+.ops-term{background:#050203;border:2px solid #5a1d22;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;min-height:420px;height:calc(100dvh - 230px);max-height:900px;cursor:text}
+.ops-out{flex:1;overflow:auto;font:13px/1.45 "IBM Plex Mono",ui-monospace,Consolas,monospace;white-space:pre-wrap;word-break:break-all;color:#e9dede}
+.ops-l{min-height:1.45em}
+.ops-l.cmd{color:#fff}
+.ops-l.sim{color:#c9b3b5;font-style:italic}
+.ops-l.game{color:var(--rl-yel,#ffd400)}
+.ops-l.hint{color:#19e3ff}
+.ops-l.mis{color:var(--rl-yel,#ffd400);font-weight:700}
+.ops-l.dim{color:#9c8587}
+.ops-l.alert{color:#fff;background:#5a0d14;border-left:4px solid var(--rl-red,#ff3b47);padding:1px 6px;margin:2px 0}
+.ops-in{display:flex;align-items:center;gap:0;border-top:1px solid #3a1015;padding-top:6px;margin-top:6px;font:13px/1.4 "IBM Plex Mono",ui-monospace,Consolas,monospace}
+.ops-ps{color:var(--rl-yel,#ffd400);white-space:pre}
+.ops-in input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;font:inherit;caret-color:var(--rl-red,#ff3b47);padding:2px 0}
+.ops-side{display:grid;gap:10px;align-content:start}
+.ops-side>div{background:#170d0f;border:1px solid #4a1a1f;border-radius:8px;padding:8px 10px;font-size:12.5px}
+.ops-timer{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ops-timer b{font-size:30px;color:var(--rl-yel,#ffd400);font-variant-numeric:tabular-nums}
+.ops-timer.hot b{color:var(--rl-red,#ff3b47);animation:rlflick 1s steps(1) infinite}
+.ops-g{font-size:16px;font-weight:700;color:var(--rl-yel,#ffd400)}
+.ops-hosts table{width:100%;border-collapse:collapse;font-size:11.5px}
+.ops-hosts td:first-child,.ops-hosts td:nth-child(2){white-space:nowrap}
+.ops-hosts td{padding:2px 4px;border-bottom:1px solid #2a1013;vertical-align:top}
+.ops-hosts tr.cur td{color:var(--rl-yel,#ffd400)}
+.ops-hosts .tag{display:inline-block;padding:0 5px;border-radius:3px;font-size:10.5px}
+.ops-hosts .tag.iso{background:var(--rl-red,#ff3b47);color:#fff}
+.ops-brief .rl-big,.ops-end .rl-big{margin:4px 0 8px}
+.ops-menu code,.ops-brief code{color:var(--rl-yel,#ffd400)}
+@media (min-width:900px){
+  .ops{grid-template-columns:minmax(0,2.2fr) minmax(240px,1fr);align-items:start}
+  .ops-side{position:sticky;top:8px}
+  .ops-secs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (orientation:landscape) and (max-height:560px){
+  .app:has([data-widget="ops"]) header.top{display:none}
+  .redline:has([data-widget="ops"]) .rl-tape,.redline:has([data-widget="ops"]) .rl-head,.redline:has([data-widget="ops"]) .lg-disc{display:none}
+  .ops-term{height:calc(100dvh - 110px);min-height:240px}
+}
