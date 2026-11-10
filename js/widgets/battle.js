@@ -123,6 +123,8 @@
       unk: ["米CISAの注意喚起（AA21-131A）など一次資料は、この環境から取得できず内容を未確認。ここでの記述は報道（Dark Reading）による。", "ITネットワーク内での具体的な行動：参照資料に記載なし（未確認）。第2段階はゲーム用の抽象化。"],
       sources: [{ t: "Dark Reading: Colonial Pipeline CEO: Ransomware Attack Started via Pilfered 'Legacy' VPN Account（2021-06-09）", u: "https://www.darkreading.com/cyberattacks-data-breaches/colonial-pipeline-ceo-ransomware-attack-started-via-pilfered-legacy-vpn-account", k: "二次（報道。議会証言を伝える）" }] }
   ];
+  ST.INCIDENTS = Object.fromEntries(SCN.filter(c => c.id !== "base").map(c => [c.id, c]));
+  ST.INCIDENT_CHECKED = CHECKED;
   let NODES, ATK, DEF, D, A;
   const use = c => { NODES = c.nodes; ATK = c.atk; DEF = c.def; D = Object.fromEntries(DEF.map(d => [d.id, d])); A = Object.fromEntries(ATK.map(x => [x.id, x])); };
   use(SCN[0]);

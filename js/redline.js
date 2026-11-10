@@ -28,7 +28,7 @@
 
   let tab = "judge";
   ST.view("redline", v => {
-    const TABS = [["judge", "判定ゲーム"], ["battle", "対戦"], ["sim", "攻防対戦"],["dojo", "合法の練習場"], ["laws", "法律ミニ辞典"]];
+    const TABS = [["judge", "判定ゲーム"], ["battle", "対戦"], ["ops", "攻防端末"], ["sim", "ターン制対戦"], ["dojo", "合法の練習場"], ["laws", "法律ミニ辞典"]];
     /* judge game state */
     let J = null, B = null;
     const startJ = () => { J = { items: shuffle(L.cases), i: 0, score: 0, picked: null }; };
@@ -61,14 +61,14 @@
     const lawsHtml = () => `<ul class="lg-laws rl-laws">${Object.keys(L.laws).map(lawLine).join("")}</ul>${ST.srcList([...new Set(Object.values(L.laws).flatMap(x => x.src))])}<p class="cap">このサイトの「法律と倫理」コースも合わせて読んでください：<a href="#course-law">コースを開く</a></p>`;
 
     const draw = () => {
-      const body = tab === "judge" ? judgeHtml() : tab === "battle" ? battleHtml() : tab === "sim" ? `<div class="rl-sim" style="padding:0"><div data-widget="battle"></div></div>` : tab === "dojo" ? dojoHtml() : lawsHtml();
+      const body = tab === "judge" ? judgeHtml() : tab === "battle" ? battleHtml() : tab === "sim" ? `<div class="rl-sim" style="padding:0"><div data-widget="battle"></div></div>` : tab === "ops" ? `<div class="rl-sim" style="padding:0"><div data-widget="ops"></div></div>` : tab === "dojo" ? dojoHtml() : lawsHtml();
       v.innerHTML = `<div class="redline"><div class="rl-tape" aria-hidden="true"></div>
         <div class="rl-head"><div class="rl-eyebrow">// RED LINE</div><h1 class="rl-glitch" data-t="RED LINE">RED LINE</h1>
           <p class="rl-lead">アウトの線を、先に踏んで知る場所。ここの中身はぜんぶブラウザ内の模擬。<b>実在の機器には何もしません。</b></p></div>
         <div class="rl-tabs" role="tablist">${TABS.map(([k, n]) => `<button type="button" role="tab" aria-selected="${k === tab}" data-tab="${k}">${n}</button>`).join("")}</div>
         <div class="rl-body">${body}</div>
         <p class="lg-disc">${esc(L.disclaimer)}</p><div class="rl-tape" aria-hidden="true"></div></div>`;
-      if (tab === "sim") ST.mountAll(v);
+      if (tab === "sim" || tab === "ops") ST.mountAll(v);
       ST.$$("[data-tab]", v).forEach(b => b.onclick = () => { tab = b.dataset.tab; if (tab === "judge" && J.i >= J.items.length) startJ(); draw(); });
       const on = (sel, fn) => ST.$$(sel, v).forEach(b => b.onclick = () => fn(b));
       on("[data-j]", b => { J.picked = b.dataset.j; if (J.picked === J.items[J.i].a) J.score++; draw(); });
