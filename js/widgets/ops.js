@@ -230,7 +230,7 @@
 
   /* ---------- 共通（ゲーム側）コマンド ---------- */
   const GAME_HELP = {
-    mission: "ミッションとクリア条件をもう一度表示", status: "残り時間と達成状況を表示", hint: "ヒント（使うと相手が先に進む）", clear: "画面を消す（cls も可）", help: "コマンドの一覧"
+    mission: "ミッションとクリア条件をもう一度表示", status: "残り時間と達成状況を表示", hint: "ヒント（本番では使うと相手が先に進む）", clear: "画面を消す（cls も可）", help: "コマンドの一覧"
   };
 
   ST.OPS_WIN = WIN;
@@ -238,7 +238,15 @@
   ST.widget("ops", {
     title: "攻防端末 · リアルタイム",
     mount(el) {
-      const D = ST.OPS; let W = null, timer = null, alive = true, screen = "menu", sel = null, hist = [], hi = 0;
+      const TUT = ST.OPS_TUT || [];
+      TUT.forEach(t => { if (!t.goals) t.goals = t.steps.map((st, i) => ({ text: st.task, ok: W => W.tut && W.step > i })); });
+      const D = { missions: [...TUT, ...ST.OPS.missions] };
+      /* 本番は基礎訓練が必須：調査は 1〜3、防御は 1〜4 を終えると開く */
+      const reqs = m => m.mode === "def" ? TUT.map(t => t.id) : m.mode === "inv" ? TUT.slice(0, 3).map(t => t.id) : [];
+      const done = id => !!(ST.P && ST.P.labs && ST.P.labs[id]);
+      const missing = m => reqs(m).filter(id => !done(id));
+      const tutName = id => { const t = TUT.find(x => x.id === id); return t ? `${t.tag}「${t.title}」` : id; };
+      let W = null, timer = null, alive = true, screen = "menu", sel = null, hist = [], hi = 0;
       const stop = () => { if (timer) clearInterval(timer); timer = null; };
       const gone = () => { if (!el.isConnected) { alive = false; stop(); document.removeEventListener("keydown", onKey); return true; } return false; };
       const fmt = s => `${two(Math.floor(Math.max(0, s) / 60))}:${two(Math.max(0, s) % 60)}`;
@@ -257,22 +265,48 @@
       };
 
       const menu = () => {
-        const sec = (mode, title, lead) => { const ms = D.missions.filter(m => m.mode === mode); return `<div class="ops-sec"><h3>${title}</h3><p class="cap">${lead}</p>${ms.map(m => `<button type="button" class="rl-hand" data-m="${m.id}"><span class="bt-key">[${D.missions.indexOf(m) + 1}]</span> <b>${esc(m.goal)}</b> <span class="chip">${esc(m.tag)}</span><br><span class="cap">${esc(m.title)} · 制限 ${fmt(m.limit)}</span></button>`).join("")}</div>`; };
+        const key = m => { const i = D.missions.indexOf(m) + 1; return i <= 9 ? `[${i}]` : ""; };
+        const sec = (mode, title, lead) => { const ms = D.missions.filter(m => m.mode === mode); return `<div class="ops-sec${mode === "tut" ? " tut" : ""}"><h3>${title}</h3><p class="cap">${lead}</p>${ms.map(m => { const lk = missing(m); return `<button type="button" class="rl-hand${lk.length ? " locked" : ""}" data-m="${m.id}"><span class="bt-key">${key(m)}</span> ${lk.length ? "🔒 " : ""}<b>${esc(m.mode === "tut" ? m.title : m.goal)}</b> <span class="chip">${esc(m.tag)}</span>${m.mode === "tut" && done(m.id) ? ' <span class="chip ok">済</span>' : ""}<br><span class="cap">${m.mode === "tut" ? esc(m.goal) + " · 時間制限なし · " + m.steps.length + "手順" : esc(m.title) + " · 制限 " + fmt(m.limit)}${lk.length ? " · 🔒 基礎訓練 " + lk.map(id => TUT.findIndex(t => t.id === id) + 1).join("・") + " を終えると開く" : ""}</span></button>`; }).join("")}</div>`; };
         el.innerHTML = `<div class="ops-menu"><div class="rl-card"><h2>攻防端末 <span class="cap">// 相手は待ってくれない</span></h2>
           <p>架空の組織の端末に入り、コマンドを打って状況を読み解きます。時計は止まりません。あなたが操作するのは防御・調査の側だけ。コマンドは<b>本物の構文</b>のままで、攻撃側の動きは裏で進む筋書きです。製品固有の操作（EDR の隔離など）と報告だけ <code>[GAME]</code> コマンドにしています。<b>実在の機器には何もしません。</b></p>
           <p class="cap">キーボード前提（PC・iPad＋キーボード）。番号キーでミッションを選べます。ターン制の対戦は「ターン制対戦」タブに残しています。</p></div>
+          ${sec("tut", "基礎訓練（必須）", "本番の前に、ここで手を動かして覚えます。1手順ずつ説明があり、時間制限はありません。調査は訓練1〜3、防御は訓練1〜4を終えると開きます。")}
           <div class="ops-secs">${sec("def", "防御：未来を変えろ", "実際の事案を下敷きにした夜。記録どおりの結末を、あなたの手で変える。")}
           ${sec("inv", "調査：いま攻撃を受けているか", "警報やログは鳴っているが、本当に攻撃か？ 気づかない侵害もあれば、正常な業務もある。")}</div></div>`;
         ST.$$("[data-m]", el).forEach(b => b.onclick = () => brief(D.missions.find(m => m.id === b.dataset.m)));
       };
 
+      const lessonLinks = m => m.lessons && m.lessons.length ? `<h3>関連する授業</h3><ul class="ops-lessons">${m.lessons.map(([id, t]) => `<li><a href="#l-${esc(id)}">${esc(t)}</a>${ST.P && ST.P.lessons && ST.P.lessons[id] ? ' <span class="cap">· 読了</span>' : ""}</li>`).join("")}</ul>` : "";
       const brief = m => {
         screen = "brief"; sel = m; W = null;
+        const lk = missing(m);
+        if (lk.length) {
+          el.innerHTML = `<div class="rl-card ops-brief"><div class="rl-cap">${esc(m.tag)} · ${esc(m.title)}</div><div class="rl-big">🔒 ${esc(m.goal)}</div>
+            <p>このミッションは、基礎訓練を終えると開きます。本番は時計が止まらず、説明もありません。先に訓練で手を動かしておきましょう。</p>
+            <div class="ops-req">${lk.map(id => `<button type="button" class="rl-hand" data-t="${esc(id)}"><b>${esc(tutName(id))}</b><br><span class="cap">${esc((TUT.find(t => t.id === id) || {}).goal || "")}</span></button>`).join("")}</div>
+            <div class="btns two"><button class="btn primary" type="button" data-t="${esc(lk[0])}">[Enter] ${esc(tutName(lk[0]))} へ</button><button class="btn" type="button" data-back>[B] 一覧へ戻る</button></div></div>`;
+          ST.$$("[data-t]", el).forEach(b => b.onclick = () => brief(TUT.find(t => t.id === b.dataset.t)));
+          el.querySelector("[data-back]").onclick = () => { screen = "menu"; menu(); };
+          sel = TUT.find(t => t.id === lk[0]); screen = "locked";
+          return;
+        }
+        if (m.mode === "tut") {
+          el.innerHTML = `<div class="rl-card ops-brief"><div class="rl-cap">${esc(m.tag)}${done(m.id) ? " · 済" : ""}</div><div class="rl-big">${esc(m.title)}</div>
+            <p class="ops-story">${esc(m.story)}</p><h3>この訓練でやること</h3><ol class="ops-steps">${m.steps.map(st => `<li>${esc(st.task)}</li>`).join("")}</ol>
+            <p class="cap">時間制限なし。相手も動きません。1手順ずつ画面に説明が出ます。分からなければ <code>hint</code>（無料）で打つべきコマンドが出ます。</p>
+            ${lessonLinks(m)}
+            <div class="btns two"><button class="btn primary big" type="button" data-go>[Enter] 訓練を始める</button><button class="btn" type="button" data-back>[B] 一覧へ戻る</button></div></div>`;
+          el.querySelector("[data-go]").onclick = () => start(m);
+          el.querySelector("[data-back]").onclick = () => { screen = "menu"; menu(); };
+          return;
+        }
         el.innerHTML = `<div class="rl-card ops-brief"><div class="rl-cap">${esc(m.tag)} · ${esc(m.title)}</div><div class="rl-big">${esc(m.goal)}</div>
           <p class="ops-story">${esc(m.story)}</p><h3>クリア条件</h3>${goalsHtml(m)}
           ${m.loseText ? `<p class="cap"><b>失敗：</b>${esc(m.loseText)}</p>` : ""}<p class="cap">制限時間 ${fmt(m.limit)}。開始すると時計が進み、相手も動き出します。迷ったら <code>help</code>、手詰まりなら <code>hint</code>（ただし相手が先に進む）。</p>
-          <div class="btns two"><button class="btn primary big" type="button" data-go>[Enter] 開始</button><button class="btn" type="button" data-back>[B] 一覧へ戻る</button></div>${srcBlock(m)}</div>`;
+          <div class="btns three"><button class="btn primary big" type="button" data-go>[Enter] 本番</button><button class="btn big" type="button" data-pr>[P] 練習</button><button class="btn" type="button" data-back>[B] 一覧へ戻る</button></div>
+          <p class="cap"><b>練習</b>：時計の進みが半分になり、hint を使っても時間が進みません。慣れたら本番へ。</p>${srcBlock(m)}</div>`;
         el.querySelector("[data-go]").onclick = () => start(m);
+        el.querySelector("[data-pr]").onclick = () => start(m, true);
         el.querySelector("[data-back]").onclick = () => { screen = "menu"; menu(); };
       };
 
@@ -283,10 +317,10 @@
 
       const side = () => {
         const m = W.m, s = el.querySelector(".ops-side"); if (!s) return;
-        const left = m.limit - W.t;
+        const left = m.limit - W.t, tut = m.mode === "tut";
         const hosts = Object.values(W.hosts).filter(h => !h.hideMap);
-        s.innerHTML = `<div class="ops-timer${left <= 60 ? " hot" : ""}"><span>残り</span><b>${fmt(left)}</b><span class="cap">${esc(m.date)} ${W.clock()}</span></div>
-          <div class="ops-goal"><div class="rl-cap">MISSION</div><div class="ops-g">${esc(m.goal)}</div>${goalsHtml(m)}</div>
+        s.innerHTML = `<div class="ops-timer${!tut && left <= 60 ? " hot" : ""}"><span>${tut ? "経過" : "残り"}</span><b>${fmt(tut ? W.t : left)}</b>${W.practice ? '<span class="chip">練習</span>' : ""}<span class="cap">${esc(m.date)} ${W.clock()}</span></div>
+          <div class="ops-goal"><div class="rl-cap">${tut ? "TRAINING · " + esc(m.tag) : "MISSION"}</div><div class="ops-g">${esc(tut ? m.title : m.goal)}</div>${goalsHtml(m)}</div>
           <div class="ops-hosts"><div class="rl-cap">ネットワーク</div><table>${hosts.map(h => `<tr class="${W.cur() === h ? "cur" : ""}"><td>${esc(h.name)}</td><td>${esc(h.ip)}</td><td>${esc(h.label || "")}</td><td>${h.iso ? '<span class="tag iso">隔離</span>' : ""}</td></tr>`).join("")}</table></div>
           <button type="button" class="btn" data-quit>やめる</button>`;
         s.querySelector("[data-quit]").onclick = () => { stop(); screen = "menu"; menu(); };
@@ -296,6 +330,19 @@
         stop(); flush(); screen = "end";
         const m = W.m, o = W.over;
         const r = refOf(m);
+        if (m.mode === "tut") {
+          const i = TUT.indexOf(m), next = TUT[i + 1];
+          const opened = D.missions.filter(x => x.mode !== "tut" && reqs(x).includes(m.id) && !missing(x).length);
+          el.innerHTML = `<div class="rl-card ops-end"><div class="rl-cap">${esc(m.tag)} · CLEAR · 経過 ${fmt(W.t)}</div><div class="rl-big">訓練完了</div>
+            <p>${esc(m.explain)}</p>${opened.length ? `<p class="ops-g">🔓 開いたミッション：${opened.map(x => esc(x.goal)).join("、")}</p>` : ""}
+            ${lessonLinks(m)}
+            <div class="btns two">${next ? `<button class="btn primary" type="button" data-next>[Enter] 次の訓練：${esc(next.title)}</button>` : `<button class="btn primary" type="button" data-back2>[Enter] 本番のミッションへ</button>`}<button class="btn" type="button" data-back>[B] 一覧へ戻る</button></div></div>`;
+          sel = next || null; screen = "tutend";
+          const nx = el.querySelector("[data-next]"); if (nx) nx.onclick = () => brief(next);
+          const b2 = el.querySelector("[data-back2]"); if (b2) b2.onclick = () => { screen = "menu"; menu(); };
+          el.querySelector("[data-back]").onclick = () => { screen = "menu"; menu(); };
+          return;
+        }
         el.innerHTML = `<div class="rl-card ops-end"><div class="rl-cap">${esc(m.goal)} · ${o.win ? "CLEAR" : "FAILED"} · 経過 ${fmt(W.t)}</div>
           <div class="rl-big">${o.win ? (m.mode === "def" ? "未来は変わった" : "正解") : (m.mode === "def" ? "記録どおりの結末" : "見誤った")}</div>
           <p>${esc(o.msg)}</p>
@@ -303,18 +350,20 @@
           ${r && m.reality ? `<h3>現実では</h3><p>${esc(m.reality)}</p>` : ""}
           <p class="cap">⛔ 隔離・アカウント停止・通信遮断は、自分が管理を任された環境でだけ行う操作です。他人の機器に手を出せば犯罪になりえます（<a href="#course-law">法律と倫理コース</a>）。</p>
           <div class="btns two"><button class="btn primary" type="button" data-again>[Enter] もう一度</button><button class="btn" type="button" data-back>[B] 一覧へ戻る</button></div>${srcBlock(m)}</div>`;
-        el.querySelector("[data-again]").onclick = () => start(m);
+        el.querySelector("[data-again]").onclick = () => start(m, W.practice);
         el.querySelector("[data-back]").onclick = () => { screen = "menu"; menu(); };
       };
 
       const check = () => {
         if (!W.over && W.m.mode === "def" && W.m.goals.every(g => g.ok(W))) W.over = { win: true, msg: W.m.winText };
-        if (!W.over && W.t >= W.m.limit) W.over = { win: false, msg: W.m.timeoutText || "時間切れ。" };
+        if (!W.over && W.m.limit > 0 && W.t >= W.m.limit) W.over = { win: false, msg: W.m.timeoutText || "時間切れ。" };
         if (W.over) { setTimeout(() => { if (alive && W && W.over && screen === "game") finish(); }, 900); }
       };
 
       const tick = () => {
         if (gone() || !W || W.over) return;
+        W.real = (W.real || 0) + 1;
+        if (W.practice && W.real % 2) return;
         W.t++;
         const due = W.q.filter(x => x.at <= W.t); W.q = W.q.filter(x => x.at > W.t);
         for (const x of due) { try { x.fn(W); } catch (e) { console.error(e); } }
@@ -322,8 +371,9 @@
         flush(); side(); check();
       };
 
-      const start = m => {
-        stop(); W = mkWorld(m); sel = m; screen = "game"; hist = []; hi = 0;
+      const lessonOut = () => { const st = W.m.steps[W.step]; if (!st) return; print(""); print(`── 手順 ${W.step + 1} / ${W.m.steps.length} ──`, "mis"); st.lesson.forEach(l => print(l, "lesson")); print("▶ やること：" + st.task, "task"); };
+      const start = (m, practice) => {
+        stop(); W = mkWorld(m); W.practice = !!practice && m.mode !== "tut"; W.tut = m.mode === "tut"; W.step = 0; sel = m; screen = "game"; hist = []; hi = 0;
         el.innerHTML = `<div class="ops"><div class="ops-term" title="クリックで入力"><div class="ops-out" role="log" aria-live="polite"></div>
           <form class="ops-in" autocomplete="off"><span class="ops-ps"></span><input type="text" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" aria-label="コマンド入力"></form></div><aside class="ops-side"></aside></div>`;
         const inp = el.querySelector(".ops-in input");
@@ -336,8 +386,8 @@
           else if (e.key === "Tab") { e.preventDefault(); const v = inp.value; if (!/\s/.test(v)) { const names = cmdNames().filter(n => n.startsWith(v.toLowerCase())); if (names.length === 1) inp.value = names[0] + " "; else if (names.length) print(names.join("  "), "dim"); } }
         };
         (m.banner || []).forEach(l => print(l, "dim"));
-        print(`[MISSION] ${m.goal}`, "mis"); m.goals.forEach(g => print("  ☐ " + g.text, "mis"));
-        print("help でコマンド一覧。時計はもう動いています。", "sim");
+        if (W.tut) { print(`[TRAINING] ${m.tag}「${m.title}」：${m.goal}`, "mis"); lessonOut(); }
+        else { print(`[MISSION] ${m.goal}`, "mis"); m.goals.forEach(g => print("  ☐ " + g.text, "mis")); print(W.practice ? "練習モード：時計の進みは半分、hint に時間のペナルティなし。" : "help でコマンド一覧。時計はもう動いています。", "sim"); }
         el.querySelector(".ops-ps").textContent = prompt(); side(); flush(); inp.focus();
         timer = setInterval(tick, 1000);
       };
@@ -362,12 +412,14 @@
         let out;
         if (c === "help" || c === "?" || c === "get-help") out = helpLines();
         else if (c === "clear" || c === "cls" || c === "clear-host") { const o = outEl(); if (o) o.innerHTML = ""; out = []; }
+        else if (c === "mission" && W.tut) { out = []; lessonOut(); }
         else if (c === "mission") out = [`[MISSION] ${W.m.goal}`, ...W.m.goals.map(g => (g.ok(W) ? "  ☑ " : "  ☐ ") + g.text)];
-        else if (c === "status") out = [`残り ${fmt(W.m.limit - W.t)}`, ...W.m.goals.map(g => (g.ok(W) ? "  ☑ " : "  ☐ ") + g.text)];
+        else if (c === "status") out = [W.tut ? `経過 ${fmt(W.t)}` : `残り ${fmt(W.m.limit - W.t)}`, ...W.m.goals.map(g => (g.ok(W) ? "  ☑ " : "  ☐ ") + g.text)];
+        else if (c === "hint" && W.tut) { const st = W.m.steps[W.step]; out = st ? [`[HINT] ${st.hint}`] : []; }
         else if (c === "hint") {
           const hs = W.m.hints; const x = hs[Math.min(W.hintI, hs.length - 1)]; W.hintI++;
-          const pen = W.m.hintPenalty || 15; W.t = Math.min(W.m.limit - 1, W.t + pen);
-          out = [`[HINT] ${x}`, `[SIM] ヒントを見ている間に ${pen} 秒進んだ。相手は待ってくれない。`];
+          const pen = W.practice ? 0 : (W.m.hintPenalty || 15); W.t = Math.min(W.m.limit - 1, W.t + pen);
+          out = [`[HINT] ${x}`, pen ? `[SIM] ヒントを見ている間に ${pen} 秒進んだ。相手は待ってくれない。` : "[SIM] 練習モードなので時間は進みません。"];
           const due = W.q.filter(q => q.at <= W.t); W.q = W.q.filter(q => q.at > W.t); for (const q of due) { try { q.fn(W); } catch (e) { console.error(e); } }
         }
         else if (W.m.cmds && W.m.cmds[c]) out = W.m.cmds[c].run(W, h, args);
@@ -379,6 +431,11 @@
           const r = P[c2](t2.slice(1), out, h); if (r.err) { out = r.err; break; } out = r.out;
         }
         for (const l of out) print(l, /^\[SIM\]/.test(l) ? "sim" : /^\[GAME\]/.test(l) ? "game" : /^\[HINT\]/.test(l) ? "hint" : /^\[/.test(l) && /ALERT/.test(l) ? "alert" : "");
+        if (W.tut && !W.over) {
+          const st = W.m.steps[W.step]; let ok = false;
+          try { ok = !!st && st.ok(W, c, args, out, h, line); } catch (e) { console.error(e); }
+          if (ok) { print("✓ できた：" + st.task, "ok"); W.step++; if (W.step >= W.m.steps.length) { W.over = { win: true, msg: "" }; ST.markLab(W.m.id); } else lessonOut(); }
+        }
         const ps = el.querySelector(".ops-ps"); if (ps) ps.textContent = prompt();
         flush(); side(); check();
       };
@@ -390,8 +447,12 @@
         if (!el.getBoundingClientRect().height) return;
         const k = ev.key.toLowerCase();
         if (screen === "menu" && /^[1-9]$/.test(k)) { const m = D.missions[+k - 1]; if (m) { ev.preventDefault(); brief(m); } }
-        else if ((screen === "brief" || screen === "end") && k === "enter") { ev.preventDefault(); start(sel || W.m); }
-        else if ((screen === "brief" || screen === "end") && k === "b") { ev.preventDefault(); screen = "menu"; menu(); }
+        else if (screen === "locked" && k === "enter") { ev.preventDefault(); brief(sel); }
+        else if (screen === "tutend" && k === "enter") { ev.preventDefault(); if (sel) brief(sel); else { screen = "menu"; menu(); } }
+        else if (screen === "brief" && k === "p" && sel && sel.mode !== "tut") { ev.preventDefault(); start(sel, true); }
+        else if (screen === "brief" && k === "enter") { ev.preventDefault(); start(sel); }
+        else if (screen === "end" && k === "enter") { ev.preventDefault(); start(W.m, W.practice); }
+        else if (["brief", "end", "locked", "tutend"].includes(screen) && k === "b") { ev.preventDefault(); screen = "menu"; menu(); }
         else if (screen === "game" && k.length === 1) { const i = el.querySelector(".ops-in input"); if (i) i.focus(); }
       };
       document.addEventListener("keydown", onKey);

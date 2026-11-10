@@ -448,3 +448,15 @@ table.tbl td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;whi
   .redline:has([data-widget="ops"]) .rl-tape,.redline:has([data-widget="ops"]) .rl-head,.redline:has([data-widget="ops"]) .lg-disc{display:none}
   .ops-term{height:calc(100dvh - 110px);min-height:240px}
 }
+/* 攻防端末：基礎訓練（必須ラボ） */
+.ops-sec.tut{margin-top:12px}
+.ops-sec.tut .rl-hand{display:inline-block;width:calc(50% - 6px);vertical-align:top;margin-right:6px}
+.rl-hand.locked{opacity:.6;border-style:dashed}
+.chip.ok{background:var(--rl-grn,#3ddc84);color:#0b0607}
+.ops-l.lesson{color:#f4eaea;border-left:3px solid var(--rl-yel,#ffd400);padding-left:8px}
+.ops-l.task{color:var(--rl-yel,#ffd400);font-weight:700;padding-left:8px;border-left:3px solid var(--rl-yel,#ffd400)}
+.ops-l.ok{color:var(--rl-grn,#3ddc84);font-weight:700}
+.ops-steps{margin:4px 0 8px;padding-left:22px;display:grid;gap:2px}
+.ops-lessons{margin:4px 0;padding-left:18px}
+.btns.three{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
+@media (max-width:899px){.ops-sec.tut .rl-hand{display:block;width:100%}}
