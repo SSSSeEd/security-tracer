@@ -3,6 +3,25 @@
    Updated weekly from JPCERT/CC and IPA primary sources. Newest first. */
 ST.NEWS_STATIC = [
  {
+  "id": "jpcert-at260035",
+  "date": "2026-11-11",
+  "org": "JPCERT/CC",
+  "severity": "注意",
+  "title": "2026年11月マイクロソフトセキュリティ更新プログラムに関する注意喚起",
+  "url": "https://www.jpcert.or.jp/at/2026/at260035.html",
+  "summary": "11月の定例セキュリティ更新。Microsoft Outlook の脆弱性（CVE-2026-124194）は、細工されたメッセージファイルを開くと、通常出る警告なしに攻撃者のサーバーへ接続され、認証情報が漏えいするおそれがあり、マイクロソフトが悪用を確認済みと公表している。",
+  "points": [
+   "対策: Microsoft Update や Windows Update などで、セキュリティ更新プログラムを適用する",
+   "CVE-2026-124194 は CWE-356（安全でない操作をユーザーに警告しない）に分類されている",
+   "そのほかの対象は、マイクロソフトの公表情報で確認する"
+  ],
+  "terms": [
+   "patch",
+   "zeroday"
+  ],
+  "verifiedAt": "2026-11-16"
+ },
+ {
   "id": "ipa-jre-2026-10",
   "date": "2026-10-21",
   "org": "IPA",
