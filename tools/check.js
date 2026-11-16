@@ -69,7 +69,8 @@ if (ST && ST.W) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(s.checked || "")) bad(`出典 ${k}: 確認日（checked, YYYY-MM-DD）がない`);
   });
   ST.QUIZ.forEach((q, i) => { if (!q.term) bad(`quiz #${i + 1}: term がない（出典を引けない）`); if (!q.exp) bad(`quiz #${i + 1}: 解説（exp）がない`); });
-  const used = new Set([...lessons.flatMap(l => l.practice || []), ...lessons.flatMap(l => l.src || []), ...ST.TERMS.flatMap(t => t.src || [])]);
+  const used = new Set([...lessons.flatMap(l => l.practice || []), ...lessons.flatMap(l => l.src || []), ...ST.TERMS.flatMap(t => t.src || []),
+    ...Object.values((ST.LEGAL || {}).laws || {}).flatMap(x => x.src || []), ...((ST.LEGAL || {}).practice || []).flatMap(x => x.src || [])]);
   const unused = Object.keys(ST.SRC).filter(k => !used.has(k));
   if (unused.length) console.log("（参考）どこからも引用されていない出典: " + unused.join(", "));
   console.log(`ウィジェット ${widgets.size}、ラボ ${Object.keys(ST.LAB).length}、レッスン ${lessons.length}、用語 ${ST.TERMS.length}`);
