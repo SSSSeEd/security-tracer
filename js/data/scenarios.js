@@ -80,5 +80,20 @@ ST.SCEN = [
    {f:"acc",t:"bank",p:"振込",title:"指定された口座へ振り込む",text:"メールに書かれた口座へ振込を依頼する。攻撃者が指定する口座は、多くが海外の口座とされる。"},
    {f:"bank",t:"atk",p:"着金",title:"攻撃者が資金を受け取る",text:"一度海外へ送金されると、回収は非常に困難になる。"}],
   bad:"攻撃成功：偽の口座へ送金された",good:"攻撃を阻止",mid:"被害の可能性が下がりました"}
+ ,{id:"testenv",title:"テスト環境に置かれた本番データ",tag:"組織",terms:["preprod-data","data-masking","segmentation"],
+  intro:"システム更新の動作確認のために、本物の顧客データがテスト環境に置かれた場合を追います。説明用に作った仮のシナリオで、実際の事案の経路や手口を再現するものではありません。",
+  nodes:[{id:"prod",type:"server",label:"本番システム",x:60,y:60},{id:"test",type:"server",label:"テスト環境",x:300,y:60},
+         {id:"atk",type:"attacker",label:"第三者",x:300,y:200},{id:"ops",type:"pc",label:"運用チーム",x:60,y:200}],
+  links:[["prod","test"],["atk","test",1],["test","atk",1],["ops","test"]],
+  defs:[{id:"dummy",label:"ダミー・マスキングしたデータを使う",d:"本物の個人情報をテスト環境に置かない",term:"data-masking"},
+        {id:"delete",label:"使い終わったら期限までに消す",d:"期限と削除の確認を決めておく",term:"preprod-data"},
+        {id:"protect",label:"本番と同じ水準で守る",d:"アクセス元の制限と多要素認証をテスト環境にも適用",term:"segmentation"},
+        {id:"monitor",label:"ログを監視する",d:"大量のデータ取得を検知して早く止める",term:"preprod-data"}],
+  steps:[
+   {f:"prod",t:"test",p:"COPY",title:"動作確認のために本番データをコピー",text:"システム更新の動作確認のため、本番と同じ形式のデータが必要になり、本物の顧客情報がテスト環境にコピーされる。",block:"dummy",blockText:"テスト環境にはダミーやマスキングしたデータしか置かれない。コピーされるのは架空の値で、本物の個人情報は存在しない。"},
+   {f:"ops",t:"test",p:"TEST",title:"動作確認が終わる",text:"確認は終わったが、念のためや、後で再確認するかもしれないという理由で、データはそのまま残る。「一時的」のつもりが、期限のないまま続く。",block:"delete",blockText:"期限どおりにデータが削除され、削除の確認も記録される。残っていないものは、持ち出されようがない。"},
+   {f:"atk",t:"test",p:"ACCESS",title:"第三者がテスト環境に到達する",text:"何らかの方法で、第三者がテスト環境のシステムに入る。入り方はさまざまで、ここでは省略している（このシナリオは、実際の事案の経路を示すものではない）。",block:"protect",blockText:"アクセス元の制限や多要素認証などが、テスト環境にも本番と同じ水準で適用されていて、到達できない。"},
+   {f:"test",t:"atk",p:"EXPORT",title:"データが外部へ持ち出される",text:"テスト環境にあった顧客情報がまとめて取り出される。",mitig:"monitor",mitigText:"大量のデータ取得を検知して早期に遮断できるため、持ち出される量を減らせる。"}],
+  bad:"攻撃成功：テスト環境の顧客情報が持ち出されたおそれ",good:"攻撃を阻止",mid:"被害の可能性が下がりました"}
 ];
 ST.SC = Object.fromEntries(ST.SCEN.map(s => [s.id, s]));

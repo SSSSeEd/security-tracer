@@ -84,5 +84,12 @@ ST.SRC = {
   thmjuice: {org:"TryHackMe", label:"OWASP Juice Shop ルーム（仮想マシンを起動して学ぶ形式）", url:"https://tryhackme.com/r/room/owaspjuiceshop", checked:"2026-11-16"},
   htb:      {org:"Hack The Box", label:"Hack The Box（実践ラボ・Academy・CTF。料金は公式で確認）", url:"https://www.hackthebox.com/", checked:"2026-11-16"},
   ipavulnrep:{org:"IPA", label:"脆弱性関連情報の届出受付", url:"https://www.ipa.go.jp/security/vuln/report/index.html", checked:"2026-11-04"},
-  ipa10org: {org:"IPA", label:"情報セキュリティ10大脅威 2026 解説書（組織編）", url:"https://www.ipa.go.jp/security/10threats/omgdg50000008fi8-att/kaisetsu_2026_soshiki.pdf", checked:"2026-11-03"}
+  ipa10org: {org:"IPA", label:"情報セキュリティ10大脅威 2026 解説書（組織編）", url:"https://www.ipa.go.jp/security/10threats/omgdg50000008fi8-att/kaisetsu_2026_soshiki.pdf", checked:"2026-11-03"},
+  rakusec:  {org:"楽天証券（公式発表）", label:"当社お客様の情報漏えいの可能性に関するお詫びとお知らせ（2026-11-17付。原因は調査中と記載）", url:"https://www.rakuten-sec.co.jp/web/info/info20261117-02.html", checked:"2026-11-19"},
+  piyolog:  {org:"piyolog（報道のまとめ・補助資料）", label:"楽天証券への不正アクセスについてまとめてみた（報道をもとにした整理。事実の根拠は公式発表を優先）", url:"https://piyolog.hatenadiary.jp/entry/2026/11/18/100525", checked:"2026-11-19"},
+  nist80053:{org:"NIST", label:"SP 800-53 Rev.5 セキュリティ・プライバシー管理策（SA-3(2) 本番データの利用、SC-7 境界防御）", url:"https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final", checked:"2026-11-19"},
+  nist80061:{org:"NIST", label:"SP 800-61 Rev.3 インシデント対応の推奨事項（2025年4月）", url:"https://csrc.nist.gov/pubs/sp/800/61/r3/final", checked:"2026-11-19"},
+  ppcleak:  {org:"個人情報保護委員会", label:"漏えい等の対応とお役立ち資料（漏えい等報告・速報と確報）", url:"https://www.ppc.go.jp/personalinfo/legal/leakAction/", checked:"2026-11-19"},
+  ipainsider:{org:"IPA", label:"組織における内部不正防止ガイドライン（第5版、2022年4月）", url:"https://www.ipa.go.jp/security/guide/insider.html", checked:"2026-11-19"},
+  metiasm:  {org:"経済産業省", label:"ASM（Attack Surface Management）導入ガイダンス（2023年5月29日公表）", url:"https://www.meti.go.jp/press/2023/05/20230529001/20230529001.html", checked:"2026-11-19"}
 };
