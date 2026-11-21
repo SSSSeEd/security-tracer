@@ -91,5 +91,14 @@ ST.SRC = {
   nist80061:{org:"NIST", label:"SP 800-61 Rev.3 インシデント対応の推奨事項（2025年4月）", url:"https://csrc.nist.gov/pubs/sp/800/61/r3/final", checked:"2026-11-19"},
   ppcleak:  {org:"個人情報保護委員会", label:"漏えい等の対応とお役立ち資料（漏えい等報告・速報と確報）", url:"https://www.ppc.go.jp/personalinfo/legal/leakAction/", checked:"2026-11-19"},
   ipainsider:{org:"IPA", label:"組織における内部不正防止ガイドライン（第5版、2022年4月）", url:"https://www.ipa.go.jp/security/guide/insider.html", checked:"2026-11-19"},
-  metiasm:  {org:"経済産業省", label:"ASM（Attack Surface Management）導入ガイダンス（2023年5月29日公表）", url:"https://www.meti.go.jp/press/2023/05/20230529001/20230529001.html", checked:"2026-11-19"}
+  metiasm:  {org:"経済産業省", label:"ASM（Attack Surface Management）導入ガイダンス（2023年5月29日公表）", url:"https://www.meti.go.jp/press/2023/05/20230529001/20230529001.html", checked:"2026-11-19"},
+  owaspapi10:{org:"OWASP", label:"OWASP API Security Top 10 2023（10項目の名称）", url:"https://owasp.org/API-Security/editions/2023/en/0x11-t10/", checked:"2026-11-20"},
+  rfc9110:  {org:"IETF", label:"RFC 9110 HTTP Semantics（HTTPはステートレスなアプリケーション層のプロトコル）", url:"https://www.rfc-editor.org/rfc/rfc9110.html", checked:"2026-11-20"},
+  mdnhttp:  {org:"MDN Web Docs", label:"HTTP の概要（リクエストとレスポンスの構成）", url:"https://developer.mozilla.org/ja/docs/Web/HTTP/Overview", checked:"2026-11-20"},
+  mdnstatus:{org:"MDN Web Docs", label:"HTTP レスポンスステータスコード（5分類、200・401・403・404・429・500）", url:"https://developer.mozilla.org/ja/docs/Web/HTTP/Status", checked:"2026-11-20"},
+  rfc8259:  {org:"IETF", label:"RFC 8259 JSON（データ交換フォーマット）", url:"https://www.rfc-editor.org/rfc/rfc8259", checked:"2026-11-20"},
+  nist80190:{org:"NIST", label:"SP 800-190 Application Container Security Guide（2017年9月）", url:"https://csrc.nist.gov/pubs/sp/800/190/final", checked:"2026-11-20"},
+  owaspdocker:{org:"OWASP", label:"Docker Security Cheat Sheet（RULE #0〜#6 ほか）", url:"https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html", checked:"2026-11-20"},
+  ociimage: {org:"Open Container Initiative", label:"OCI Image Format Specification（README）", url:"https://github.com/opencontainers/image-spec", checked:"2026-11-20"},
+  dockercli:{org:"Docker", label:"Docker CLI コマンドリファレンス（docker run / ps / stop / rm / images / exec / logs / pull。docker/cli リポジトリのドキュメント）", url:"https://github.com/docker/cli/tree/master/docs/reference/commandline", checked:"2026-11-20"}
 };
