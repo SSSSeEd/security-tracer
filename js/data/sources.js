@@ -101,5 +101,10 @@ ST.SRC = {
   nist80190:{org:"NIST", label:"SP 800-190 Application Container Security Guide（2017年9月）", url:"https://csrc.nist.gov/pubs/sp/800/190/final", checked:"2026-11-20"},
   owaspdocker:{org:"OWASP", label:"Docker Security Cheat Sheet（RULE #0〜#6 ほか）", url:"https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html", checked:"2026-11-20"},
   ociimage: {org:"Open Container Initiative", label:"OCI Image Format Specification（README）", url:"https://github.com/opencontainers/image-spec", checked:"2026-11-20"},
-  dockercli:{org:"Docker", label:"Docker CLI コマンドリファレンス（docker run / ps / stop / rm / images / exec / logs / pull。docker/cli リポジトリのドキュメント）", url:"https://github.com/docker/cli/tree/master/docs/reference/commandline", checked:"2026-11-20"}
+  dockercli:{org:"Docker", label:"Docker CLI コマンドリファレンス（docker run / ps / stop / rm / images / exec / logs / pull。docker/cli リポジトリのドキュメント）", url:"https://github.com/docker/cli/tree/master/docs/reference/commandline", checked:"2026-11-20"},
+  rfc5798:  {org:"IETF", label:"RFC 5798 VRRP バージョン3（標準化過程。RFC 3768 を置き換え。単一障害点・タイマー・優先度）", url:"https://www.rfc-editor.org/rfc/rfc5798.html", checked:"2026-11-22"},
+  rfc2281:  {org:"IETF", label:"RFC 2281 Cisco HSRP（Informational。標準ではない。ホロー時間・ホールド時間・状態）", url:"https://www.rfc-editor.org/rfc/rfc2281", checked:"2026-11-22"},
+  rfc5880:  {org:"IETF", label:"RFC 5880 BFD（標準化過程。経路の故障を素早く検出する）", url:"https://www.rfc-editor.org/rfc/rfc5880", checked:"2026-11-22"},
+  awsavail: {org:"AWS", label:"Well-Architected 信頼性の柱：可用性（定義・式・年間の停止時間の表。「過去の参考用」の表示あり）", url:"https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/availability.html", checked:"2026-11-22"},
+  awselb:   {org:"AWS", label:"Elastic Load Balancing とは（振り分け・ヘルスチェック）", url:"https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/what-is-load-balancing.html", checked:"2026-11-22"}
 };
