@@ -29,6 +29,7 @@ ST.SRC = {
   killchain:{org:"Lockheed Martin", label:"Cyber Kill Chain", url:"https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html", checked:"2026-10-27"},
   attack:   {org:"MITRE ATT&CK", label:"Enterprise Tactics", url:"https://attack.mitre.org/tactics/enterprise/", checked:"2026-10-27"},
   cwe787:   {org:"MITRE", label:"CWE-787: Out-of-bounds Write", url:"https://cwe.mitre.org/data/definitions/787.html", checked:"2026-10-27"},
+  t1539:    {org:"MITRE ATT&CK", label:"T1539 Steal Web Session Cookie（セッションCookieの窃取）", url:"https://attack.mitre.org/techniques/T1539/", checked:"2026-11-22"},
   t1566:    {org:"MITRE ATT&CK", label:"T1566 Phishing", url:"https://attack.mitre.org/techniques/T1566/", checked:"2026-10-27"},
   rfc826:   {org:"IETF", label:"RFC 826 An Ethernet Address Resolution Protocol", url:"https://www.rfc-editor.org/rfc/rfc826", checked:"2026-10-28"},
   t1557_002:{org:"MITRE ATT&CK", label:"T1557.002 ARP Cache Poisoning", url:"https://attack.mitre.org/techniques/T1557/002/", checked:"2026-10-28"},
