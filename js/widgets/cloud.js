@@ -62,7 +62,7 @@
         if (!leak) { v.innerHTML = pol === "app" ? `<div class="verdict good">最小権限<p>アプリに必要な操作だけを許可しています。</p></div>` : `<div class="verdict mid">権限が大きすぎる<p>アプリは使わない操作まで許可されています。漏れたときに何が起きるか、チェックを入れて確かめてください。</p></div>`; return; }
         ST.markLab("iam-key");
         v.innerHTML = (pol === "app" ? `<div class="verdict mid">被害は app-bucket の読み取りに限られる<p>それでも漏えいは漏えいです。</p></div>` : `<div class="verdict bad">${pol === "all" ? "アカウント全体を乗っ取られうる" : "顧客データまで読み書きされうる"}<p>キーの権限がそのまま攻撃者の権限になります。</p></div>`)
-          + `<div class="callout warn" style="margin-top:8px">漏れたと気づいたら：まずキーを<b>無効化</b>し、そのキーで作られた一時的な認証情報も止め、ログ（CloudTrail など）で何をされたかを確かめます（AWSの手順）。無効化するまで、悪用されるおそれは残ります。</div>`;
+          + `<div class="callout warn" style="margin-top:8px">漏れたと気づいたら：キーを<b>無効化</b>し、そのキーで作られた一時的な認証情報も止め、ログ（CloudTrail など）で何をされたかを確かめます（AWSの手順）。無効化するまで、悪用されるおそれは残ります。</div>`;
       };
       ST.wireSeg(el, "pol", x => { pol = x; upd(); });
       el.querySelector("#ik-leak").onchange = upd;
