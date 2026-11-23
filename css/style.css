@@ -460,3 +460,4 @@ table.tbl td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;whi
 .ops-lessons{margin:4px 0;padding-left:18px}
 .btns.three{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
 @media (max-width:899px){.ops-sec.tut .rl-hand{display:block;width:100%}}
+.return-lesson{display:flex;justify-content:flex-start;text-align:left;margin-bottom:10px;line-height:1.4;padding:10px 14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 56px);z-index:4}
