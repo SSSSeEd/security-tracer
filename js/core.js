@@ -160,9 +160,20 @@ window.ST = window.ST || {};
     }
     return { view: "home", arg: null, tab: "home" };
   };
+  /* 用語から授業へ戻る導線: 授業内の用語リンクを押した時に、授業IDとスクロール位置を覚える（端末内、タブを閉じると消える）。 */
+  ST.returnTo = (() => { try { const o = JSON.parse(sessionStorage.getItem("st.returnTo") || "null"); if (o && typeof o.id === "string" && typeof o.y === "number") return o; } catch (e) {} return null; })();
+  const setReturn = o => { ST.returnTo = o; try { o ? sessionStorage.setItem("st.returnTo", JSON.stringify(o)) : sessionStorage.removeItem("st.returnTo"); } catch (e) {} };
+  document.addEventListener("click", e => {
+    const a = e.target.closest && e.target.closest('a[href^="#term-"]');
+    if (a && ST.current.view === "lesson") setReturn({ id: ST.current.arg, y: Math.round(window.scrollY) });
+  }, true);
   ST.go = (keepScroll) => {
     cleanupWidgets();
+    const prevView = ST.current.view;
     ST.current = ST.parseHash();
+    let restoreY = null;
+    if (ST.current.view === "lesson" && prevView === "term" && ST.returnTo && ST.returnTo.id === ST.current.arg) restoreY = ST.returnTo.y;
+    if (ST.current.view === "lesson" || (ST.current.view !== "term" && ST.returnTo)) setReturn(null);
     ST.$$("nav.tabs a").forEach(a => { if (a.dataset.v === ST.current.tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
     const learn = document.querySelector('nav.tabs a[data-v="courses"]');
     if (learn) learn.classList.toggle("dot", ST.dueLessons(Date.now()).some(id => ST.LESSON[id]));
@@ -170,7 +181,8 @@ window.ST = window.ST || {};
     const fn = ST.views[ST.current.view] || ST.views.home;
     try { fn(view, ST.current.arg); } catch (e) { view.innerHTML = `<p class="empty">ページを表示できませんでした: ${ST.esc(e.message)}</p>`; console.error(e); }
     ST.mountAll(view);
-    if (!keepScroll) window.scrollTo(0, 0);
+    if (restoreY != null) { window.scrollTo(0, restoreY); requestAnimationFrame(() => window.scrollTo(0, restoreY)); }
+    else if (!keepScroll) window.scrollTo(0, 0);
   };
   ST.refresh = () => ST.go(true);
 })(window.ST);

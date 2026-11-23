@@ -232,7 +232,8 @@
     const st = ST.termStat(t.id); st.seen = (st.seen || 0) + 1; ST.P.terms[t.id] = st; ST.save();
     const rel = ST.NEWS.filter(n => (n.terms || []).includes(t.id));
     const ls = Object.values(ST.LESSON).filter(l => l.terms.includes(t.id));
-    v.innerHTML = `<a href="#terms" style="font-size:14px">‹ 用語一覧</a>
+    const back = ST.returnTo && ST.LESSON[ST.returnTo.id];
+    v.innerHTML = `${back ? `<a class="btn primary return-lesson" href="#l-${back.id}">‹ 授業に戻る：${esc(back.title)}</a>` : ""}<div><a href="#terms" style="font-size:14px">‹ 用語一覧</a></div>
       <article class="card detail">
         <div><div class="eyebrow">${esc(t.cat)} · ${esc(t.en)}</div><h1>${esc(t.name)}</h1><p class="lead" style="color:var(--ink);font-size:16px">${md(t.summary)}</p></div>
         <section><h2>仕組み</h2><p>${md(t.how)}</p></section>
