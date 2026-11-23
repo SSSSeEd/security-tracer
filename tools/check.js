@@ -73,6 +73,25 @@ if (ST && ST.W) {
     ...Object.values((ST.LEGAL || {}).laws || {}).flatMap(x => x.src || []), ...((ST.LEGAL || {}).practice || []).flatMap(x => x.src || [])]);
   const unused = Object.keys(ST.SRC).filter(k => !used.has(k));
   if (unused.length) console.log("（参考）どこからも引用されていない出典: " + unused.join(", "));
+  /* Reliability guards (added after the 2026-11 fact check).
+     Failures: news without a primary-source URL or verification date; a CVE number that is not backed by a news entry.
+     Warnings only: stale verification dates, terms backed only by the generic glossary source. */
+  const today = new Date(), ageDays = d => Math.floor((today - new Date(d + "T00:00:00Z")) / 86400000);
+  (ST.NEWS_STATIC || []).forEach(n => {
+    if (!/^https:\/\/[^\s]+$/.test(n.url || "")) bad(`news ${n.id}: 一次情報のURL（https）がない`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(n.verifiedAt || "")) bad(`news ${n.id}: 確認日（verifiedAt）がない`);
+  });
+  const newsText = JSON.stringify(ST.NEWS_STATIC || []);
+  const cveIn = (label, text) => (String(text).match(/CVE-\d{4}-\d{4,}/g) || []).forEach(c => { if (!newsText.includes(c)) bad(`${label}: ${c} は news.js（一次情報で確認した記録）にない。先にニュースとして確認・登録する`); });
+  ST.TERMS.forEach(t => cveIn(`term ${t.id}`, JSON.stringify(t)));
+  lessons.forEach(l => cveIn(`lesson ${l.id}`, JSON.stringify(l.blocks)));
+  ST.QUIZ.forEach((q, i) => cveIn(`quiz #${i + 1}`, JSON.stringify(q)));
+  const stale = (ST.NEWS_STATIC || []).filter(n => n.verifiedAt && ageDays(n.verifiedAt) > 30).map(n => `${n.id}(${n.verifiedAt})`);
+  if (stale.length) console.log("（警告）ニュースの確認日が30日より古い。公開後に更新されていないか再確認: " + stale.join(", "));
+  const oldSrc = Object.entries(ST.SRC).filter(([, v]) => v.checked && ageDays(v.checked) > 90).map(([k, v]) => `${k}(${v.checked})`);
+  if (oldSrc.length) console.log("（警告）出典の確認日が90日より古い。内容が変わっていないか再確認: " + oldSrc.join(", "));
+  const weak = ST.TERMS.filter(t => (t.src || []).length && (t.src || []).every(k => k === "nist")).map(t => t.id);
+  if (weak.length) console.log(`（参考）出典が一般用語集（nist）だけの用語 ${weak.length} 件。一次情報のページを足すと信頼性が上がる: ` + weak.join(", "));
   console.log(`ウィジェット ${widgets.size}、ラボ ${Object.keys(ST.LAB).length}、レッスン ${lessons.length}、用語 ${ST.TERMS.length}`);
 } else bad("ST.W が作られていない");
 
